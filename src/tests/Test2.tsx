@@ -1,6 +1,4 @@
-import React, {
-  useState, useEffect, FC, useCallback,
-} from 'react';
+import React, { useState, useEffect, FC, useCallback } from 'react';
 
 import useTick from '../hooks/useTick';
 import { now } from '../helpers';
@@ -20,10 +18,8 @@ const Test2: FC = () => {
   // Timed average for framerate
   const { add: addFramerate, average: averageFramerate } = useTimedAverage(1000);
 
-
+  useTick(() => {
   // console.log('re-render');
-
-  const { setInterval: setIntervalCount, requestAnimationFrame: requestAnimationFrameCount, setTimeout: setTimeoutCount, unspecified: unspecifiedCount } = useTick(() => {
     const currentTime = now();
     const difference = currentTime - currentFrameTime;
 
@@ -37,8 +33,6 @@ const Test2: FC = () => {
     setCurrentFrameTime(currentTime);
   });
 
-  const total = setIntervalCount + requestAnimationFrameCount + setTimeoutCount + unspecifiedCount;
-  const pct = (val: number) => `${((val / total) * 100).toFixed(2)}%`;
 
   return (
     <div>

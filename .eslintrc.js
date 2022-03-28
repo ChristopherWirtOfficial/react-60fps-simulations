@@ -20,9 +20,9 @@ module.exports = {
         }],
         "array-bracket-spacing": [2, "always"],
         "arrow-parens": [2, "as-needed"],
-        "no-console": [1, { "allow": ["warn", "error"]}],
-        "object-property-newline": [2, { "allowAllPropertiesOnSameLine": true }],
-        "object-curly-newline": [2, { minProperties: 9, consistent: true }],
+        "no-console": [1, { "allow": ["warn", "error"] }],
+        //"object-property-newline": [2, { "allowAllPropertiesOnSameLine": true }],
+        "object-curly-newline": [2, { minProperties: 5, multiline: true, consistent: true}],
         "no-plusplus": "off",
     },
 };

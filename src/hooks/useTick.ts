@@ -9,8 +9,8 @@ export interface TickFunctor {
   readonly frequency: number;
 }
 
-const TICK_RATE = 60;
-const TICK_LENGTH = 1000 / TICK_RATE;
+export const FRAMERATE = 60;
+const TICK_LENGTH = 1000 / FRAMERATE;
 
 // If we fall more than the max behind, don't try to catch up too far
 //  Note: probably want to make this considerably higher?
@@ -24,7 +24,8 @@ let lastTickTime = now();
 let tickLatch = 0;
 
 // Only simulate this number of ticks before halting
-const HARD_STOP = -1;
+const HARD_STOP = 0;
+let frameCount = 0;
 
 const counts = {
   requestAnimationFrame: 0,
@@ -36,7 +37,8 @@ const counts = {
 let leftoverTickTime = 0;
 
 const pulse = (source = 'unspecified') => {
-  if (HARD_STOP > 0 && Object.values(counts).reduce((acc, val) => acc + val, 0) > HARD_STOP) {
+  frameCount++;
+  if (HARD_STOP > 0 && frameCount > HARD_STOP) {
     return;
   }
   // PULSE START CODE
@@ -74,6 +76,8 @@ const pulse = (source = 'unspecified') => {
   lastTickTime = currentTickTime;
 
   const tick = () => {
+    // @ts-ignore
+    counts[source]++;
     const functorsToRun = tickFunctors.filter(f => functorsToSkipMap[f.id] === 0);
     tickFunctors.forEach(f => {
       functorsToSkipMap[f.id] = functorsToSkipMap[f.id] === 0 ? f.frequency - 1 : functorsToSkipMap[f.id] - 1;
@@ -111,10 +115,7 @@ const useTick = (functorArg: () => void, frequency = 1) => {
       //    they my prefer to not even re-render except when their functor actually runs
       // Alternatively, maybe make the report interval configurable? Set a number of ticks to report progress, since
       //  nothing will cause a re-render from this hook unless setProgress is called
-      setProgress((frequency - functorsToSkipMap[id]) / frequency);
-
-      // TODO: PICKUP This doesn't appear to be working. I just want to use setProgress to update the parent reactively
-      // with news about the progress of the functor. Should be easy to debug, but it's time for bed. It's almost 6am :)
+      // setProgress(() => (frequency - functorsToSkipMap[id]) / frequency);
       functorArg();
     };
 
@@ -132,18 +133,16 @@ const useTick = (functorArg: () => void, frequency = 1) => {
   }, [ id, functorArg, frequency ]);
 
 
-  if (frequency > 1) {
-    console.log({
-      toSkip: functorsToSkipMap[id],
-      frequency,
-      diff: frequency - functorsToSkipMap[id],
-      progress,
-    });
-  }
+  // if (frequency > 1) {
+  //   console.log({
+  //     toSkip: functorsToSkipMap[id],
+  //     frequency,
+  //     diff: frequency - functorsToSkipMap[id],
+  //     progress,
+  //   });
+  // }
 
-  return {
-    progress,
-  };
+  return { progress };
 };
 
 export default useTick;
