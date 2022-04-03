@@ -1,4 +1,5 @@
-interface Quron {
+
+type Quron {
   id: string;
   machine: (...inArr: Array<number>) => Array<number>;
 

@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
-import { now } from '../helpers';
+import { now, uuid } from '../helpers';
 
-export interface TickFunctor {
+export type TickFunctor = {
   readonly id: string;
   readonly functor: () => void;
   readonly frequency: number;
-}
+};
 
 export const FRAMERATE = 60;
 const TICK_LENGTH = 1000 / FRAMERATE;
 
 // If we fall more than the max behind, don't try to catch up too far
-//  Note: probably want to make this considerably higher?
+//  Note: probably want to make this considerably higher than 10 ticks?
 const MAX_QUEUED_TICKS = 10;
 
 let tickFunctors: Array<TickFunctor> = [];
@@ -85,7 +84,24 @@ const pulse = (source = 'unspecified') => {
 
     // Run all the functors that need to be run
     // console.log(functorsToRun.map(f => f.frequency));
-    functorsToRun.forEach(f => f.functor());
+    const times = functorsToRun.map(f => {
+      const startTime = now();
+      f.functor();
+
+      return now() - startTime;
+    });
+
+    const reportTimes = () => {
+      console.log(times);
+      const totalTimeExecuting = times.reduce((a, b) => a + b, 0);
+      const timeUntilNextTick = TICK_LENGTH - leftoverTickTime - (now() - currentTickTime);
+      console.log('TIME UNTIL NEXT TICK', timeUntilNextTick);
+      console.log('Percent of time used this tick', totalTimeExecuting / TICK_LENGTH);
+      console.log('Percent of time used this tick', totalTimeExecuting / timeUntilNextTick);
+    };
+    // Enable to see some valuable timing statistics
+    // reportTimes();
+
     tickLatch--;
   };
 
@@ -106,13 +122,13 @@ setTimeout(deferPulse);
 
 
 const useTick = (functorArg: () => void, frequency = 1) => {
-  const [ id ] = useState(uuidv4());
+  const [ id ] = useState(uuid());
   const [ progress, setProgress ] = useState(0);
 
   useEffect(() => {
     const functor = () => {
       // Maybe make this part optional? If the use-case doesn't care about tick-by-tick progress,
-      //    they my prefer to not even re-render except when their functor actually runs
+      //    they might prefer to not even re-render except when their functor actually runs
       // Alternatively, maybe make the report interval configurable? Set a number of ticks to report progress, since
       //  nothing will cause a re-render from this hook unless setProgress is called
       // setProgress(() => (frequency - functorsToSkipMap[id]) / frequency);
