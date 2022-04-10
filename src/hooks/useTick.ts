@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-
+// TODO: This file needs to be cleaned and code-split pretty urgently!
+// Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from '../helpers';
 
 export type TickFunctor = {
@@ -16,6 +17,7 @@ const TICK_LENGTH = 1000 / FRAMERATE;
 const MAX_QUEUED_TICKS = 10;
 
 let tickFunctors: Array<TickFunctor> = [];
+
 const functorsToSkipMap: { [key: string]: number } = {};
 
 let lastTickTime = now();
@@ -35,6 +37,7 @@ const counts = {
 
 let leftoverTickTime = 0;
 
+// The main tick execution loop function, looped with setTimeout(deferPulse)
 const pulse = (source = 'unspecified') => {
   frameCount++;
   if (HARD_STOP > 0 && frameCount > HARD_STOP) {
@@ -74,11 +77,16 @@ const pulse = (source = 'unspecified') => {
   tickLatch = ticksQueued;
   lastTickTime = currentTickTime;
 
+
   const tick = () => {
     // @ts-ignore
     counts[source]++;
+
+    // Find the functors to run this tick. The value of the functor's key in the functorsToSkipMap is the number of ticks until it should run next.
     const functorsToRun = tickFunctors.filter(f => functorsToSkipMap[f.id] === 0);
+
     tickFunctors.forEach(f => {
+      // Update each functor's associated "ticks until next run" count in the map.
       functorsToSkipMap[f.id] = functorsToSkipMap[f.id] === 0 ? f.frequency - 1 : functorsToSkipMap[f.id] - 1;
     });
 
@@ -111,8 +119,6 @@ const pulse = (source = 'unspecified') => {
   // PULSE END CODE
 };
 
-// setInterval(() => pulse('setInterval'), PULSE_SPEED);
-
 const deferPulse = () => {
   pulse('setTimeout');
   setTimeout(deferPulse);
@@ -120,26 +126,45 @@ const deferPulse = () => {
 
 setTimeout(deferPulse);
 
-
+/*
+  @param functor: The function to run component-level code (or any logic) per tick cadance
+  @param frequency: How many ticks between each execution of the functor
+*/
 const useTick = (functorArg: () => void, frequency = 1) => {
   const [ id ] = useState(uuid());
   const [ progress, setProgress ] = useState(0);
 
+  /*
+    This useEffect will register or re-register a functor for the static `id` of this hook instance.
+    For every use of the useTick hook, an ID is generated and remains static to the hook instance. We
+    can rely on this to stay static between renders and across functor re-registrations.
+
+    The functor used in a component, unless wrapped in a useCallback, will not be referrentialyl stable. This is
+    overall a pretty useful attribute, as long as the re-registration overhead is minimal.
+
+    Because of the lack of referential stability, every re-render we'll get a brand new reference to a brand new functor that
+     has 0 stale references to other Reactive properties, instead of letting them get stale in the old functor that was passed in.
+  */
   useEffect(() => {
     const functor = () => {
-      // Maybe make this part optional? If the use-case doesn't care about tick-by-tick progress,
-      //    they might prefer to not even re-render except when their functor actually runs
-      // Alternatively, maybe make the report interval configurable? Set a number of ticks to report progress, since
-      //  nothing will cause a re-render from this hook unless setProgress is called
-      // setProgress(() => (frequency - functorsToSkipMap[id]) / frequency);
+      // TODO: This is like this to let us track progress, but that code wasn't working. It's in git somewhere, but also it didn't work lol
+      // setProgress here or something
       functorArg();
     };
 
     const newTickFunctors = tickFunctors.filter(f => f.id !== id);
     newTickFunctors.push({ id, functor, frequency });
+
+    // Even if we re-register, we keep the same ID and consider ourselves the same functor.
+    // Because of this, we only set a value for the functorsToSkipMap if there isn't one already. If there is, we don't change it.
+    // This lets us keep the same cooldown between executions as the last functor, even though it was re-registered (every render, usually)
     if (functorsToSkipMap[id] === undefined) {
-      functorsToSkipMap[id] = frequency - 1;
+      functorsToSkipMap[id] = 0;
     }
+
+    // TODO: NOTE: When re-registering because the frequency changed, don't reset the functorsToSkipMap value to zero. Instead,
+    //  increase or decrease it by the difference between the old and new frequency. This way, the functor will be run next at the new frequency.
+    //  This could be useful as a way to almost directly tie something like attack speed to the frequency of the tick, and get a lot of good stuff for free.
 
 
     tickFunctors = newTickFunctors;
@@ -147,16 +172,6 @@ const useTick = (functorArg: () => void, frequency = 1) => {
       tickFunctors = tickFunctors.filter(f => f.functor !== functor);
     };
   }, [ id, functorArg, frequency ]);
-
-
-  // if (frequency > 1) {
-  //   console.log({
-  //     toSkip: functorsToSkipMap[id],
-  //     frequency,
-  //     diff: frequency - functorsToSkipMap[id],
-  //     progress,
-  //   });
-  // }
 
   return { progress };
 };

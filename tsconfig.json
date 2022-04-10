@@ -29,9 +29,23 @@
   "include": [
     "src"
   ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "baseUrl": "./src",
+  "paths": {
+    "*": [
+      "*",
+      "src/*"
+    ],
+    "src/*": [
+      "src/*"
+    ],
+    "@hooks/*": [
+      "src/hooks/*"
+    ],
+    "@components/*": [
+      "src/components/*"
+    ],
+    "@atoms/*": [
+      "src/atoms/*"
+    ],
+  }
 }

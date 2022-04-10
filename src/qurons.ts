@@ -1,6 +1,13 @@
+/* @ts-ignore ts(1208) */
+type QuronValue = number;
+
+type TruthQuron = Quron &{
+  value: 
+};
+
 
 type Quron {
-  id: string;
+  key: string;
   machine: (...inArr: Array<number>) => Array<number>;
 
   // To allow for self-referential Qurons, we make this property a function.

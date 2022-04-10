@@ -1,7 +1,5 @@
-import {
-  atom, atomFamily, selector, selectorFamily, useRecoilState, useRecoilValue,
-} from 'recoil';
-import { uuid } from '../../helpers';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+
 import ClosestEnemySelector from '../Enemies/ClosestEnemySelector';
 import PlayerPositionAtom from '../Player/PlayerPositionAtom';
 
@@ -16,6 +14,8 @@ export type Projectile = {
   damage: number;
   color?: string;
 };
+
+// TODO: I should seriously reconsider spawning projecticles by just using an atomFamily
 
 export const ProjectileAtomFamily = atomFamily<Projectile, string>({
   key: 'Projectile',
@@ -41,7 +41,7 @@ export const ProjectileAtomFamily = atomFamily<Projectile, string>({
         x: playerX,
         y: playerY,
         size: 10,
-        speed: 250,
+        speed: 5,
         direction: radiansTowardClosestEnemy,
         damage: 10,
       } as Projectile;
@@ -50,7 +50,8 @@ export const ProjectileAtomFamily = atomFamily<Projectile, string>({
   effects: key => [
     ({ resetSelf, onSet }) => {
       onSet(newValue => {
-        console.log('got a new value!', key, newValue);
+        // TODO: What is this doing? Does this make any sense still? It's kind of hidden and magic, whatever it is
+        // console.log('got a new value!', key, newValue);
         if (newValue === null) {
           resetSelf();
         }
@@ -61,7 +62,7 @@ export const ProjectileAtomFamily = atomFamily<Projectile, string>({
 
 });
 
-const ProjectileKeyListAtom = atom<string[]>({
+export const ProjectileKeyListAtom = atom<string[]>({
   key: 'ProjectileKeyList',
   default: [],
 });
@@ -76,33 +77,3 @@ export const ProjectileListSelector = selector<Projectile[]>({
     return projectiles as Projectile[];
   },
 });
-
-export const useProjectileKeyList = () => {
-  const [ keyList, setKeyList ] = useRecoilState(ProjectileKeyListAtom);
-  const projectiles = useRecoilValue(ProjectileListSelector);
-
-
-  const addProjectile = () => {
-    const key = uuid();
-    const newKeyList = [ ...keyList, key ];
-
-    setKeyList(newKeyList);
-  };
-
-  const removeProjectile = (key: string) => {
-    const newKeyList = keyList.filter(k => k !== key);
-    setKeyList(newKeyList);
-  };
-
-  return {
-    projectiles,
-    keyList,
-    addProjectile,
-    removeProjectile,
-  };
-};
-
-
-// Well made, and theoretically useful, but probably just gonna make a big list of projectiles and then render them out and
-// let each projectile handle its own rendering as a component, knowing about itself in the larger scope of the key list and its atom.
-

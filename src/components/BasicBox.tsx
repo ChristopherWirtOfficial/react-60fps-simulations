@@ -5,7 +5,7 @@ import PlayerPositionAtom from '../atoms/Player/PlayerPositionAtom';
 import useTick, { FRAMERATE } from '../hooks/useTick';
 import EnemyAtomFamily, { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
-import { useProjectileKeyList } from '../atoms/Projectiles/ProjectileAtomFamily';
+import { makeStaticUseLog } from '../hooks/useLog';
 
 type MoveBoxTowardPointProps = {
   x: number;
@@ -56,6 +56,7 @@ const moveBoxTowardPoint = ({
 // BASE SPEED VALUE
 const getTickSpeed = (pixelsPerSecond: number) => pixelsPerSecond / FRAMERATE;
 
+const useLog = makeStaticUseLog('Deleting Self');
 
 type BasicBoxProps = {
   enemy: Enemy
@@ -89,13 +90,6 @@ const BasicBox: React.FC<BasicBoxProps> = ({ enemy }) => {
     });
   });
 
-  const { addProjectile } = useProjectileKeyList();
-
-  // Attacks!
-  useTick(() => {
-    addProjectile();
-  }, 10);
-
   // TODO: Remove this probably lol
   // Or at least only make it happen if we actually track that a box dies from inside the box. Not a bad idea
   const deleteSelf = useRecoilCallback(({ set }) => () => {
@@ -107,17 +101,6 @@ const BasicBox: React.FC<BasicBoxProps> = ({ enemy }) => {
     if (tickCount >= 250) {
       setTickCount(0);
       deleteSelf();
-
-      console.log('BasicBox Deleting self!', {
-        x,
-        y,
-        playerX,
-        playerY,
-        adjustedX: x - (width / 2),
-        adjustedY: y - (height / 2),
-        halfWidth: width / 2,
-        halfHeight: height / 2,
-      });
     }
   });
 
@@ -132,6 +115,13 @@ const BasicBox: React.FC<BasicBoxProps> = ({ enemy }) => {
   //  that should be the best litnis test for when I've got both the player and the BasicBox transforms working perfectly
   const rotationDeg = ((Math.atan2((mouseY ?? playerY) - y, (mouseX ?? playerX) - x) * 180) / Math.PI).toFixed(1);
 
+  // TODO: NOTE: A cool effect when I had my mouse on the screen was that the boxes slowly swirled as they approached the player
+  // Also a copilot suggestion just gave me the idea to have boxes that are too close enter an "orbit" around the player, at whatever distance they
+  //  "prefer" to be at, and most enemies can only fire if they're in their orbit.
+  // That won't be easy to do, because something is going to have to keep track of their position through the orbit, and I'm imagining a pretty darn
+  //  elliptical orbit to look a lot like a nucleus or the Jimmy Neutron logo lmao.
+
+  // TODO: Refactor this to use a hook that encapsulates the logic for drawing anything to the screen, including Projecticles and the BasicBox, maybe the player.
   return (
     <div
       style={ {

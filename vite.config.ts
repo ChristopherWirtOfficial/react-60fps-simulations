@@ -18,6 +18,7 @@ export default defineConfig({
       "@components": path.resolve(__dirname, './src/components'),
       "@hooks": path.resolve(__dirname, './src/hooks'),
       "@atoms": path.resolve(__dirname, './src/atoms'),
+      "@helpers": path.resolve(__dirname, './src/helpers.ts'),
     }
   }
 })

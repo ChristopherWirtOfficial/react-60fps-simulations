@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createUseStyles } from 'react-jss';
-import { useProjectileKeyList as useProjectiles } from '../atoms/Projectiles/ProjectileAtomFamily';
+import useTick from '@hooks/useTick';
+import useProjectiles from '../atoms/Projectiles/useProjectiles';
 import useScreen from '../atoms/Screen/useScreen';
 import BasicBox from '../components/BasicBox';
 import useEnemies from '../atoms/Enemies/useEnemies';
 import usePlayer from '../atoms/Player/usePlayer';
 import Projectile from '../components/Projectile';
+import useLog from '../hooks/useLog';
+import PlayerProjectiles from '../components/PlayerProjectiles';
 
 
 const useStyles = createUseStyles({
@@ -27,9 +30,9 @@ const DrawTest: React.FC = () => {
   const classes = useStyles();
 
   const enemies = useEnemies();
-  const { projectiles } = useProjectiles();
-
   const { playerRef } = usePlayer();
+
+  // TODO: Move pretty much everything that's genuinely tick dependent out of this layer
 
   // TODO move the player position to be a selector off of the actual pixel position value from a ref for the player
   //   and then place the player on the screen with normal HTML and css.
@@ -56,9 +59,8 @@ const DrawTest: React.FC = () => {
       {
         enemies.map(enemy => <BasicBox key={ enemy.key } enemy={ enemy } />)
       }
-      {
-        projectiles.map(projectile => <Projectile key={ projectile.key } projectile={ projectile } />)
-      }
+
+      <PlayerProjectiles />
     </div>
   );
 };
