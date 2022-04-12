@@ -56,6 +56,8 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
     direction,
     size,
     key,
+    insertionPointX,
+    insertionPointY,
   } = enemy;
 
   // TODO: ROTATION/ANIMATION - Make this a selector off of the enemy's animation atom and the enemy's position atom
@@ -69,29 +71,49 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
   const boxStyles = useBoxStyles(enemy);
 
 
+  const inseertionStyle = useBoxStyles({
+    // @ts-expect-error
+    x: insertionPointX, y: insertionPointY, size: 10, color, direction,
+  });
+
+  const showInsertionPoint = false;
+  const showDirection = false;
+
+
   return (
-    <div
-      style={ {
-        ...boxStyles,
-        transform: `${boxStyles.transform} rotate(${direction}rad)`,
-        border: `2px solid ${color}`,
-        borderRadius: '1px',
-      } }
-    >
-      { ' ' }
+    <>
+      {
+        showInsertionPoint && (
+          <div style={ {
+            ...inseertionStyle,
+            backgroundColor: color,
+          } }
+          />
+        )
+      }
       <div
         style={ {
-          position: 'absolute',
-          color,
-          transform: `translate(0, -30px) rotate(${-direction}rad)`,
+          ...boxStyles,
+          transform: `${boxStyles.transform} rotate(${direction}rad)`,
+          border: `2px solid ${color}`,
+          borderRadius: '1px',
         } }
       >
-        {
+        { ' ' }
+        <div
+          style={ {
+            position: 'absolute',
+            color,
+            transform: `translate(0, -30px) rotate(${-direction}rad)`,
+          } }
+        >
+          {
           // Anything in this div will be put above the enemy's head, right side up. Great for debugging!
-        }
-        { direction.toFixed(2) }
+          }
+          { showDirection && direction.toFixed(2) }
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

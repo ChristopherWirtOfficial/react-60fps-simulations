@@ -71,7 +71,20 @@ export const enterOrbit = <T extends Moveable>(box: T) => {
     // If we're close to the insertion point, then we need to change direction
     const insertionAngle = Math.atan2(insertionPointY - y, insertionPointX - x);
 
-    const directionDifference = (insertionAngle - direction) % (2 * Math.PI);
+    const directionDifferenceRaw = (insertionAngle - direction);
+
+
+    // try to dampen the direction difference when it goes across the y axis and becomes nearly 2PI radians away
+    const directionDifference = directionDifferenceRaw > Math.PI ? directionDifferenceRaw - 2 * Math.PI : directionDifferenceRaw;
+
+    /*
+      TODO: PICKUP - I am so immensely happy with this
+      But it has some problems.
+
+
+      Have those been solved with my changes I just made? Seems okay, but obviously still glitching at the bottom.
+      Maybe ask Sam for a hand here
+    */
 
 
     const newDirection = ((distanceToInsertionPoint - distanceToIntercept) / (1 + distanceToInsertionPoint) * directionDifference) + direction;
