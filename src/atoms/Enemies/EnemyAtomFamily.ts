@@ -1,19 +1,29 @@
+import React from 'react';
 import { atomFamily, selectorFamily } from 'recoil';
+import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../knobs';
 import { ScreenDimensionsSelector } from '../Screen/ScreenNodeAtom';
+import { Moveable } from '../../hooks/Entities/useMovement';
 
-export type Enemy = {
+// TODO: LATER My types are still bad lol
+export interface Enemy extends Moveable {
   key: string;
 
   x: number;
   y: number;
-  width: number;
-  height: number;
+  size: number;
   speed: number;
   health: number;
   maxHealth: number;
   damage: number;
   color: string;
-};
+  direction: number;
+
+
+  insertionPointX?: number;
+  insertionPointY?: number;
+  insertionAngle?: number;
+  tangentAngle?: number;
+}
 
 export default atomFamily<Enemy, string>({
   key: 'Enemy',
@@ -21,35 +31,34 @@ export default atomFamily<Enemy, string>({
   default: selectorFamily({
     key: 'EnemyDefaultSelector',
     get: key => ({ get }) => {
-      const size = Math.floor(Math.random() * 35) + 15;
+      // Randomly sized between 15 and 50
+      const size = Math.floor(Math.random() * (MAX_ENEMY_SIZE - MIN_ENEMY_SIZE)) + MIN_ENEMY_SIZE;
 
-      const { width: screenWidth, height: screenHeight } = get(ScreenDimensionsSelector);
-      const secondaryDimensionOffset = 2 * size;
-      const whichSides = Math.floor(Math.random() * 2 - 1);
-      const spawnType = Math.random() * 2 > 1 ? 'random-x' : 'random-y';
+      // Randomly positioned a specific distance away from the origin at a random angle
+      const { width, height } = get(ScreenDimensionsSelector);
+      const biggestDimension = Math.max(width, height);
 
-      const mainDimensionPosition = (spawnType === 'random-x' ? screenWidth : screenHeight) * Math.random();
-      const secondaryDimensionPosition = whichSides >= 0 ?
-        -secondaryDimensionOffset :
-        secondaryDimensionOffset + (spawnType === 'random-x' ? screenHeight : screenWidth);
+      const distanceFromOrigin = ORBIT_RADIUS * 4;// Math.floor(biggestDimension);
+      const angle = Math.random() * 2 * Math.PI;
+      // console.log(`Enemy ${key} is ${distanceFromOrigin} away from the origin at an angle of ${angle}`);
+      const x = distanceFromOrigin * Math.cos(angle);
+      const y = distanceFromOrigin * Math.sin(angle);
 
-      const startingX = spawnType === 'random-x' ? mainDimensionPosition : secondaryDimensionPosition;
-      const startingY = spawnType === 'random-y' ? mainDimensionPosition : secondaryDimensionPosition;
-
+      // The angle that the enemy is pointing back toward the 0,0 origin from their x,y position
+      const direction = Math.atan2(-y, -x);
 
       const newEnemy: Enemy = {
         key,
-
-        // Should be just off screen in any of the 4 directions, and as close to or far from corners as we want
-        x: startingX,
-        y: startingY,
-        width: size,
-        height: size,
-        speed: 250,
+        x,
+        y,
+        size,
+        speed: ENEMY_SPEED,
         health: 100,
         maxHealth: 100,
         damage: 10,
-        color: 'red',
+        // Pick a random color from rgb values with high contrast to white
+        color: `rgb(${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)})`,
+        direction,
       };
 
       return newEnemy;

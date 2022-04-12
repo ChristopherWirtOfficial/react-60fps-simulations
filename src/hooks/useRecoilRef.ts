@@ -8,7 +8,7 @@ const useRecoilRef = <T>(atom: RecoilState<T>) => {
     // But it can't be resized so ..
     // TODO: I guess
     set(atom, value);
-  }, []);
+  }, [ atom ]);
 
   return [ recoilRef, node ] as [ <T2>() => T2, T ];
 };

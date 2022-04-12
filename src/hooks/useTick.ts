@@ -7,16 +7,37 @@ export type TickFunctor = {
   readonly id: string;
   readonly functor: () => void;
   readonly frequency: number;
+  readonly isPhysics: boolean;
 };
 
+// TODO: DEBUGGING I really need to add a way to step through single pulses, and probably other ways to highlight specific entities or tickFunctors.
+// TODO: DEBUGGING:NEXT I need to add debugging menus at some point (probably sooner rather than later) that display information about the current state of the game.
+//    This would be easy to do by just having another pane to the right of the play area. Even if squares draw over it lmao
+
+// TODO: This is basically doing nothing right now, but theoretically it could be used to have physics run at a higher rate than the framerate
+export const BASE_TICKRATE = 60;
 export const FRAMERATE = 60;
-const TICK_LENGTH = 1000 / FRAMERATE;
+
+const TICK_LENGTH = 1000 / BASE_TICKRATE;
+if (TICK_LENGTH <= 1) {
+  console.warn('PHYSICS TICK LENGTH IS LESS THAN 1');
+}
+
+
+const TICK_RATIO = BASE_TICKRATE / FRAMERATE;
+if (TICK_RATIO < 1) {
+  console.warn('TICK RATIO IS LESS THAN 1');
+}
+
+// const TICK_LENGTH = 1000 / FRAMERATE;
 
 // If we fall more than the max behind, don't try to catch up too far
 //  Note: probably want to make this considerably higher than 10 ticks?
 const MAX_QUEUED_TICKS = 10;
 
 let tickFunctors: Array<TickFunctor> = [];
+
+export const getTickFunctors = () => tickFunctors;
 
 const functorsToSkipMap: { [key: string]: number } = {};
 
@@ -119,18 +140,20 @@ const pulse = (source = 'unspecified') => {
   // PULSE END CODE
 };
 
+const timeout = undefined;
+
 const deferPulse = () => {
   pulse('setTimeout');
-  setTimeout(deferPulse);
+  setTimeout(deferPulse, timeout);
 };
 
-setTimeout(deferPulse);
+setTimeout(deferPulse, timeout);
 
 /*
   @param functor: The function to run component-level code (or any logic) per tick cadance
   @param frequency: How many ticks between each execution of the functor
 */
-const useTick = (functorArg: () => void, frequency = 1) => {
+const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) => {
   const [ id ] = useState(uuid());
   const [ progress, setProgress ] = useState(0);
 
@@ -153,7 +176,7 @@ const useTick = (functorArg: () => void, frequency = 1) => {
     };
 
     const newTickFunctors = tickFunctors.filter(f => f.id !== id);
-    newTickFunctors.push({ id, functor, frequency });
+    newTickFunctors.push({ id, functor, frequency, isPhysics });
 
     // Even if we re-register, we keep the same ID and consider ourselves the same functor.
     // Because of this, we only set a value for the functorsToSkipMap if there isn't one already. If there is, we don't change it.
@@ -175,5 +198,10 @@ const useTick = (functorArg: () => void, frequency = 1) => {
 
   return { progress };
 };
+
+export const usePhysicsTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency, true);
+
+
+const useTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency * TICK_RATIO);
 
 export default useTick;

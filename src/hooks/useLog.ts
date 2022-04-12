@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { uuid } from '../helpers';
 
-const logMessage = (message: any[]) => {
+const logMessage = (...message: any[]) => {
   console.log(...message);
 };
 
@@ -9,6 +9,7 @@ const LOG_THROTTLE = 5000;
 const queuedLogMessages: Map<string, any[]> = new Map();
 const logMessages = () => {
   Array.from(queuedLogMessages.values()).forEach(logMessage);
+  queuedLogMessages.clear();
 };
 setInterval(logMessages, LOG_THROTTLE);
 
@@ -16,10 +17,10 @@ setInterval(logMessages, LOG_THROTTLE);
 // I could make each call automatically get its own ID, but it might also be time to provide a version of useTick where you can give a
 // static ID, almost exactly like what we did here with makeStaticUseLog
 const useLogGuts = (id: string, message: any[]) => {
-  const setupLog = (key: string) => (msg: any[]) => {
+  const setupLog = (key: string) => (...msg: any[]) => {
     if (!queuedLogMessages.has(key)) {
       // If it's the first time through, log asap as well
-      logMessage(msg);
+      logMessage(...msg);
     }
     queuedLogMessages.set(key, msg);
   };

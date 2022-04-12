@@ -1,24 +1,24 @@
+import React from 'react';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { PROJECTILE_SPEED } from '../../knobs';
 
 import ClosestEnemySelector from '../Enemies/ClosestEnemySelector';
 import PlayerPositionAtom from '../Player/PlayerPositionAtom';
+import { Moveable } from '../../hooks/Entities/useMovement';
 
-export type Projectile = {
+export interface Projectile extends Moveable {
   key: string;
-
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  direction: number; // The angle (in radians?) that the projectile is traveling
   damage: number;
   color?: string;
-};
+}
 
 // TODO: I should seriously reconsider spawning projecticles by just using an atomFamily
 
 export const ProjectileAtomFamily = atomFamily<Projectile, string>({
   key: 'Projectile',
+
+  // This is because of the ref. See the note in the EnemyAtomFamily for why.
+
   default: selectorFamily({
     key: 'ProjectileDefaultSelector',
     get: key => ({ get }) => {
@@ -28,23 +28,24 @@ export const ProjectileAtomFamily = atomFamily<Projectile, string>({
       // Do I need to prune this list every tick somehow?
       // Should I put the current tick in an atom and do effects based on that? That sounds neat
       if (!closestEnemy) {
-        // TODO: PICKUP: Where do I actually initiate this from?
+        // TODO: SOON: Where do I actually initiate this from?
+        // Right now the PlayerProjectiles component adds projectiles, but each new projectile decides where to shoot itself, which seems ... dumb?
         // I think I need to know more about recoil, because it's too annoying to delete if there's no closest enemy
         //  at create time, but I don't want to do that right now. Goodnight. Sleep tight. Bitch head.
       }
       const radiansTowardClosestEnemy = closestEnemy ?
         Math.atan2((closestEnemy.y - playerY), (closestEnemy.x - playerX)) :
-        0;
+        Math.random() * 2 * Math.PI;
 
       return {
         key,
         x: playerX,
         y: playerY,
         size: 10,
-        speed: 5,
+        speed: PROJECTILE_SPEED,
         direction: radiansTowardClosestEnemy,
         damage: 10,
-      } as Projectile;
+      };
     },
   }),
   effects: key => [
