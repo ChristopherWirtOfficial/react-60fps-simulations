@@ -1,28 +1,10 @@
-import React, { useState } from 'react';
-import { useRecoilState, useRecoilCallback, useRecoilValue } from 'recoil';
-import MousePositionAtom from '../atoms/MousePositionAtom';
-import PlayerPositionAtom from '../atoms/Player/PlayerPositionAtom';
-import useTick, { FRAMERATE } from '../hooks/useTick';
+import React from 'react';
+import { useRecoilState, useRecoilCallback } from 'recoil';
 import EnemyAtomFamily, { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
-import { makeStaticUseLog } from '../hooks/useLog';
-import { ENEMY_DEATH_TIMEOUT } from '../knobs';
+import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from '../knobs';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
-import useMovement, { enterOrbit, Moveable } from '../hooks/Entities/useMovement';
-import { ScreenDimensionsSelector } from '../atoms/Screen/ScreenNodeAtom';
-
-type MoveBoxTowardPointProps = {
-  x: number;
-  y: number;
-  setX: (x: number) => void;
-  setY: (y: number) => void;
-  targetX: number;
-  targetY: number;
-  speed: number;
-};
-
-// BASE SPEED VALUE
-const getTickSpeed = (pixelsPerSecond: number) => pixelsPerSecond / FRAMERATE;
+import useMovement, { enterOrbit } from '../hooks/Entities/useMovement';
 
 
 const useEnemyAtom = (key: string) => {
@@ -38,10 +20,6 @@ const useEnemyAtom = (key: string) => {
   };
 };
 
-// TODO: Try this out lol
-const useLog = makeStaticUseLog('Deleting Self');
-
-
 /*
   This is the component that renders an enemy
 
@@ -50,18 +28,11 @@ const useLog = makeStaticUseLog('Deleting Self');
 const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
   const { enemy } = useEnemyAtom(enemyKey);
   const {
-    x,
-    y,
     color,
     direction,
-    size,
-    key,
     insertionPointX,
     insertionPointY,
   } = enemy;
-
-  // TODO: ROTATION/ANIMATION - Make this a selector off of the enemy's animation atom and the enemy's position atom
-  // That was sort of a joke. I like the idea, but I mostly wanted to note that I should refactor it to use the new animation system
 
   const updateBox = useRecoilCallback(({ set }) => (newEnemy: Enemy) => {
     set(EnemyAtomFamily(enemy.key), newEnemy);
@@ -71,13 +42,13 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
   const boxStyles = useBoxStyles(enemy);
 
 
-  const inseertionStyle = useBoxStyles({
+  const insertionStyle = useBoxStyles({
     // @ts-expect-error
     x: insertionPointX, y: insertionPointY, size: 10, color, direction,
   });
 
-  const showInsertionPoint = false;
-  const showDirection = false;
+  const showInsertionPoint = SHOW_ENEMY_INSERTION_POINT;
+  const showDirection = SHOW_ENEMY_ANGLE;
 
 
   return (
@@ -85,7 +56,7 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
       {
         showInsertionPoint && (
           <div style={ {
-            ...inseertionStyle,
+            ...insertionStyle,
             backgroundColor: color,
           } }
           />
@@ -110,7 +81,7 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
           {
           // Anything in this div will be put above the enemy's head, right side up. Great for debugging!
           }
-          { showDirection && direction.toFixed(2) }
+          { showDirection && (direction).toFixed(2) }
         </div>
       </div>
     </>

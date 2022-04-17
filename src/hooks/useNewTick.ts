@@ -3,9 +3,23 @@ import { useEffect, useState } from 'react';
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from '../helpers';
 
-export type TickFunctor = {
+type PhysicsState = Object;
+
+// TODO: I can probably pass a T here, and say it has to be a constraint of PhysicsState and therefore have a key of type string
+type StateSetFunc = (state: PhysicsState) => void;
+type StateGet = (ret: PhysicsState | string) => ([PhysicsState, StateSetFunc]);
+
+interface TickAccessor {
+  state: PhysicsState;
+  get: StateGet;
+}
+
+
+export type TickFunctor = (tickState: TickAccessor) => PhysicsState;
+
+export type TickFunctorRecord = {
   readonly id: string;
-  readonly functor: (tickNumber?: number) => void;
+  readonly functor: TickFunctor;
   readonly frequency: number;
   readonly isPhysics: boolean;
 };
@@ -35,7 +49,7 @@ if (TICK_RATIO < 1) {
 //  Note: probably want to make this considerably higher than 10 ticks?
 const MAX_QUEUED_TICKS = 10;
 
-let tickFunctors: Array<TickFunctor> = [];
+let tickFunctors: Array<TickFunctorRecord> = [];
 
 export const getTickFunctors = () => tickFunctors;
 
@@ -59,7 +73,7 @@ const counts = {
 let leftoverTickTime = 0;
 
 // The main tick execution loop function, looped with setTimeout(deferPulse)
-const pulse = (source = 'unspecified') => {
+const pulse = () => {
   frameCount++;
   if (HARD_STOP > 0 && frameCount > HARD_STOP) {
     return;
@@ -153,21 +167,20 @@ setTimeout(deferPulse, timeout);
   @param functor: The function to run component-level code (or any logic) per tick cadance
   @param frequency: How many ticks between each execution of the functor
 */
-const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) => {
+const useBaseTick = (functorArg: TickFunctor, frequency = 1, isPhysics = false) => {
   const [ id ] = useState(uuid());
-  const [ progress, setProgress ] = useState(0);
 
+
+  // TODO: PICKUP
   /*
-    This useEffect will register or re-register a functor for the static `id` of this hook instance.
-    For every use of the useTick hook, an ID is generated and remains static to the hook instance. We
-    can rely on this to stay static between renders and across functor re-registrations.
 
-    The functor used in a component, unless wrapped in a useCallback, will not be referrentialyl stable. This is
-    overall a pretty useful attribute, as long as the re-registration overhead is minimal.
 
-    Because of the lack of referential stability, every re-render we'll get a brand new reference to a brand new functor that
-     has 0 stale references to other Reactive properties, instead of letting them get stale in the old functor that was passed in.
-  */
+      Rewrite useTick functors to also manage physics state (or not)
+
+
+    */
+
+
   useEffect(() => {
     const functor = () => {
       // TODO: This is like this to let us track progress, but that code wasn't working. It's in git somewhere, but also it didn't work lol
@@ -194,14 +207,13 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
     return () => {
       tickFunctors = tickFunctors.filter(f => f.functor !== functor);
     };
-  }, [ id, functorArg, frequency ]);
+  }, [ id, functorArg, frequency, isPhysics ]);
 
-  return { progress };
+  return id;
 };
 
-export const usePhysicsTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency, true);
+export const usePhysicsTick = (functorArg: TickFunctor, frequency = 1) => useBaseTick(functorArg, frequency, true);
 
-
-const useTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency * TICK_RATIO);
+const useTick = (functorArg: TickFunctor, frequency = 1) => useBaseTick(functorArg, frequency * TICK_RATIO, false);
 
 export default useTick;

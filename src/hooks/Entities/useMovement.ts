@@ -41,9 +41,6 @@ export const enterOrbit = <T extends Moveable>(box: T) => {
     y: 0,
   };
 
-  const distanceFromCenter = Math.sqrt(
-    (x - orbitCenter.x) ** 2 + (y - orbitCenter.y) ** 2,
-  );
 
   // Start moving to intercept the orbit radius at 2x the orbit radius
   if (orbitRadius > 0) {
@@ -55,9 +52,13 @@ export const enterOrbit = <T extends Moveable>(box: T) => {
       (x - interceptX) ** 2 + (y - interceptY) ** 2,
     );
 
-    const orbitalCircumference = 2 * Math.PI * orbitRadius;
-    const offset = (speed / orbitalCircumference) * ORBIT_EAGERNESS;
+    const distanceToCenter = Math.sqrt((x - orbitCenter.x) ** 2 + (y - orbitCenter.y) ** 2);
 
+    const orbitalCircumference = 2 * Math.PI * orbitRadius;
+    const first = (distanceToCenter / (3 * orbitRadius));
+    const second = (speed / orbitalCircumference);
+
+    const offset = (first + second) * (ORBIT_EAGERNESS / 20);
     // The angle one tick further along the orbit circumference at our speed
     const offsetAngle = angleTowardCenter + offset;
 
@@ -72,39 +73,32 @@ export const enterOrbit = <T extends Moveable>(box: T) => {
     const insertionAngle = Math.atan2(insertionPointY - y, insertionPointX - x);
 
     const directionDifferenceRaw = (insertionAngle - direction);
+    const diffSign = Math.sign(directionDifferenceRaw);
 
+    // try to dampen the direction difference when it goes across the y axis and becomes nearly
+    //  2PI radians away in the negative or positive direction
+    const directionDifference = Math.abs(directionDifferenceRaw) > Math.PI ?
+      directionDifferenceRaw - diffSign * 2 * Math.PI :
+      directionDifferenceRaw;
 
-    // try to dampen the direction difference when it goes across the y axis and becomes nearly 2PI radians away
-    const directionDifference = directionDifferenceRaw > Math.PI ? directionDifferenceRaw - 2 * Math.PI : directionDifferenceRaw;
+    const top = (distanceToInsertionPoint - distanceToIntercept);
+    const bottom = (1 + distanceToInsertionPoint);
 
-    /*
-      TODO: PICKUP - I am so immensely happy with this
-      But it has some problems.
+    const ratio = top / bottom;
 
+    // lol the 0.2 is a magic number to make up for the fact that we're angling directly toward the insertion point
+    // It's basically our anti-gravity to stay closer to the oribtal plane until I get smarter
+    const newDirection = ratio * directionDifference + direction - 0.2;
 
-      Have those been solved with my changes I just made? Seems okay, but obviously still glitching at the bottom.
-      Maybe ask Sam for a hand here
-    */
-
-
-    const newDirection = ((distanceToInsertionPoint - distanceToIntercept) / (1 + distanceToInsertionPoint) * directionDifference) + direction;
-
-
-    if (newDirection < direction) {
-      console.log('new direction', {
-        direction, newDirection, distanceToInsertionPoint, distanceToIntercept, directionDifference, insertionAngle, offsetAngle, insertionPointX, insertionPointY, x, y, interceptX, interceptY, orbitCenter, orbitRadius, angleTowardCenter, offset, orbitalCircumference,
-      });
-    }
 
     return {
       ...box,
-      direction: newDirection,
+      direction: newDirection % (2 * Math.PI),
       insertionPointX,
       insertionPointY,
       interceptX,
       interceptY,
       offsetAngle,
-      // tangentAngle,
       insertionAngle,
     };
   }
@@ -118,7 +112,8 @@ const useMovement = <T extends Moveable>(box: T, movementSteps: MovementStep[], 
     throw new Error('useMovement requires a boxUpdateCallback');
   }
 
-  useTick(() => {
+  // TODO: PICKUP - rewrite this with the new phsyics tick system
+  useTick(tickNumber => {
     // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector
     const allMovementSteps = [ ...movementSteps, stepMovementVector ];
     const newBox = allMovementSteps.reduce((boxData, step) => step(boxData), box);
