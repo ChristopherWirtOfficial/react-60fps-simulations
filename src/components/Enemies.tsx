@@ -14,18 +14,6 @@ const Enemies: FC = () => {
 
   return (
     <div className="enemies">
-      <div style={ {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        border: '2px solid green',
-        borderRadius: '50%',
-        width: `${2 * ORBIT_RADIUS - 2}px`,
-        height: `${2 * ORBIT_RADIUS - 2}px`,
-      } }
-      >{ ' ' }
-      </div>
       <div>
         Enemies: { enemies.length }
       </div>

@@ -47,27 +47,33 @@ const DrawTest: React.FC = () => {
       <div>
         Mouse: { x } x { y }
       </div>
-      <div style={ {
-        position: 'absolute',
-        top: height / 2,
-        left: 0,
-        width: '100%',
-        height: '1px',
-        backgroundColor: 'red',
-      } }
-      >{ ' ' }
-      </div>
-      <div style={ {
-        // vertical line from center to top
-        position: 'absolute',
-        top: 0,
-        left: width / 2,
-        width: '1px',
-        height: '100%',
-        backgroundColor: 'blue',
-      } }
-      >{ ' ' }
-      </div>
+      {
+        false && (
+          <>
+            <div style={ {
+              position: 'absolute',
+              top: height / 2,
+              left: 0,
+              width: '100%',
+              height: '1px',
+              backgroundColor: 'red',
+            } }
+            >{ ' ' }
+            </div>
+            <div style={ {
+            // vertical line from center to top
+              position: 'absolute',
+              top: 0,
+              left: width / 2,
+              width: '1px',
+              height: '100%',
+              backgroundColor: 'blue',
+            } }
+            >{ ' ' }
+            </div>
+          </>
+        )
+      }
 
 
       <Player />

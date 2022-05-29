@@ -3,7 +3,7 @@ export const PLAYER_SIZE = 20;
 export const TICKS_BETWEEN_ATTACKS = 200;
 export const PROJECTILE_SPEED = 5;
 
-export const DESIRED_ENEMY_SPAWN_RATE = 1.5;
+export const DESIRED_ENEMY_SPAWN_RATE = 0.5;
 export const ENEMY_DEATH_TIMEOUT = 300;
 export const ENEMY_SPEED = 4.5;
 

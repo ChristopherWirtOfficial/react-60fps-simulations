@@ -8,16 +8,3 @@
 
 import useTick from './useNewTick';
 
-
-const useCollision = (projectileKey: string) => {
-  useTick(({ state, get }) => {
-    const [ projectileState, setProjectile ] = get(projectileKey);
-
-
-    return {
-      ...state,
-    };
-  });
-};
-
-export default useCollision;

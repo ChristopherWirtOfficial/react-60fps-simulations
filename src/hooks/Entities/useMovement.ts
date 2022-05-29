@@ -11,6 +11,7 @@ import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../knobs';
 export interface Moveable extends Box {
   speed: number;
   direction: number;
+  orbitRadius?: number;
   // rotation: number;
 }
 
@@ -35,7 +36,7 @@ const stepMovementVector = <T extends Moveable>(box: T) => {
 export const enterOrbit = <T extends Moveable>(box: T) => {
   const { x, y, direction, speed } = box;
 
-  const orbitRadius = ORBIT_RADIUS;
+  const orbitRadius = box?.orbitRadius ?? ORBIT_RADIUS;
   const orbitCenter = {
     x: 0,
     y: 0,
@@ -62,8 +63,8 @@ export const enterOrbit = <T extends Moveable>(box: T) => {
     // The angle one tick further along the orbit circumference at our speed
     const offsetAngle = angleTowardCenter + offset;
 
-    const insertionPointX = Math.cos(offsetAngle) * ORBIT_RADIUS;
-    const insertionPointY = Math.sin(offsetAngle) * ORBIT_RADIUS;
+    const insertionPointX = Math.cos(offsetAngle) * orbitRadius;
+    const insertionPointY = Math.sin(offsetAngle) * orbitRadius;
 
     const distanceToInsertionPoint = Math.sqrt(
       (insertionPointX - x) ** 2 + (insertionPointY - y) ** 2,
@@ -113,7 +114,7 @@ const useMovement = <T extends Moveable>(box: T, movementSteps: MovementStep[], 
   }
 
   // TODO: PICKUP - rewrite this with the new phsyics tick system
-  useTick(tickNumber => {
+  useTick(() => {
     // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector
     const allMovementSteps = [ ...movementSteps, stepMovementVector ];
     const newBox = allMovementSteps.reduce((boxData, step) => step(boxData), box);

@@ -47,15 +47,22 @@ export default atomFamily<Enemy, string>({
       // The angle that the enemy is pointing back toward the 0,0 origin from their x,y position
       const direction = Math.atan2(-y, -x);
 
+      const orbitRadius = ORBIT_RADIUS * (Math.random() * 0.5 + 0.5);
+
+      // Modify the speed as a proportion of the distance from the origin the enemy should orbit
+      // This lead sto a cool effect where the enemies have a nearly identical orbital period, independent of radius
+      const speed = ENEMY_SPEED * (orbitRadius / ORBIT_RADIUS);
+
       const newEnemy: Enemy = {
         key,
         x,
         y,
         size,
-        speed: ENEMY_SPEED,
+        speed,
         health: 100,
         maxHealth: 100,
         damage: 10,
+        orbitRadius,
         // Pick a random color from rgb values with high contrast to white
         color: `rgb(${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)})`,
         direction,

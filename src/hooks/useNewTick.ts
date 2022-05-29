@@ -1,21 +1,24 @@
 import { useEffect, useState } from 'react';
+import { Projectile } from '../atoms/Projectiles/ProjectileAtomFamily';
 // TODO: This file needs to be cleaned and code-split pretty urgently!
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from '../helpers';
+import { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 
-type PhysicsState = Object;
+import createEventBus, { EventBus } from './EventBus';
+import { GameState } from './GameState';
 
-// TODO: I can probably pass a T here, and say it has to be a constraint of PhysicsState and therefore have a key of type string
-type StateSetFunc = (state: PhysicsState) => void;
-type StateGet = (ret: PhysicsState | string) => ([PhysicsState, StateSetFunc]);
 
-interface TickAccessor {
-  state: PhysicsState;
-  get: StateGet;
+export interface TickAccessor {
+  state: GameState;
+  bus: EventBus;
 }
 
 
-export type TickFunctor = (tickState: TickAccessor) => PhysicsState;
+export type TickFunctor = (tickState: TickAccessor) => GameState;
+
+type ProjectileDictionary = { [key: string]: Projectile };
+
 
 export type TickFunctorRecord = {
   readonly id: string;
@@ -71,6 +74,9 @@ const counts = {
 };
 
 let leftoverTickTime = 0;
+
+const eventBus = createEventBus();
+let tickState: GameState = {};
 
 // The main tick execution loop function, looped with setTimeout(deferPulse)
 const pulse = () => {
@@ -129,7 +135,11 @@ const pulse = () => {
     // console.log(functorsToRun.map(f => f.frequency));
     const times = functorsToRun.map(({ functor }) => {
       const startTime = now();
-      functor(frameCount);
+
+      tickState = functor({
+        state: { ...tickState },
+        bus: eventBus,
+      });
 
       return now() - startTime;
     });
@@ -157,7 +167,7 @@ const pulse = () => {
 const timeout = undefined;
 
 const deferPulse = () => {
-  pulse('setTimeout');
+  pulse();
   setTimeout(deferPulse, timeout);
 };
 
@@ -182,10 +192,11 @@ const useBaseTick = (functorArg: TickFunctor, frequency = 1, isPhysics = false) 
 
 
   useEffect(() => {
-    const functor = () => {
+    const functor = (state: TickAccessor) => {
       // TODO: This is like this to let us track progress, but that code wasn't working. It's in git somewhere, but also it didn't work lol
       // setProgress here or something
-      functorArg();
+      console.log('functor called', state);
+      functorArg(state);
     };
 
     const newTickFunctors = tickFunctors.filter(f => f.id !== id);
@@ -217,3 +228,50 @@ export const usePhysicsTick = (functorArg: TickFunctor, frequency = 1) => useBas
 const useTick = (functorArg: TickFunctor, frequency = 1) => useBaseTick(functorArg, frequency * TICK_RATIO, false);
 
 export default useTick;
+
+// TODO: PICKUP eventually
+const useCollision = (projectileKey: string) => {
+  useTick(({ state, bus }) => {
+    const { projectiles, enemies }: { projectiles: ProjectileDictionary, enemies: Enemy[] } = state;
+    const projectile: Projectile = projectiles[projectileKey];
+
+    // Should never happen
+    if (!projectile) {
+      console.error('Projectile not found in state', projectileKey);
+      return;
+    }
+
+    const enemyList = enemies as Enemy[];
+
+    // Check if the projectile has collided with any enemies
+    const collidedEnemies = enemyList.filter(enemy => {
+      const { x, y, size } = enemy;
+
+      if (Math.abs(x - projectile.x) < size && Math.abs(y - projectile.y) < size) {
+        return true;
+      }
+
+      return false;
+    });
+
+    const collidedEnemy = collidedEnemies[0];
+
+    if (collidedEnemy) {
+      bus.emit({
+        event: 'enemy-hit',
+        entity: collidedEnemy.key,
+      }, {
+        damage: projectile.damage,
+        projectile,
+      });
+    }
+
+    // Remove the projectile from the state
+    bus.emit({
+      event: 'projectile-hit',
+      entity: projectileKey,
+    }, {
+      projectile,
+    });
+  });
+};
