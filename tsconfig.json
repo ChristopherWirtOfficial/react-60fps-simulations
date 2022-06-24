@@ -12,6 +12,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -23,11 +24,14 @@
       "node",
       "react",
       "react-dom",
-      "react-jsx"
     ]
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules/**",
+    "**/*.spec.ts"
   ],
   "baseUrl": "./src",
   "paths": {
@@ -47,5 +51,7 @@
     "@atoms/*": [
       "src/atoms/*"
     ],
-  }
+  },
 }
+
+

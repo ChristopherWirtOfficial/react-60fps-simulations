@@ -1,20 +1,17 @@
-import { useState } from 'react';
-import { useRecoilCallback, useRecoilValue, useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import useTick, { FRAMERATE } from '@hooks/useTick';
-import useInitScreen from '../Screen/useScreen';
-import { Enemy } from './EnemyAtomFamily';
+import { useAtomCallback } from 'jotai/utils';
 import EnemyIDListAtom from './EnemyIDListAtom';
-import EnemyListSelector from './EnemyListSelector';
 import { uuid } from '../../helpers';
 import { DESIRED_ENEMY_SPAWN_RATE, MAX_ENEMIES } from '../../knobs';
 
 
 const useEnemyKeys = () => {
-  const [ enemyIDList ] = useRecoilState(EnemyIDListAtom);
+  const [enemyIDList] = useAtom(EnemyIDListAtom);
 
-  const addEnemy = useRecoilCallback(({ set }) => () => {
-    set(EnemyIDListAtom, oldVal => [ ...oldVal, uuid() ]);
-  }, []);
+  const addEnemy = useAtomCallback((get, set) => {
+    set(EnemyIDListAtom, oldVal => [...oldVal, uuid()]);
+  });
 
   const desiredSpawnRate = DESIRED_ENEMY_SPAWN_RATE;
   const perTickSpawnChance = desiredSpawnRate / FRAMERATE;

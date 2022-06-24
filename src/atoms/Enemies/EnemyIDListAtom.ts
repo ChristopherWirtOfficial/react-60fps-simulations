@@ -1,7 +1,3 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
-export default atom<Array<string>>({
-  key: 'EnemyIDListAtom',
-
-  default: [],
-});
+export default atom<Array<string>>([]);

@@ -1,8 +1,10 @@
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
 
 
 export interface Box {
+  key: string; // TODO: Decide if thise key belongs here or in the entity system or something
+
   x: number;
   y: number;
   size: number;
@@ -13,7 +15,7 @@ export interface Box {
 */
 
 const useBoxStyles = <T extends Box>(box: T) => {
-  const { center } = useRecoilValue(ScreenDimensionsSelector);
+  const { center } = useAtomValue(ScreenDimensionsSelector);
 
   const { x, y, size } = box ?? {};
 

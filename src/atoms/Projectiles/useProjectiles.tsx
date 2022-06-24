@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { uuid } from '@helpers';
 
 import { ProjectileKeyListAtom } from './ProjectileAtomFamily';
@@ -11,7 +11,7 @@ import { ProjectileKeyListAtom } from './ProjectileAtomFamily';
   They are not typically our concern, so don't care about them
 */
 const useProjectileKeys = () => {
-  const [ projectileKeys, setProjectileKeys ] = useRecoilState(ProjectileKeyListAtom);
+  const [ projectileKeys, setProjectileKeys ] = useAtom(ProjectileKeyListAtom);
 
   const addProjectile = () => {
     const key = uuid();

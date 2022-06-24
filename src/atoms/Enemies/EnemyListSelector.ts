@@ -1,14 +1,10 @@
-import { selector } from 'recoil';
+import { atom } from 'jotai';
 import EnemyAtomFamily from './EnemyAtomFamily';
 import EnemyIDListAtom from './EnemyIDListAtom';
 
-export default selector({
-  key: 'EnemyList',
+export default atom(get => {
+  const enemyIDList = get(EnemyIDListAtom);
+  const enemies = enemyIDList.map(id => get(EnemyAtomFamily(id)));
 
-  get: ({ get }) => {
-    const enemyIDList = get(EnemyIDListAtom);
-    const enemies = enemyIDList.map(id => get(EnemyAtomFamily(id)));
-
-    return enemies;
-  },
+  return enemies;
 });

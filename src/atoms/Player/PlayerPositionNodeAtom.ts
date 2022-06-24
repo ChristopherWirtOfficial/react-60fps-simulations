@@ -1,6 +1,3 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
-export default atom<HTMLDivElement | null>({
-  key: 'PlayerPositionNode',
-  default: null,
-});
+export default atom<HTMLDivElement | null>(null);

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 // TODO: This file needs to be cleaned and code-split pretty urgently!
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from '../helpers';
+import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS } from '../knobs';
 
 export type TickFunctor = {
   readonly id: string;
@@ -31,10 +32,6 @@ if (TICK_RATIO < 1) {
 
 // const TICK_LENGTH = 1000 / FRAMERATE;
 
-// If we fall more than the max behind, don't try to catch up too far
-//  Note: probably want to make this considerably higher than 10 ticks?
-const MAX_QUEUED_TICKS = 10;
-
 let tickFunctors: Array<TickFunctor> = [];
 
 export const getTickFunctors = () => tickFunctors;
@@ -43,24 +40,20 @@ const functorsToSkipMap: { [key: string]: number } = {};
 
 let lastTickTime = now();
 
-let tickLatch = 0;
 
-// Only simulate this number of ticks before halting
-const HARD_STOP = 0;
+// FOR DEBUGGING - Only simulate this number of ticks before halting, 0 disables this functionality
+const HARD_STOP = MAX_EXECUTED_TICKS;
 let frameCount = 0;
-
-const counts = {
-  requestAnimationFrame: 0,
-  setInterval: 0,
-  setTimeout: 0,
-  unspecified: 0,
-};
 
 let leftoverTickTime = 0;
 
+
+let tickLatch = 0;
+
 // The main tick execution loop function, looped with setTimeout(deferPulse)
-const pulse = (source = 'unspecified') => {
+const pulse = () => {
   frameCount++;
+  // Check HARD_STOP debugger, if it's even on
   if (HARD_STOP > 0 && frameCount > HARD_STOP) {
     return;
   }
@@ -72,16 +65,18 @@ const pulse = (source = 'unspecified') => {
 
   const currentTickTime = now();
 
-  if (currentTickTime - lastTickTime < 0) {
-    console.warn('TICK ELAPSED WAS NEGATIVE', currentTickTime - lastTickTime);
-    console.warn('This probably means that performance.now() wrapped around above its max value, which is sorta neat.');
-
-    // Reset the lastTickTime to 0, giving us ou
-    lastTickTime = 0;
-  }
 
   // How long has it been since we last started executing ticks?
   const elapsed = currentTickTime - lastTickTime;
+
+  // Probably won't ever happen lmao but I think it's possible
+  if (elapsed < 0) {
+    console.warn('TICK ELAPSED WAS NEGATIVE', { elapsed, currentTickTime, lastTickTime });
+    console.warn('This probably means that performance.now() wrapped around above its max value, which is sorta neat.');
+
+    // Reset the lastTickTime to 0, giving us a new starting point for the next tick
+    lastTickTime = 0;
+  }
 
   // How long it's been since the last tick + the leftover time from the last tick.
   // Basically, the remainder of our fraction * the totalRequiredTickTime
@@ -101,8 +96,6 @@ const pulse = (source = 'unspecified') => {
 
   const tick = () => {
     // @ts-ignore
-    counts[source]++;
-
     // Find the functors to run this tick. The value of the functor's key in the functorsToSkipMap is the number of ticks until it should run next.
     const functorsToRun = tickFunctors.filter(f => functorsToSkipMap[f.id] === 0);
 
@@ -140,10 +133,10 @@ const pulse = (source = 'unspecified') => {
   // PULSE END CODE
 };
 
-const timeout = undefined;
+const timeout = TICK_LENGTH;
 
 const deferPulse = () => {
-  pulse('setTimeout');
+  pulse();
   setTimeout(deferPulse, timeout);
 };
 
@@ -154,8 +147,8 @@ setTimeout(deferPulse, timeout);
   @param frequency: How many ticks between each execution of the functor
 */
 const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) => {
-  const [ id ] = useState(uuid());
-  const [ progress, setProgress ] = useState(0);
+  const [id] = useState(uuid());
+  const [progress, setProgress] = useState(0);
 
   /*
     This useEffect will register or re-register a functor for the static `id` of this hook instance.
@@ -194,7 +187,7 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
     return () => {
       tickFunctors = tickFunctors.filter(f => f.functor !== functor);
     };
-  }, [ id, functorArg, frequency ]);
+  }, [id, functorArg, frequency, isPhysics]);
 
   return { progress };
 };

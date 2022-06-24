@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 
 interface MousePosition {
   x: number | null;
@@ -6,10 +6,6 @@ interface MousePosition {
 }
 
 export default atom<MousePosition>({
-  key: 'mousePosition',
-
-  default: {
-    x: null,
-    y: null,
-  },
+  x: null,
+  y: null,
 });

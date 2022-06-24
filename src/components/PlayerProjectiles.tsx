@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import useProjectileKeys from '../atoms/Projectiles/useProjectiles';
 import useTick from '@/hooks/useTick';
 import ProjectileComp from './Projectile';
@@ -19,7 +19,7 @@ const PlayerProjectiles: FC = () => {
     }
   }, []);
 
-  const closestEnemy = useRecoilValue(ClosestEnemySelector);
+  const closestEnemy = useAtomValue(ClosestEnemySelector);
 
   // TODO: Find a good permenant spot for this, obviously it'll be tied to the player and their attack speed.
   // Attacks!
@@ -35,8 +35,8 @@ const PlayerProjectiles: FC = () => {
 
   return (
     <div className="player-projectiles">
-      <div>Registered Functors: { getTickFunctors().length } </div>
       <div>Projectiles: { projectileKeys.length } </div>
+      <div>Registered Functors: { getTickFunctors().length } </div>
       {
         projectileKeys.map(key => <ProjectileComp key={ key } projectileKey={ key } />)
       }

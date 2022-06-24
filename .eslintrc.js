@@ -36,11 +36,6 @@ module.exports = {
         // Turning these both off because we're using TS and they're in the way
         "react/prop-types": 0,
         "react/require-default-props": 0,
-        "react-hooks/exhaustive-deps": [
-            "warn", {
-              "additionalHooks": "(useRecoilCallback|useRecoilTransaction_UNSTABLE)"
-            },
-        ],
         "operator-linebreak": [2, "after"],
     },
 };

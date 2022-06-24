@@ -1,25 +1,25 @@
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
 import useMouse from '@react-hook/mouse-position';
 
-import useRecoilRef from '@hooks/useRecoilRef';
+import { useAtom, useAtomValue } from 'jotai';
+import useAtomicRef from '../../hooks/useAtomicRef';
 import MousePositionAtom from '../MousePositionAtom';
 
 import { ScreenDimensionsSelector, ScreenNodeAtom } from './ScreenNodeAtom';
 
 
 const useInitScreen = () => {
-  const [ { x: mouseX, y: mouseY }, setMousePosition ] = useRecoilState(MousePositionAtom);
-  const [ callbackRef, node ] = useRecoilRef(ScreenNodeAtom);
+  const [{ x: mouseX, y: mouseY }, setMousePosition] = useAtom(MousePositionAtom);
+  const [callbackRef, node] = useAtomicRef(ScreenNodeAtom);
 
   const mouse = useMouse(node);
 
   useEffect(() => {
     setMousePosition({ x: mouse.x, y: mouse.y });
-  }, [ setMousePosition, mouse ]);
+  }, [setMousePosition, mouse]);
 
-  const screenDimensions = useRecoilValue(ScreenDimensionsSelector);
+  const screenDimensions = useAtomValue(ScreenDimensionsSelector);
 
 
   return {

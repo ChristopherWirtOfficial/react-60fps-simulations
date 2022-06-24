@@ -14,7 +14,7 @@ const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
       className="projec"
       style={ {
         ...styles,
-        background: 'black',
+        background: projectile?.target?.color ?? 'black',
       } }
     />
   );

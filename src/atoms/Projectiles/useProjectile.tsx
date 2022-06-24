@@ -1,20 +1,24 @@
-import { useRecoilState, useRecoilValue, useResetRecoilState, useRecoilCallback } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
 import { ScreenDimensionsSelector } from '@atoms/Screen/ScreenNodeAtom';
 import useTick from '@hooks/useTick';
-import { useEffect } from 'react';
-import { Projectile, ProjectileAtomFamily } from './ProjectileAtomFamily';
+import { useAtomCallback, useResetAtom } from 'jotai/utils';
+import { Projectile, ProjectileAtomFamily, Projectiles } from './ProjectileAtomFamily';
 import useProjectiles from './useProjectiles';
 import EnemyListSelector from '../Enemies/EnemyListSelector';
 import EnemyIDListAtom from '../Enemies/EnemyIDListAtom';
+import useMovement, { Moveable, MovementStep } from '../../hooks/Entities/useMovement';
+import EnemyAtomFamily from '../Enemies/EnemyAtomFamily';
+import { Box } from '../../hooks/Entities/useBoxStyles';
+import { MAX_PROJECTILE_SPEED } from '../../knobs';
 
 /*
   Manage an individual projectile.
 */
 const useProjectileAtom = (key: string) => {
-  const [ projectile, setProjectileAtom ] = useRecoilState(ProjectileAtomFamily(key));
-  const resetProjectile = useResetRecoilState(ProjectileAtomFamily(key));
-  const { removeProjectile } = useProjectiles();
+  const [ projectile, setProjectileAtom ] = useAtom(Projectiles(key));
 
+  const resetProjectile = useResetAtom(ProjectileAtomFamily(key));
+  const { removeProjectile } = useProjectiles();
 
   return {
     projectile,
@@ -24,27 +28,68 @@ const useProjectileAtom = (key: string) => {
   };
 };
 
+let first = true;
+
+// Movement step that tracks a target like a heat-seeking missile
+// A glorified stepToward vector adjustor
+const seekTarget: MovementStep<Projectile> = projectile => {
+  const {
+    x, y, direction, speed, target, damage,
+  } = projectile;
+
+  if (first) {
+    console.log('first', projectile);
+    first = false;
+  }
+
+  // Do whatever you were just doing lol sorry
+  if (!target) {
+    return projectile;
+  }
+
+
+  // Constantly take the exact angle toward our desired target
+  const angleTowardClosestEnemy = Math.atan2(
+    target?.y ?? 0 - y,
+    target?.x ?? 0 - x,
+  );
+
+  const distance = Math.sqrt(
+    (target?.x ?? 0 - x) * (target?.x ?? 0 - x) +
+    (target?.y ?? 0 - y) * (target?.y ?? 0 - y),
+  );
+
+  console.table({
+    targetX: target?.x ?? 0,
+    targetY: target?.y ?? 0,
+    x,
+    y,
+    speed,
+    angleTowardClosestEnemy,
+    distance,
+  });
+
+
+  return {
+    ...projectile,
+    direction: angleTowardClosestEnemy,
+  } as Projectile;
+};
+
+const accelerate: MovementStep<Projectile> = projectile => {
+  const { speed } = projectile;
+
+  return {
+    ...projectile,
+    speed: Math.min(speed + 0.05 * speed, MAX_PROJECTILE_SPEED),
+  };
+};
+
+
 const useMove = (projectileOrKey: Projectile | string) => {
   const key = typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
   const { projectile, setProjectileAtom } = useProjectileAtom(key);
-  
-  const {
-    speed,
-    direction, // in radians
-  } = projectile;
-
-  const move = () => {
-    const xDelta = speed * Math.cos(direction);
-    const yDelta = speed * Math.sin(direction);
-
-    setProjectileAtom(p => ({
-      ...p,
-      x: p.x + xDelta,
-      y: p.y + yDelta,
-    }));
-  };
-
-  useTick(move);
+  useMovement(projectile, setProjectileAtom, [ seekTarget, accelerate ]);
 };
 
 /* Check every few ticks if the projectile is off-screen, and just delete it if it is */
@@ -56,7 +101,7 @@ const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
   const { resetProjectile, removeProjectile } = useProjectileAtom(key);
 
   const isOffscreenThreshold = 200; // #px offscreen it should be before deleting. Generous and should be.
-  const { width: screenWidth, height: screenHeight } = useRecoilValue(ScreenDimensionsSelector);
+  const { width: screenWidth, height: screenHeight } = useAtomValue(ScreenDimensionsSelector);
 
   const distanceFromOrigin = Math.sqrt(x * x + y * y);
 
@@ -80,7 +125,7 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
   const { key } = projectile;
   const { resetProjectile, removeProjectile } = useProjectileAtom(key);
 
-  const enemies = useRecoilValue(EnemyListSelector);
+  const enemies = useAtomValue(EnemyListSelector);
 
   /*
     Get a list of all of the enemies and check for collisions.
@@ -88,7 +133,7 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
     TODO: Everything has up-to-date x, y, width, and height in the atoms, use that
   */
 
-  const removeEnemy = useRecoilCallback(({ set }) => (enemyKey: string) => {
+  const removeEnemy = useAtomCallback((get, set, enemyKey: string) => {
     set(EnemyIDListAtom, enemyIDList => enemyIDList.filter(id => id !== enemyKey));
   });
 
@@ -97,13 +142,13 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
     const { x, y, size } = projectile;
 
     const collisions = enemies.filter(enemy => {
-      const { x: enemyX, y: enemyY, width, height } = enemy;
+      const { x: enemyX, y: enemyY, size: enemySize } = enemy;
 
       return (
         x + size > enemyX &&
-        x < enemyX + width &&
+        x < enemyX + enemySize &&
         y + size > enemyY &&
-        y < enemyY + height
+        y < enemyY + enemySize
       );
     });
 

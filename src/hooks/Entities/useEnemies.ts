@@ -2,7 +2,7 @@ import { uuid } from '../../helpers';
 import { ENEMY_SPEED, MAX_ENEMY_SIZE, MIN_ENEMY_SIZE, ORBIT_RADIUS } from '../../knobs';
 import { Entity, Damageable, useEntities } from './EntityProvider';
 
-interface Enemy extends Entity, Damageable {}
+interface Enemy extends Entity, Damageable { }
 
 const createEnemy = (): Enemy => {
   const key = uuid();

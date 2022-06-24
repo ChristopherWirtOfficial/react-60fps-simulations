@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom } from 'jotai';
 import { PLAYER_SIZE } from '../../knobs';
 
 
@@ -9,11 +9,7 @@ export type PlayerPosition = {
 };
 
 export default atom<PlayerPosition>({
-  key: 'playerPosition',
-
-  default: {
-    x: 0,
-    y: 0,
-    size: PLAYER_SIZE,
-  },
+  x: 0,
+  y: 0,
+  size: PLAYER_SIZE,
 });

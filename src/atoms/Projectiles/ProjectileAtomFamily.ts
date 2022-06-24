@@ -1,80 +1,62 @@
-import React from 'react';
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { PROJECTILE_SPEED } from '../../knobs';
+import { atom } from 'jotai';
+import { atomFamily, atomWithDefault } from 'jotai/utils';
 
+import { BASE_PROJECTILE_SPEED } from '../../knobs';
 import ClosestEnemySelector from '../Enemies/ClosestEnemySelector';
 import PlayerPositionAtom from '../Player/PlayerPositionAtom';
 import { Moveable } from '../../hooks/Entities/useMovement';
+import EnemyAtomFamily, { Enemy } from '../Enemies/EnemyAtomFamily';
 
 export interface Projectile extends Moveable {
-  key: string;
+  readonly key: string;
   damage: number;
   color?: string;
+  targetKey?: string;
+
+  // This doesn't really stop anyone from providing a brand new atom state with an arbitrary target
+  readonly target?: Enemy
 }
 
-// TODO: I should seriously reconsider spawning projecticles by just using an atomFamily
+// TODO: I should seriously reconsider spawning projecticles by using an atomFamily...
 
-export const ProjectileAtomFamily = atomFamily<Projectile, string>({
-  key: 'Projectile',
+export const ProjectileAtomFamily = atomFamily((key: string) => atomWithDefault<Projectile>(get => {
+  const { x: playerX, y: playerY } = get(PlayerPositionAtom);
 
-  // This is because of the ref. See the note in the EnemyAtomFamily for why.
+  // Select the closest enemy to the player at the time of creation, and home in on it
+  const closestEnemy = get(ClosestEnemySelector);
 
-  default: selectorFamily({
-    key: 'ProjectileDefaultSelector',
-    get: key => ({ get }) => {
-      const { x: playerX, y: playerY } = get(PlayerPositionAtom);
-      const closestEnemy = get(ClosestEnemySelector);
-      // If there's no enemy, don't fire at anything. Idk how we would handle this actually lmao
-      // Do I need to prune this list every tick somehow?
-      // Should I put the current tick in an atom and do effects based on that? That sounds neat
-      if (!closestEnemy) {
-        // TODO: SOON: Where do I actually initiate this from?
-        // Right now the PlayerProjectiles component adds projectiles, but each new projectile decides where to shoot itself, which seems ... dumb?
-        // I think I need to know more about recoil, because it's too annoying to delete if there's no closest enemy
-        //  at create time, but I don't want to do that right now. Goodnight. Sleep tight. Bitch head.
-      }
-      const radiansTowardClosestEnemy = closestEnemy ?
-        Math.atan2((closestEnemy.y - playerY), (closestEnemy.x - playerX)) :
-        Math.random() * 2 * Math.PI;
+  return {
+    key,
 
-      return {
-        key,
-        x: playerX,
-        y: playerY,
-        size: 10,
-        speed: PROJECTILE_SPEED,
-        direction: radiansTowardClosestEnemy,
-        damage: 10,
-      };
-    },
-  }),
-  effects: key => [
-    ({ resetSelf, onSet }) => {
-      onSet(newValue => {
-        // TODO: What is this doing? Does this make any sense still? It's kind of hidden and magic, whatever it is
-        // console.log('got a new value!', key, newValue);
-        if (newValue === null) {
-          resetSelf();
-        }
-        return newValue;
-      });
-    },
-  ],
+    x: playerX,
+    y: playerY,
+    targetKey: closestEnemy?.key,
+    damage: 1,
 
-});
+    speed: BASE_PROJECTILE_SPEED,
+    direction: 0,
+    size: 10,
+  };
+}));
 
-export const ProjectileKeyListAtom = atom<string[]>({
-  key: 'ProjectileKeyList',
-  default: [],
-});
+export const Projectiles = atomFamily((key: string) => atom<Projectile, Projectile>(get => {
+  const projectile = get(ProjectileAtomFamily(key));
+  const target = projectile.targetKey ? get(EnemyAtomFamily(projectile.targetKey)) : undefined;
 
-export const ProjectileListSelector = selector<Projectile[]>({
-  key: 'ProjectileListSelector',
-  get: ({ get }) => {
-    const keyList = get(ProjectileKeyListAtom);
-    const projectiles = keyList.map(key => get(ProjectileAtomFamily(key)));
+  return {
+    ...projectile,
+    target,
+  };
+}, (get, set, updateValue) => {
+  set(ProjectileAtomFamily(key), updateValue);
+}));
 
-    // Idk why I have to do this, so it must mean something else with they types is wrong
-    return projectiles as Projectile[];
-  },
+export const ProjectileKeyListAtom = atom<string[]>([]);
+
+export const ProjectileListSelector = atom<Projectile[]>(get => {
+  const keyList = get(ProjectileKeyListAtom);
+  const projectiles = keyList.map(key => get(ProjectileAtomFamily(key)));
+
+  // Idk why I have to do this, so it must mean something else with they types is wrong
+  return projectiles as Projectile[];
 });

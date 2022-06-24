@@ -1,16 +1,18 @@
 import React from 'react';
-import { useRecoilState, useRecoilCallback } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
+import { useAtomCallback } from 'jotai/utils';
 import EnemyAtomFamily, { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
 import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from '../knobs';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
 import useMovement, { enterOrbit } from '../hooks/Entities/useMovement';
+import ClosestEnemySelector from '../atoms/Enemies/ClosestEnemySelector';
 
 
 const useEnemyAtom = (key: string) => {
-  const [ enemy ] = useRecoilState(EnemyAtomFamily(key));
+  const enemy = useAtomValue(EnemyAtomFamily(key));
 
-  const deleteSelf = useRecoilCallback(({ set }) => () => {
+  const deleteSelf = useAtomCallback((get, set) => {
     set(EnemyIDListAtom, oldEnemyIDList => oldEnemyIDList.filter(k => k !== enemy.key));
   });
 
@@ -34,11 +36,12 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
     insertionPointY,
   } = enemy;
 
-  const updateBox = useRecoilCallback(({ set }) => (newEnemy: Enemy) => {
-    set(EnemyAtomFamily(enemy.key), newEnemy);
+  const updateBox = useAtomCallback((get, set, newEnemy: Enemy) => {
+    const familyMemeber = EnemyAtomFamily(enemy.key);
+    set(familyMemeber, newEnemy);
   });
 
-  useMovement(enemy, [ enterOrbit ], updateBox);
+  useMovement(enemy, updateBox, [ enterOrbit ]);
   const boxStyles = useBoxStyles(enemy);
 
 
@@ -50,6 +53,8 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
   const showInsertionPoint = SHOW_ENEMY_INSERTION_POINT;
   const showDirection = SHOW_ENEMY_ANGLE;
 
+  const closestEnemy = useAtomValue(ClosestEnemySelector);
+  const lookAtMe = closestEnemy?.key === enemy.key; // I am the closest now
 
   return (
     <>
@@ -68,6 +73,7 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
           transform: `${boxStyles.transform} rotate(${direction}rad)`,
           border: `2px solid ${color}`,
           borderRadius: '1px',
+          background: lookAtMe ? '#ff0000' : color,
         } }
       >
         { ' ' }
