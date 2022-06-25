@@ -5,7 +5,7 @@ import EnemyAtomFamily, { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
 import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from '../knobs';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
-import useMovement, { enterOrbit } from '../hooks/Entities/useMovement';
+import useMovement, { enterOrbit, MovementStep } from '../hooks/Entities/useMovement';
 import ClosestEnemySelector from '../atoms/Enemies/ClosestEnemySelector';
 
 

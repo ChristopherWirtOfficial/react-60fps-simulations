@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithDefault } from 'jotai/utils';
 
 interface MousePosition {
   x: number | null;

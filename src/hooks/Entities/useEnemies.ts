@@ -44,18 +44,7 @@ const createEnemy = (): Enemy => {
   return newEnemy;
 };
 
-// Get the enemies reactively from the context
-const useEnemies2 = () => {
-  // TODO: Pickup
-  // How do we want to actually get a single enemy?
-  // Can we be okay with it not being individually reactive? Should I just go for it?
-
-  const enemies = get('enemy');
-
-  return enemies;
-};
-
-
+// LEFTOVER from when I started working on an Entity Provider
 const useEnemies = () => {
   const { entities, updateEntity, addEntity, removeEntity } = useEntities();
 
@@ -80,12 +69,4 @@ const useEnemies = () => {
     updateEnemy,
     removeEnemy,
   };
-};
-
-// Create a reactive hook for a single enemy that doesn't re-render when any enemy changes
-export const useEnemy = (key: string) => {
-  const { entities } = useEntities();
-  const enemy = entities[key];
-
-  return enemy;
 };

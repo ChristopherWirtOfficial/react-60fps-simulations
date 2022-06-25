@@ -1,5 +1,5 @@
 import { useAtomCallback } from 'jotai/utils';
-import { WritableAtom } from 'jotai';
+import { Getter, SetStateAction, WritableAtom } from 'jotai';
 import useTick from '../useTick';
 import { Box } from './useBoxStyles';
 import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../knobs';
@@ -17,16 +17,18 @@ export interface Moveable extends Box {
   // rotation: number;
 }
 
-type WriteGetter = Parameters<WritableAtom<unknown, unknown>['write']>[0];
+type WriteGetter = Getter; // Parameters<WritableAtom<SetStateAction<T | null>, void>['write']>[0];
 
 export type MovementStep<T extends Moveable> = (box: T, get: WriteGetter) => T;
 
 // Yes I'm a genius, but I don't like to show off
 // When the box is close to its orbit point (default 20px from the center), change the direction to insert into an orbit around the center
-export const enterOrbit: MovementStep<Moveable> = box => {
+export const enterOrbit = (<T extends Moveable>(box: T) => {
   const { x, y, direction, speed } = box;
 
   const orbitRadius = box?.orbitRadius ?? ORBIT_RADIUS;
+
+  // Lol the orbit center could be an entity's current position lmaoo
   const orbitCenter = {
     x: 0,
     y: 0,
@@ -95,7 +97,7 @@ export const enterOrbit: MovementStep<Moveable> = box => {
   }
 
   return box;
-};
+});
 
 
 // Step the box in the direction it is moving at the speed it is moving
@@ -134,9 +136,7 @@ const useMovement = <T extends Moveable>(
       throw new Error('No box data in useMovement\'s tick');
     }
 
-    const num: number = allMovementSteps.reduce((acc, step) => acc + 1, 0);
-
-    const newBox = allMovementSteps.reduce((boxState: T, step) => {
+    const newBox = allMovementSteps.reduce((boxState, step): T => {
       if (!boxState) {
         throw new Error('No box state in useMovement\'s tick');
       }
@@ -146,7 +146,8 @@ const useMovement = <T extends Moveable>(
         throw new Error('No step result in useMovement\'s tick');
       }
 
-      return stepRes;
+      // It's a little hack-y, but it's at least exactly how this is intended to be used
+      return stepRes as T;
     }, box);
 
 

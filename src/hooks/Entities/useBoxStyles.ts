@@ -3,8 +3,6 @@ import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
 
 
 export interface Box {
-  key: string; // TODO: Decide if thise key belongs here or in the entity system or something
-
   x: number;
   y: number;
   size: number;

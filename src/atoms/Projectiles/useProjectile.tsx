@@ -59,15 +59,15 @@ const seekTarget: MovementStep<Projectile> = projectile => {
     (target?.y ?? 0 - y) * (target?.y ?? 0 - y),
   );
 
-  console.table({
-    targetX: target?.x ?? 0,
-    targetY: target?.y ?? 0,
-    x,
-    y,
-    speed,
-    angleTowardClosestEnemy,
-    distance,
-  });
+  // console.table({
+  //   targetX: target?.x ?? 0,
+  //   targetY: target?.y ?? 0,
+  //   x,
+  //   y,
+  //   speed,
+  //   angleTowardClosestEnemy,
+  //   distance,
+  // });
 
 
   return {

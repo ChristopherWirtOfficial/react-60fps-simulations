@@ -1,6 +1,6 @@
 export const PLAYER_SIZE = 20;
 
-export const TICKS_BETWEEN_ATTACKS = 1000;
+export const TICKS_BETWEEN_ATTACKS = 10;
 export const BASE_PROJECTILE_SPEED = 0.1;
 export const MAX_PROJECTILE_SPEED = 10;
 
@@ -14,7 +14,7 @@ export const ORBIT_EAGERNESS = 30;
 
 // After switching to Jotai the Hard max seems to be 500, especially when calculating
 //   the distance between the player and the enemy when it takes a huge performance hit.
-export const MAX_ENEMIES = 120; // Soft cap of 300 probably
+export const MAX_ENEMIES = 60; // Soft cap of 300 probably
 
 export const MIN_ENEMY_SIZE = 10;
 export const MAX_ENEMY_SIZE = 30;

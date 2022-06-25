@@ -1,5 +1,22 @@
 {
   "compilerOptions": {
+    "paths": {
+      "src/*": [
+        "./src/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@atoms/*": [
+        "./src/atoms/*"
+      ],
+      "@helpers": [
+        "./src/helpers.ts"
+      ]
+    },
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [
@@ -32,26 +49,5 @@
   "exclude": [
     "node_modules/**",
     "**/*.spec.ts"
-  ],
-  "baseUrl": "./src",
-  "paths": {
-    "*": [
-      "*",
-      "src/*"
-    ],
-    "src/*": [
-      "src/*"
-    ],
-    "@hooks/*": [
-      "src/hooks/*"
-    ],
-    "@components/*": [
-      "src/components/*"
-    ],
-    "@atoms/*": [
-      "src/atoms/*"
-    ],
-  },
+  ]
 }
-
-

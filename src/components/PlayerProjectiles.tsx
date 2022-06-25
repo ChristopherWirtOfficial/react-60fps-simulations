@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import useProjectileKeys from '../atoms/Projectiles/useProjectiles';
-import useTick from '@/hooks/useTick';
+import useTick from '@hooks/useTick';
 import ProjectileComp from './Projectile';
 import ClosestEnemySelector from '../atoms/Enemies/ClosestEnemySelector';
 import { TICKS_BETWEEN_ATTACKS } from '../knobs';

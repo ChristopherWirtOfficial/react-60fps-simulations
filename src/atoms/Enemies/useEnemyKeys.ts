@@ -19,6 +19,7 @@ const useEnemyKeys = () => {
     // Every tick, roll a random number and see if we should spawn a new enemy
 
     const roll = Math.random();
+    // @ts-ignore Just shut your mouth smartass
     if (roll < perTickSpawnChance && (MAX_ENEMIES === -1 || enemyIDList.length < MAX_ENEMIES)) {
       // Spawn a new enemy by adding one to the list of enemies with a random position outside of the screen
       addEnemy();

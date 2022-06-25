@@ -3,14 +3,15 @@ import React, { FC } from 'react';
 import { useDebugMetrics } from '../hooks/useDebugMetric';
 
 const DebugMetrics: FC = () => {
-  const debugMetrics = useDebugMetrics();
+  const { metrics } = useDebugMetrics();
 
   return (
     <div className="debug-metrics">
       {
-        Object.entries(debugMetrics).map(([ key, value ]) => (
+        Object.entries(metrics).map(([ key, value ]) => (
           <div key={ key }>
-            { key }: { value }
+            <span>{ key }: </span>
+            <span>{ value }</span>
           </div>
         ))
       }

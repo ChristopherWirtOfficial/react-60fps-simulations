@@ -2,16 +2,18 @@ import { useEffect } from 'react';
 
 import useMouse from '@react-hook/mouse-position';
 
-import { useAtom, useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import useAtomicRef from '../../hooks/useAtomicRef';
 import MousePositionAtom from '../MousePositionAtom';
 
 import { ScreenDimensionsSelector, ScreenNodeAtom } from './ScreenNodeAtom';
 
+const watcherAtom = atom(get => get(MousePositionAtom), (get, set, payload) => console.log(payload));
 
+// Small bridge between the Mouse hook, the ScreenRef AtomicRef, and the MousePositionAtom
 const useInitScreen = () => {
   const [{ x: mouseX, y: mouseY }, setMousePosition] = useAtom(MousePositionAtom);
-  const [callbackRef, node] = useAtomicRef(ScreenNodeAtom);
+  const [callbackRef, node] = useAtomicRef(ScreenNodeAtom as any);
 
   const mouse = useMouse(node);
 

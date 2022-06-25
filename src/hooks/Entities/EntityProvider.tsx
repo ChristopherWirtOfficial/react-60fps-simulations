@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, FC } from 'react';
+import React, { createContext, useContext, useMemo, FC, PropsWithChildren } from 'react';
 import { Moveable } from './useMovement';
 
 export interface Damageable {
@@ -50,7 +50,7 @@ const updateEntity = (entity: Entity) => {
   entities[entity.key] = entity;
 };
 
-const EntityProvider: FC = ({ children }) => {
+const EntityProvider: FC<PropsWithChildren> = ({ children }) => {
   const context = useMemo(() => ({
     entities,
     addEntity,
