@@ -8,12 +8,6 @@ import jotaiReactRefresh from 'jotai/babel/plugin-react-refresh'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server: {
-    https: {
-      key: fs.readFileSync('./.cert/key.pem'),
-      cert: fs.readFileSync('./.cert/cert.pem'),
-    },
-  },
   plugins: [react({ babel: { plugins: [jotaiDebugLabel, jotaiReactRefresh] } })],
   resolve: {
     alias: {
