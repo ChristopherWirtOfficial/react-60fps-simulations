@@ -46,6 +46,7 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
 
 
   const insertionStyle = useBoxStyles({
+    // Just some fake bullshit anyway
     // @ts-expect-error
     x: insertionPointX, y: insertionPointY, size: 10, color, direction,
   });

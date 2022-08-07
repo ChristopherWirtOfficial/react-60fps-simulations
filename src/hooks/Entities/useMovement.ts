@@ -1,8 +1,9 @@
-import { useAtomCallback } from 'jotai/utils';
-import { Getter, SetStateAction, WritableAtom } from 'jotai';
+import { atomFamily, atomWithDefault, useAtomCallback } from 'jotai/utils';
+import { atom, Getter, useAtomValue, useSetAtom } from 'jotai';
 import useTick from '../useTick';
 import { Box } from './useBoxStyles';
 import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../knobs';
+import { useEffect } from 'react';
 
 /*
   Moveable boxes operate with vectors that are acted upon by specified Movement Step functions.
@@ -19,7 +20,7 @@ export interface Moveable extends Box {
 
 type WriteGetter = Getter; // Parameters<WritableAtom<SetStateAction<T | null>, void>['write']>[0];
 
-export type MovementStep<T extends Moveable> = (box: T, get: WriteGetter) => T;
+export type MovementStep<T extends Moveable> = (box: T, get?: WriteGetter) => T;
 
 // Yes I'm a genius, but I don't like to show off
 // When the box is close to its orbit point (default 20px from the center), change the direction to insert into an orbit around the center
@@ -101,7 +102,7 @@ export const enterOrbit = (<T extends Moveable>(box: T) => {
 
 
 // Step the box in the direction it is moving at the speed it is moving
-const stepMovementVector: MovementStep<Moveable> = box => {
+export const stepMovementVector: MovementStep<Moveable> = box => {
   const { x, y, direction, speed } = box;
 
   const newX = x + Math.cos(direction) * speed;
@@ -114,6 +115,15 @@ const stepMovementVector: MovementStep<Moveable> = box => {
   };
 };
 
+// TODO: This has a memory leak! Nothing ever removes things from this atom family
+export const MovementStepsAtomFamily = atomFamily(() => atom([] as MovementStep<Moveable>[]));
+
+export const useTargetMovementSteps = (key: string): MovementStep<Moveable>[] => {
+  const steps = useAtomValue(MovementStepsAtomFamily(key));
+  return steps;
+};
+
+
 const useMovement = <T extends Moveable>(
   box: T,
   boxUpdateCallback: (box: T) => void,
@@ -123,8 +133,16 @@ const useMovement = <T extends Moveable>(
     throw new Error('useMovement requires a boxUpdateCallback');
   }
 
-  // TODO: This is probably better managed with a larger scale entity system
+  const setEnemyMovementSteps = useSetAtom(MovementStepsAtomFamily(box.key));
+
+  useEffect(() => {
+    // TODO: There's clearly a better way here, but I don't see it.
+    setEnemyMovementSteps(movementSteps as any as MovementStep<Moveable>[]);
+  }, [setEnemyMovementSteps, movementSteps]);
+
+
   // Hoist the `get` out of useAtomCallback for the movement steps to access atomic state
+  // TODO: This is probably better managed with a larger scale entity system
   const getAtomicState = useAtomCallback((_get, _, arg) => _get(arg as any));
 
   useTick(() => {

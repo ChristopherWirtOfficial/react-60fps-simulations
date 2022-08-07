@@ -1,4 +1,3 @@
-import { Atom, atom, SetStateAction } from 'jotai';
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 
 import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../knobs';
@@ -7,8 +6,6 @@ import { Moveable } from '../../hooks/Entities/useMovement';
 
 // TODO: LATER My types are still bad lol
 export interface Enemy extends Moveable {
-  key: string;
-
   x: number;
   y: number;
   size: number;

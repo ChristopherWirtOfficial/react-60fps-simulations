@@ -4,6 +4,8 @@ import { Entity, Damageable, useEntities } from './EntityProvider';
 
 interface Enemy extends Entity, Damageable { }
 
+// NOTE: THIS WHOLE FILE IS LEFTOVER FROM THE ENTITY PROVIDER STUFF
+
 const createEnemy = (): Enemy => {
   const key = uuid();
 

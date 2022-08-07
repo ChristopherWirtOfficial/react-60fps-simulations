@@ -50,6 +50,7 @@ const updateEntity = (entity: Entity) => {
   entities[entity.key] = entity;
 };
 
+// TOTALLY UNUSED RIGHT NOW
 const EntityProvider: FC<PropsWithChildren> = ({ children }) => {
   const context = useMemo(() => ({
     entities,

@@ -3,6 +3,7 @@ import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
 
 
 export interface Box {
+  key: string;
   x: number;
   y: number;
   size: number;
