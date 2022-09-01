@@ -8,14 +8,13 @@ import useBoxStyles from '../hooks/Entities/useBoxStyles';
 
 const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
   const projectile = useProjectile(projectileKey);
-
+  console.log(projectile);
   const styles = useBoxStyles(projectile);
 
   const target = useAtomValue(EnemyAtomFamily(projectile.targetKey ?? ''));
 
   return (
     <div
-      className="projec"
       style={ {
         ...styles,
         opacity: target ? 1 : 0,

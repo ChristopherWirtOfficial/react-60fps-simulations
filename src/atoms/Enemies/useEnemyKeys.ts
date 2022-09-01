@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import useTick, { FRAMERATE } from '@hooks/useTick';
+import useTick, { FRAMERATE } from 'hooks/useTick';
 import { useAtomCallback } from 'jotai/utils';
 import EnemyIDListAtom from './EnemyIDListAtom';
 import { uuid } from '../../helpers';

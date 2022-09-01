@@ -1,8 +1,9 @@
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 
+import { Moveable } from 'hooks/Entities/useMovement';
+import enterOrbit from 'hooks/Entities/movement-steps/enterOrbit';
 import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../knobs';
 import { ScreenDimensionsSelector } from '../Screen/ScreenNodeAtom';
-import { Moveable } from '../../hooks/Entities/useMovement';
 
 // TODO: LATER My types are still bad lol
 export interface Enemy extends Moveable {
@@ -58,6 +59,7 @@ export default atomFamily((key: string) => atomWithDefault(get => {
     orbitRadius,
     // Pick a random color from rgb values with high contrast to white
     color: `rgb(${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)})`,
+    movementSteps: [enterOrbit],
     direction,
   };
 

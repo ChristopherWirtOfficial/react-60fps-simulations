@@ -36,12 +36,8 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
     insertionPointY,
   } = enemy;
 
-  const updateBox = useAtomCallback((get, set, newEnemy: Enemy) => {
-    const familyMemeber = EnemyAtomFamily(enemy.key);
-    set(familyMemeber, newEnemy);
-  });
-
-  useMovement(enemy, updateBox, [ enterOrbit ]);
+  const enemyAtom = EnemyAtomFamily(enemyKey);
+  useMovement(enemyAtom);
   const boxStyles = useBoxStyles(enemy);
 
 

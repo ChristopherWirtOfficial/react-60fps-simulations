@@ -2,11 +2,11 @@ import { atom } from 'jotai';
 import PlayerPositionAtom from '../Player/PlayerPositionAtom';
 import EnemyListSelector from './EnemyListSelector';
 import { getDistance } from '../../helpers';
-import { Enemy } from './EnemyAtomFamily';
+import { Enemy } from './';
 import { ProjectileListSelector } from '../Projectiles/ProjectileAtomFamily';
 
 // Select the closest enemy that isn't already targeted by another projectile
-export default atom(get => {
+const ClosestEnemySelector = atom(get => {
   const { x: playerX, y: playerY } = get(PlayerPositionAtom);
   const enemies = get(EnemyListSelector);
   const projecticles = get(ProjectileListSelector);
@@ -30,3 +30,5 @@ export default atom(get => {
 
   return closestEnemy.enemy;
 });
+
+export default ClosestEnemySelector;

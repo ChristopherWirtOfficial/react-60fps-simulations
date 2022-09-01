@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAtom } from 'jotai';
-import { uuid } from '@helpers';
+import { uuid } from 'helpers';
 
 import { ProjectileKeyListAtom } from './ProjectileAtomFamily';
 
@@ -16,7 +16,6 @@ const useProjectileKeys = () => {
 
   const addProjectile = useCallback(() => {
     const key = uuid();
-    console.warn('the key', key);
     const newKeyList = [ ...projectileKeys, key ];
 
     setProjectileKeys(newKeyList);
