@@ -1,48 +1,53 @@
 import React, { FC } from 'react';
-import useTick from 'hooks/useTick';
-import { useAtomCallback, useAtomValue } from 'jotai/utils';
-import NextProjectile from 'atoms/Projectiles/NextProjectile';
-import { ProjectileAtomFamily } from 'atoms/Projectiles/ProjectileAtomFamily';
+import useTick, { getTickFunctors } from 'hooks/useTick';
+import { useAtomValue } from 'jotai/utils';
+import { SpawnProjectile } from 'atoms/Projectiles/ProjectileAtomFamily';
+import { useSetAtom } from 'jotai';
+import DefaultProjectile from 'atoms/Projectiles/DefaultProjectile';
+import generateNextProjectile from 'atoms/Projectiles/generateNextProjectile';
+import { MAX_TARGET_DISTANCE, TICKS_BETWEEN_ATTACKS } from 'helpers/knobs';
+import { Box } from '@chakra-ui/react';
 import ClosestEnemySelector from '../atoms/Enemies/ClosestEnemySelector';
-import useProjectileKeys from '../atoms/Projectiles/useProjectiles';
+import useProjectileKeys from '../atoms/Projectiles/useProjectileKeys';
 
 import ProjectileComp from './Projectile';
-import { TICKS_BETWEEN_ATTACKS } from '../knobs';
-import { getTickFunctors } from '../hooks/useTick';
 
-const PlayerProjectiles: FC = () => {
-  const { projectileKeys, addProjectile } = useProjectileKeys();
+const ourProjectileDef = { ...DefaultProjectile };
 
-  // TODO: ... Could this be an iterator? Or an atom generator? Hmm...
-  // TODO: Make this into a write atom instead
-  const spawnProjectile = useAtomCallback((get, set) => {
-    const key = addProjectile();
-
-    const newProjectile = get(NextProjectile);
-
-    set(ProjectileAtomFamily(key), newProjectile);
-  });
+const useFireProjectiles = () => {
+  const spawnProjectile = useSetAtom(SpawnProjectile);
 
   const closestEnemy = useAtomValue(ClosestEnemySelector);
 
 
-  // TODO: Would it be smarter to use a sngle callback function and pass it directly to useTick?
-  //    Basically, wrap the closestEnemy check in the callback and pass that directly to useTick.
-  //  Theoretically, it would save "unnecessary" re-renders, but I think that basically doesn't apply here :/
-  // For the record, I doubt it would be a performance gain, but a lot of small things like that could be huge idk
-  // TODO: Find a good permenant spot for this, obviously it'll be tied to the player and their attack speed.
-  // Attacks!
-  useTick(async () => {
-    // Small note, but useTick or useTick(..., 40) neither one will inherently cause re-renders.
-    // This one does, because it does modify reactive state that causes re-renders of the projectileKeys, but a useTick doesn't force a re-render.
-
-    if (closestEnemy) {
-      spawnProjectile();
+  useTick(() => {
+    if (!closestEnemy) {
+      // TODO: Instead of skipping the attack, we should do something smarter
+      return;
     }
+
+    const nextProjectile = generateNextProjectile(ourProjectileDef, closestEnemy);
+    spawnProjectile(nextProjectile);
   }, TICKS_BETWEEN_ATTACKS);
+};
+
+const PlayerProjectiles: FC = () => {
+  const { projectileKeys } = useProjectileKeys();
+  useFireProjectiles();
 
   return (
     <div className="player-projectiles">
+
+      <Box
+        pos="absolute"
+        width={ `${MAX_TARGET_DISTANCE}px` }
+        height={ MAX_TARGET_DISTANCE }
+        rounded="full"
+        border="4px solid red"
+        top="50%"
+        left="50%"
+        transform="translate(-50%, -50%)"
+      />
       <div>Projectiles: { projectileKeys.length } </div>
       <div>Registered Functors: { getTickFunctors().length } </div>
       {

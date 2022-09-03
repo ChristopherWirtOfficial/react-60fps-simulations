@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FC, useCallback } from 'react';
 
 import useTick from '../hooks/useTick';
-import { now } from '../helpers';
+import { now } from 'helpers';
 import useTimedAverage from '../hooks/useTimedAverage';
 
 

@@ -1,7 +1,7 @@
 // Yes I'm a genius, but I don't like to show off
 
-import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../../knobs';
-import { Moveable } from '../useMovement';
+import { Moveable } from 'types/Boxes';
+import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../../helpers/knobs';
 
 // When the box is close to its orbit point (default 20px from the center), change the direction to insert into an orbit around the center
 export const enterOrbit = (<T extends Moveable>(box: T) => {

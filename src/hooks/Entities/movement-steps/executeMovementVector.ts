@@ -1,4 +1,5 @@
-import { Moveable, MovementStep } from '../useMovement';
+import { Moveable, MovementStep } from 'types/Boxes';
+
 
 // Step the box in the direction it is moving at the speed it is moving
 const executeMovementVector: MovementStep<Moveable> = box => {

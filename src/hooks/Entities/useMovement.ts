@@ -1,37 +1,10 @@
-import { atomFamily, atomWithDefault, useAtomCallback } from 'jotai/utils';
+import { atomFamily, useAtomCallback } from 'jotai/utils';
 import {
-  atom, Getter, SetStateAction, useAtom, useAtomValue, useSetAtom, WritableAtom,
+  atom, SetStateAction, useAtom, useAtomValue, WritableAtom,
 } from 'jotai';
-import { useEffect } from 'react';
+import { Moveable, MovementStep } from 'types/Boxes';
 import useTick from '../useTick';
-import { Box } from './useBoxStyles';
-import { ORBIT_EAGERNESS, ORBIT_RADIUS } from '../../knobs';
 import executeMovementVector from './movement-steps/executeMovementVector';
-
-/*
-  Moveable boxes operate with vectors that are acted upon by specified Movement Step functions.
-
-  Movement Steps are functions that take a Moveable box and return a new Moveable box.
-  They are mutators that can act on the box's x, y, direction, and speed.
-*/
-export interface Moveable extends Box {
-  // The actual movement vector to execute on every movement tick
-  speed: number;
-  direction: number;
-
-  orbitRadius?: number;
-
-  movementSteps: MovementStep<Moveable>[];
-
-  // lenny-face emoji - One day... ;)
-  // rotationSpeed: number;
-  // rotation: number;
-}
-
-type WriteGetter = Getter; // Parameters<WritableAtom<SetStateAction<T | null>, void>['write']>[0];
-
-export type MovementStep<T extends Moveable> = (box: T, get?: WriteGetter) => T;
-
 
 // BUG: This has a memory leak! Nothing ever removes things from this atom family
 // TODO: Either use a more robust Entity manager (I really would rather not tbh...)
@@ -51,18 +24,18 @@ export const useTargetMovementSteps = (key: string): MovementStep<Moveable>[] =>
 const useMovement = <T extends Moveable>(
   moveableAtom: WritableAtom<T, SetStateAction<T>, void>,
 ) => {
-  const [box, setBox] = useAtom(moveableAtom);
+  const [ box, setBox ] = useAtom(moveableAtom);
 
 
   const { movementSteps } = box;
 
   // Hoist the `get` out of useAtomCallback for the movement steps to access atomic state
-  // NOTE: Currently unused, but sounds useful?
-  const getAtomicState = useAtomCallback((_get, _, arg) => _get(arg as any));
+  // NOTE: Currently unused, but sounds useful? Maybe for getting positions of other entities (that don't move)
+  // const getAtomicState = useAtomCallback((_get, _, arg) => _get(arg as any));
 
   useTick(() => {
     // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector
-    const allMovementSteps = [...movementSteps, executeMovementVector];
+    const allMovementSteps = [ ...movementSteps, executeMovementVector ];
     if (!box?.speed) {
       // Nothing else to do I guess, there's no speed and probably no box at all..
       console.error('No box data', { box });
@@ -76,7 +49,7 @@ const useMovement = <T extends Moveable>(
         throw new Error('No box state in useMovement\'s tick');
       }
 
-      const stepRes = step(boxState, getAtomicState);
+      const stepRes = step(boxState);
       if (!stepRes) {
         throw new Error('No step result in useMovement\'s tick');
       }
@@ -85,12 +58,12 @@ const useMovement = <T extends Moveable>(
       return stepRes;
     }, box);
 
-    // @ts-ignore
-    if (box.targetKey) {
-      console.log('projectile', box, newBox);
-    }
     // Update the box with the new data
-    setBox(newBox);
+    setBox({
+      ...newBox,
+      prevX: box.x,
+      prevY: box.y,
+    });
   });
 };
 

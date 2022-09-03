@@ -1,6 +1,4 @@
-import { useAtomValue } from 'jotai';
 import React, { FC } from 'react';
-import EnemyAtomFamily from '../atoms/Enemies/EnemyAtomFamily';
 
 import useProjectile from '../atoms/Projectiles/useProjectile';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
@@ -8,10 +6,9 @@ import useBoxStyles from '../hooks/Entities/useBoxStyles';
 
 const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
   const projectile = useProjectile(projectileKey);
-  console.log(projectile);
-  const styles = useBoxStyles(projectile);
+  const { target } = projectile;
 
-  const target = useAtomValue(EnemyAtomFamily(projectile.targetKey ?? ''));
+  const styles = useBoxStyles(projectile);
 
   return (
     <div

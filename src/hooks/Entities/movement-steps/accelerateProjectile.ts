@@ -1,16 +1,9 @@
-import { isSimulating } from 'atoms/Projectiles/NextProjectile';
-import { ACCELERATION_FACTOR, MAX_PROJECTILE_SPEED } from '../../../knobs';
-import { Moveable, MovementStep } from '../useMovement';
+import { Moveable, MovementStep } from 'types/Boxes';
+import { ACCELERATION_FACTOR, MAX_PROJECTILE_SPEED } from '../../../helpers/knobs';
 
 // A basic movement step that accelerates the projectile
 const accelerateProjectile: MovementStep<Moveable> = projectile => {
   const { speed } = projectile;
-
-  if (isSimulating()) {
-    // console.log('SIMULATING acceleration', projectile);
-  } else {
-    console.log('REALLY accelerating', projectile);
-  }
 
   return {
     ...projectile,

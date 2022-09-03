@@ -1,5 +1,7 @@
 
 import React, { FC } from 'react';
+import { Box } from '@chakra-ui/react';
+import { MAX_TARGET_DISTANCE } from 'helpers/knobs';
 import { useDebugMetrics } from '../hooks/useDebugMetric';
 
 const DebugMetrics: FC = () => {

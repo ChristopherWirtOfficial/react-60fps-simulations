@@ -1,11 +1,11 @@
 import React from 'react';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
-import EnemyAtomFamily, { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
+import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from 'helpers/knobs';
+import EnemyAtomFamily from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
-import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from '../knobs';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
-import useMovement, { enterOrbit, MovementStep } from '../hooks/Entities/useMovement';
+import useMovement from '../hooks/Entities/useMovement';
 import ClosestEnemySelector from '../atoms/Enemies/ClosestEnemySelector';
 
 

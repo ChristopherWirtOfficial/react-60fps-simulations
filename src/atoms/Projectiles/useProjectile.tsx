@@ -1,14 +1,14 @@
 import { useAtom, useAtomValue } from 'jotai';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import useTick from 'hooks/useTick';
-import { useAtomCallback, useResetAtom } from 'jotai/utils';
-import { Enemy } from 'atoms/Enemies/EnemyAtomFamily';
+import { useAtomCallback } from 'jotai/utils';
+import { Enemy, Projectile } from 'types/Boxes';
+import checkCollisions from 'helpers/checkCollisions';
 import {
-  Projectile,
   ProjectileAtomFamily,
   Projectiles,
 } from './ProjectileAtomFamily';
-import useProjectiles from './useProjectiles';
+import useProjectiles from './useProjectileKeys';
 import EnemyListSelector from '../Enemies/EnemyListSelector';
 import EnemyIDListAtom from '../Enemies/EnemyIDListAtom';
 import useMovement from '../../hooks/Entities/useMovement';
@@ -18,15 +18,11 @@ import useMovement from '../../hooks/Entities/useMovement';
 */
 const useProjectileAtom = (key: string) => {
   const [ projectile, setProjectileAtom ] = useAtom(Projectiles(key));
-
-  const resetProjectile = useResetAtom(ProjectileAtomFamily(key));
-
   const { removeProjectile } = useProjectiles();
 
   return {
     projectile,
     setProjectileAtom,
-    resetProjectile,
     removeProjectile,
   };
 };
@@ -34,7 +30,7 @@ const useProjectileAtom = (key: string) => {
 /* Check every few ticks if the projectile is off-screen, and just delete it if it is */
 const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
   const { key, x, y } = projectile;
-  const { resetProjectile, removeProjectile } = useProjectileAtom(key);
+  const { removeProjectile } = useProjectileAtom(key);
 
   const isOffscreenThreshold = 2000; // #px offscreen it should be before deleting. Generous and should be.
   const { width: screenWidth, height: screenHeight } = useAtomValue(
@@ -53,7 +49,7 @@ const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
       y < -isOffscreenThreshold ||
       y > screenHeight + isOffscreenThreshold
     ) {
-      resetProjectile();
+      console.warn('Projectile offscreen, deleting', projectile);
       removeProjectile(key);
     }
   };
@@ -63,7 +59,7 @@ const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
 
 const useProjectileCheckCollision = (projectile: Projectile) => {
   const { key } = projectile;
-  const { resetProjectile, removeProjectile } = useProjectileAtom(key);
+  const { removeProjectile } = useProjectileAtom(key);
 
   const enemies = useAtomValue(EnemyListSelector);
 
@@ -77,38 +73,23 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
     set(EnemyIDListAtom, enemyIDList => enemyIDList.filter(id => id !== enemyKey));
   });
 
-  const checkCollisions = () => {
-    const { x, y, size } = projectile;
-
-    // Check all enemies and find the first one that collides with the projectile, if any
-    // This is honestly so cheap it's not worth complicating more than this. The only thing better would be to delay
-    // the check until more than X number of ticks, X being something like 50% of the simulated ticks before simulated collision.
-    const collidedEnemy = enemies.find((enemy: Enemy) => {
-      const { x: enemyX, y: enemyY, size: enemySize } = enemy;
-
-      return (
-        x + size > enemyX &&
-        x < enemyX + enemySize &&
-        y + size > enemyY &&
-        y < enemyY + enemySize
-      );
-    });
-
+  const checkEnemyCollisions = () => {
+    const collidedEnemy = checkCollisions(projectile, enemies);
     if (collidedEnemy) {
+      console.error('COLLISION', collidedEnemy);
       // TODO: COMBAT Real damage calculations here, and probably encapsulate all of this in a COMBAT system
 
       // Destroy the first enemy we hit
       removeEnemy(collidedEnemy.key);
 
-      resetProjectile();
+      // Remove ourselves, duh
       removeProjectile(key);
     }
   };
 
-  useTick(checkCollisions);
+  useTick(checkEnemyCollisions);
 };
 
-// TODO: PICKUP -- Movement just isn't working at all for projectiles rn
 // Pretty basic wrapper around useMovement for this specific projectile
 const useMove = (projectileOrKey: Projectile | string) => {
   const key =

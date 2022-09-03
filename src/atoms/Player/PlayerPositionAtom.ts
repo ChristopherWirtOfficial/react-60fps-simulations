@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { PLAYER_SIZE } from '../../knobs';
+import { PLAYER_SIZE } from '../../helpers/knobs';
 
 
 export type PlayerPosition = {

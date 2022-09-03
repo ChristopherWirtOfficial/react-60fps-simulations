@@ -1,16 +1,16 @@
 import { useAtom } from 'jotai';
 import useTick, { FRAMERATE } from 'hooks/useTick';
 import { useAtomCallback } from 'jotai/utils';
+import { uuid } from 'helpers';
+import { DESIRED_ENEMY_SPAWN_RATE, MAX_ENEMIES } from 'helpers/knobs';
 import EnemyIDListAtom from './EnemyIDListAtom';
-import { uuid } from '../../helpers';
-import { DESIRED_ENEMY_SPAWN_RATE, MAX_ENEMIES } from '../../knobs';
 
 
 const useEnemyKeys = () => {
-  const [enemyIDList] = useAtom(EnemyIDListAtom);
+  const [ enemyIDList ] = useAtom(EnemyIDListAtom);
 
   const addEnemy = useAtomCallback((get, set) => {
-    set(EnemyIDListAtom, oldVal => [...oldVal, uuid()]);
+    set(EnemyIDListAtom, oldVal => [ ...oldVal, uuid() ]);
   });
 
   const desiredSpawnRate = DESIRED_ENEMY_SPAWN_RATE;
