@@ -1,3 +1,5 @@
+import { Getter } from 'jotai';
+
 /*
   Box - Something that can be positioned on the screen
   Moveable - Something that can be moved with MovementSteps
@@ -26,9 +28,6 @@ export interface Moveable extends Box {
 
   movementSteps: MovementStep<Moveable>[];
 
-  prevX?: number;
-  prevY?: number;
-
   // lenny-face emoji - One day... ;)
   // rotationSpeed: number;
   // rotation: number;
@@ -37,7 +36,9 @@ export interface Moveable extends Box {
 /*
   MovementSteps - functors that take a Moveable box and return a new Moveable box.
 */
-export type MovementStep<T extends Moveable> = (box: T) => T;
+type WriteGetter = Getter;
+// TODO: Leaving the `get` here for now, but it causes bad practice and is currently UNUSED
+export type MovementStep<T extends Moveable> = (box: T, get?: WriteGetter) => T;
 
 
 export interface Enemy extends Moveable {

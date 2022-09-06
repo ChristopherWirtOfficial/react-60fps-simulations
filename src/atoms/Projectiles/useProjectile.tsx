@@ -1,9 +1,10 @@
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import useTick from 'hooks/useTick';
 import { useAtomCallback } from 'jotai/utils';
-import { Enemy, Projectile } from 'types/Boxes';
-import checkCollisions from 'helpers/checkCollisions';
+import { Projectile } from 'types/Boxes';
+import projectCollision from 'helpers/collisions/projectCollisions';
+import checkCollisions from 'helpers/collisions/checkCollisions';
 import {
   ProjectileAtomFamily,
   Projectiles,
@@ -41,17 +42,18 @@ const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
 
   const checkOffscreen = () => {
     if (distanceFromOrigin > 1500) {
-      console.warn('Yo we got a far one dude', projectile);
-    }
-    if (
-      x < -isOffscreenThreshold ||
-      x > screenWidth + isOffscreenThreshold ||
-      y < -isOffscreenThreshold ||
-      y > screenHeight + isOffscreenThreshold
-    ) {
-      console.warn('Projectile offscreen, deleting', projectile);
+      console.warn('Yo we got a far one dude (deleting)', projectile);
       removeProjectile(key);
     }
+    // if (
+    //   x < -isOffscreenThreshold ||
+    //   x > screenWidth + isOffscreenThreshold ||
+    //   y < -isOffscreenThreshold ||
+    //   y > screenHeight + isOffscreenThreshold
+    // ) {
+    //   console.warn('Projectile offscreen, deleting', projectile);
+    //   removeProjectile(key);
+    // }
   };
 
   useTick(checkOffscreen, 5);
@@ -76,7 +78,6 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
   const checkEnemyCollisions = () => {
     const collidedEnemy = checkCollisions(projectile, enemies);
     if (collidedEnemy) {
-      console.error('COLLISION', collidedEnemy);
       // TODO: COMBAT Real damage calculations here, and probably encapsulate all of this in a COMBAT system
 
       // Destroy the first enemy we hit
@@ -99,6 +100,20 @@ const useMove = (projectileOrKey: Projectile | string) => {
   useMovement(projectileAtom);
 };
 
+
+const useJumpToCollision = (projectile: Projectile) => {
+  const { key } = projectile;
+  const setProjectile = useSetAtom(ProjectileAtomFamily(key));
+  const enemies = useAtomValue(EnemyListSelector);
+
+  useTick(() => {
+    const collisionPoint = projectCollision(projectile, enemies);
+    if (collisionPoint) {
+      setProjectile(p => ({ ...p, x: collisionPoint.x, y: collisionPoint.y }));
+    }
+  });
+};
+
 const useProjectile = (projectileOrKey: Projectile | string) => {
   const key = typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
 
@@ -106,6 +121,11 @@ const useProjectile = (projectileOrKey: Projectile | string) => {
 
   /* Hooks to perform the really re-usable aspects of the projectile. */
   useMove(projectile);
+
+  // TODO: PICKUP - This idea doesn't really work unless it's much closer to perfect
+  //  And it's starting to stress me out now smh
+  useJumpToCollision(projectile);
+
   useDeleteSelfWhenOffscreen(projectile);
   useProjectileCheckCollision(projectile);
 

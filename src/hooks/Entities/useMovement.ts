@@ -1,6 +1,6 @@
 import { atomFamily, useAtomCallback } from 'jotai/utils';
 import {
-  atom, SetStateAction, useAtom, useAtomValue, WritableAtom,
+  atom, Getter, SetStateAction, useAtom, useAtomValue, WritableAtom,
 } from 'jotai';
 import { Moveable, MovementStep } from 'types/Boxes';
 import useTick from '../useTick';
@@ -20,6 +20,41 @@ export const useTargetMovementSteps = (key: string): MovementStep<Moveable>[] =>
   return steps;
 };
 
+export const collapseMovementSteps = (moveable: Moveable, get?: Getter): Moveable => {
+  const { movementSteps } = moveable;
+  // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector
+  const allMovementSteps = [ ...movementSteps, executeMovementVector ];
+  if (!moveable?.speed) {
+    // Nothing else to do I guess, there's no speed and probably no box at all..
+    console.error('No box data', { box: moveable });
+    throw new Error('No box data in useMovement\'s tick');
+  }
+
+  // BUG: There's some weird typescript shit happening here. I think I have a typing issue with the MovementStep funtor type
+  // @ts-ignore
+  const newBox: T = allMovementSteps.reduce((boxState: Moveable, step) => {
+    if (!boxState) {
+      throw new Error('No box state in useMovement\'s tick');
+    }
+
+    // If there's a get function, we pass it along. If there's not, we pass that along too.
+    const stepRes = step(boxState, get);
+    if (!stepRes) {
+      throw new Error('No step result in useMovement\'s tick');
+    }
+
+    // It's a little hack-y, but it's at least exactly how this is intended to be used
+    return stepRes;
+  }, moveable);
+
+  // Update the box with the new data
+  return {
+    ...newBox,
+    prevX: moveable.x,
+    prevY: moveable.y,
+  };
+};
+
 // TODO: Should this be changed to accept an Atom instead of a box and box update callback?
 const useMovement = <T extends Moveable>(
   moveableAtom: WritableAtom<T, SetStateAction<T>, void>,
@@ -27,43 +62,15 @@ const useMovement = <T extends Moveable>(
   const [ box, setBox ] = useAtom(moveableAtom);
 
 
-  const { movementSteps } = box;
-
   // Hoist the `get` out of useAtomCallback for the movement steps to access atomic state
   // NOTE: Currently unused, but sounds useful? Maybe for getting positions of other entities (that don't move)
-  // const getAtomicState = useAtomCallback((_get, _, arg) => _get(arg as any));
+  const getAtomicState = useAtomCallback((_get, _, arg) => _get(arg as any));
 
   useTick(() => {
-    // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector
-    const allMovementSteps = [ ...movementSteps, executeMovementVector ];
-    if (!box?.speed) {
-      // Nothing else to do I guess, there's no speed and probably no box at all..
-      console.error('No box data', { box });
-      throw new Error('No box data in useMovement\'s tick');
-    }
+    const newBox = collapseMovementSteps(box, getAtomicState);
 
-    // BUG: There's some weird typescript shit happening here. I think I have a typing issue with the MovementStep funtor type
-    // @ts-ignore
-    const newBox: T = allMovementSteps.reduce((boxState: Moveable, step) => {
-      if (!boxState) {
-        throw new Error('No box state in useMovement\'s tick');
-      }
-
-      const stepRes = step(boxState);
-      if (!stepRes) {
-        throw new Error('No step result in useMovement\'s tick');
-      }
-
-      // It's a little hack-y, but it's at least exactly how this is intended to be used
-      return stepRes;
-    }, box);
-
-    // Update the box with the new data
-    setBox({
-      ...newBox,
-      prevX: box.x,
-      prevY: box.y,
-    });
+    // TYPE ERROR :(
+    setBox(newBox as any);
   });
 };
 

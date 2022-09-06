@@ -1,4 +1,5 @@
 import executeMovementVector from 'hooks/Entities/movement-steps/executeMovementVector';
+import { collapseMovementSteps } from 'hooks/Entities/useMovement';
 import { Moveable, BaseProjectileDefinition } from 'types/Boxes';
 import DefaultProjectile from './DefaultProjectile';
 
@@ -36,11 +37,9 @@ const simulateCollisionImpl = (baseProjectile: BaseProjectileDefinition, target:
     // COOL: I specifically use the simulatedTarget/Projectile here because it supports dynamic movement steps lol
     //  Theoretically, I could use a movement step to return a cloned projectile/enemy that has different movement steps,
     //   exactly like I do with the angle/speeed/x/y of all moveables in the movement steps already.
-    const enemyMovementSteps = [ ...simulatedTarget.movementSteps, executeMovementVector ];
-    const projectileMovementSteps = [ ...simulatedProjectile.movementSteps, executeMovementVector ];
 
-    const newEnemy = enemyMovementSteps.reduce((acc, step) => step(acc), simulatedTarget);
-    const newProjectile = projectileMovementSteps.reduce((acc, step) => step(acc), simulatedProjectile);
+    const newEnemy = collapseMovementSteps(simulatedTarget);
+    const newProjectile = collapseMovementSteps(simulatedProjectile);
 
     // Update the tracked state of the simulated target and projectile
     simulatedTarget = newEnemy;

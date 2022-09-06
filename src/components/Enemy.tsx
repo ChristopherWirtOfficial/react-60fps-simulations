@@ -1,7 +1,11 @@
 import React from 'react';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import { SHOW_ENEMY_ANGLE, SHOW_ENEMY_INSERTION_POINT } from 'helpers/knobs';
+import { Enemy } from 'types/Boxes';
+import projectCollision from 'helpers/collisions/projectCollisions';
+import useTick from 'hooks/useTick';
+import { ProjectileListSelector } from 'atoms/Projectiles/ProjectileAtomFamily';
 import EnemyAtomFamily from '../atoms/Enemies/EnemyAtomFamily';
 import EnemyIDListAtom from '../atoms/Enemies/EnemyIDListAtom';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
@@ -22,6 +26,29 @@ const useEnemyAtom = (key: string) => {
   };
 };
 
+const useProjTargetingUs = (enemy: Enemy) => {
+  const { key } = enemy;
+  const projectiles = useAtomValue(ProjectileListSelector);
+
+  return projectiles.find(p => p.target.key === key);
+};
+
+const useJumpToCollision = (enemy: Enemy) => {
+  const { key } = enemy;
+  const setEnemy = useSetAtom(EnemyAtomFamily(key));
+
+  const projectileTargetingUs = useProjTargetingUs(enemy);
+
+  useTick(() => {
+    if (projectileTargetingUs) {
+      const collisionPoint = projectCollision(enemy, [ projectileTargetingUs ]);
+      if (collisionPoint) {
+        setEnemy(e => ({ ...e, x: collisionPoint.x, y: collisionPoint.y }));
+      }
+    }
+  });
+};
+
 /*
   This is the component that renders an enemy
 
@@ -38,6 +65,9 @@ const EnemyComp: React.FC<{ enemyKey: string }> = ({ enemyKey }) => {
 
   const enemyAtom = EnemyAtomFamily(enemyKey);
   useMovement(enemyAtom);
+  useJumpToCollision(enemy);
+
+
   const boxStyles = useBoxStyles(enemy);
 
 
