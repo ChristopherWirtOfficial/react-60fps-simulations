@@ -2,6 +2,13 @@ export const PLAYER_SIZE = 20;
 
 export const TICK_FACTOR = 1;
 
+// Tile Miner knobs
+// Square, for now, but with an odd number of tiles to have a center
+export const TILE_ENEMY_DEBUG_ON = false;
+export const MAP_SIZE = 7;
+export const ENEMY_SPAWN_PADDING = 10;
+export const TILE_SIZE = 250;
+
 // Core Projectile knobs
 export const TICKS_BETWEEN_ATTACKS = 2;
 export const BASE_PROJECTILE_SPEED = 30;

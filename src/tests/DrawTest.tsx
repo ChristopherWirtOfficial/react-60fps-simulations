@@ -1,6 +1,7 @@
 import React, { FC, useRef, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useAtomValue } from 'jotai';
+import { SHOW_FPS, SHOW_AXIS } from 'helpers/knobs';
 import useScreen from '../atoms/Screen/useScreen';
 import PlayerProjectiles from '../components/PlayerProjectiles';
 import Enemies from '../components/Enemies';
@@ -8,7 +9,6 @@ import Player from '../components/Player';
 import { ScreenDimensionsSelector } from '../atoms/Screen/ScreenNodeAtom';
 import MousePositionAtom from '../atoms/MousePositionAtom';
 import useTick from '../hooks/useTick';
-import { SHOW_FPS, SHOW_AXIS } from 'helpers/knobs';
 
 let currentFps = 0;
 // Use requestAnimationFrame to truly compute the framerate

@@ -44,3 +44,9 @@ const throttle = (callback: Function, time: number) => {
   return throt;
 };
 
+// eslint-disable-next-line max-len
+export const randomColor = (highestVal: number = 220) => `rgb(
+  ${Math.floor(Math.random() * highestVal)},
+  ${Math.floor(Math.random() * highestVal)},
+  ${Math.floor(Math.random() * highestVal)}
+)`;

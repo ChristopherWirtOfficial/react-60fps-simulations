@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import useTick from '../hooks/useTick';
-import { now } from 'helpers';
 import useTimedAverage from '../hooks/useTimedAverage';
 
 const Test3: React.FC = () => {
