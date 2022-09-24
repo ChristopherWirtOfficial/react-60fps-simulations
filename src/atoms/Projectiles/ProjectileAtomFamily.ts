@@ -1,40 +1,20 @@
 import { atom } from 'jotai';
-import { atomFamily, atomWithDefault } from 'jotai/utils';
+import { atomFamily, atomWithReset } from 'jotai/utils';
+import { Projectile, ProjectileAtomDefinition, ProjectileIntention } from 'types/Boxes';
+import { uuid } from 'helpers';
+import EnemyAtomFamily from 'atoms/Enemies/EnemyAtomFamily';
 
-import { BASE_PROJECTILE_SPEED } from '../../knobs';
-import PlayerPositionAtom from '../Player/PlayerPositionAtom';
-import { Moveable } from '../../hooks/Entities/useMovement';
-import EnemyAtomFamily from '../Enemies/EnemyAtomFamily';
 
-export interface Projectile extends Moveable {
-  readonly key: string;
-  damage: number;
-  color?: string;
-  targetKey?: string;
-}
+// This holds all of the data except for the target, since it would get stale
+// TODO: Consider not exposing the atom family at all, and just using Derived write atoms or something
+// The API certainly requires a way to get the actual underlying atom (or a facsimilie thereof),
+// and the only way to do that right now is off of the atom family directly
+export const ProjectileAtomFamily = atomFamily((key: string) => atomWithReset<ProjectileAtomDefinition>(null!));
 
-// TODO: I should seriously reconsider spawning projecticles by using an atomFamily...
-
-export const ProjectileAtomFamily = atomFamily((key: string) => atomWithDefault<Projectile>(get => {
-  const { x: playerX, y: playerY } = get(PlayerPositionAtom);
-
-  return {
-    key,
-
-    x: playerX,
-    y: playerY,
-    targetKey: undefined,
-    damage: 1,
-
-    speed: BASE_PROJECTILE_SPEED,
-    direction: 0,
-    size: 10,
-  };
-}));
-
-export const Projectiles = atomFamily((key: string) => atom<Projectile, Projectile>(get => {
+// The target is stored in the EnemyAtomFamily, but pulled into the Projectiles selector family to keep it all fresh
+export const Projectiles = atomFamily((key: string) => atom<Projectile, ProjectileAtomDefinition>(get => {
   const projectile = get(ProjectileAtomFamily(key));
-  const target = projectile.targetKey ? get(EnemyAtomFamily(projectile.targetKey)) : undefined;
+  const target = get(EnemyAtomFamily(projectile.targetKey));
 
   return {
     ...projectile,
@@ -46,10 +26,28 @@ export const Projectiles = atomFamily((key: string) => atom<Projectile, Projecti
 
 export const ProjectileKeyListAtom = atom<string[]>([]);
 
-export const ProjectileListSelector = atom<Projectile[]>(get => {
+export const ProjectileListSelector = atom(get => {
   const keyList = get(ProjectileKeyListAtom);
-  const projectiles = keyList.map(key => get(ProjectileAtomFamily(key)));
+  const projectiles = keyList.map(key => get(Projectiles(key)));
 
-  // Idk why I have to do this, so it must mean something else with they types is wrong
-  return projectiles as Projectile[];
+  return projectiles;
+});
+
+
+// A write atom that creates a new projectile
+// NOTE: This does NO checks, it assumes that everything it's being told to do makes sense
+export const SpawnProjectile = atom(null, (get, set, projectileIntention: ProjectileIntention) => {
+  const key = uuid('spawned-projectile');
+
+  const projectile: ProjectileAtomDefinition = {
+    ...projectileIntention,
+    key,
+  };
+
+  // NOTE: This very briefly creates a "default" projectile, which is `null!`.
+  //  This should be totally fine though, because it's immediately overwritten, and most
+  //  importantly, it's written to again before it's EVER read from, since the only consumers rely on the key
+  //  being in the key list to even know it exists.
+  set(ProjectileAtomFamily(key), projectile);
+  set(ProjectileKeyListAtom, old => [ ...old, key ]);
 });

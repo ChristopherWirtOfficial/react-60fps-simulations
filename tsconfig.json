@@ -1,23 +1,7 @@
 {
+  "baseUrl": "./src/",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "src/*": [
-        "./src/*"
-      ],
-      "@hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@components/*": [
-        "./src/components/*"
-      ],
-      "@atoms/*": [
-        "./src/atoms/*"
-      ],
-      "@helpers": [
-        "./src/helpers.ts"
-      ]
-    },
+    "baseUrl": "./src/",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": [

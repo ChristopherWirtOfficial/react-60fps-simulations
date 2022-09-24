@@ -1,27 +1,10 @@
 import { atomFamily, atomWithDefault } from 'jotai/utils';
 
-import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../knobs';
+import enterOrbit from 'hooks/Entities/movement-steps/enterOrbit';
+import { Enemy } from 'types/Boxes';
+import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../helpers/knobs';
 import { ScreenDimensionsSelector } from '../Screen/ScreenNodeAtom';
-import { Moveable } from '../../hooks/Entities/useMovement';
 
-// TODO: LATER My types are still bad lol
-export interface Enemy extends Moveable {
-  x: number;
-  y: number;
-  size: number;
-  speed: number;
-  health: number;
-  maxHealth: number;
-  damage: number;
-  color: string;
-  direction: number;
-
-
-  insertionPointX?: number;
-  insertionPointY?: number;
-  insertionAngle?: number;
-  tangentAngle?: number;
-}
 
 export default atomFamily((key: string) => atomWithDefault(get => {
   // Randomly sized between 15 and 50
@@ -31,7 +14,7 @@ export default atomFamily((key: string) => atomWithDefault(get => {
   const { width, height } = get(ScreenDimensionsSelector);
   const biggestDimension = Math.max(width, height);
 
-  const distanceFromOrigin = ORBIT_RADIUS * 4;// Math.floor(biggestDimension);
+  const distanceFromOrigin = ORBIT_RADIUS * 3;// Math.floor(biggestDimension);
   const angle = Math.random() * 2 * Math.PI;
   // console.log(`Enemy ${key} is ${distanceFromOrigin} away from the origin at an angle of ${angle}`);
   const x = distanceFromOrigin * Math.cos(angle);
@@ -58,6 +41,7 @@ export default atomFamily((key: string) => atomWithDefault(get => {
     orbitRadius,
     // Pick a random color from rgb values with high contrast to white
     color: `rgb(${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)})`,
+    movementSteps: [ enterOrbit ],
     direction,
   };
 

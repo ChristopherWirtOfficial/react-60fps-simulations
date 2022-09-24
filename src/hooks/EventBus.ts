@@ -32,7 +32,7 @@ export type EventBus = {
   emit: (dispatchArgs: EventDef, ...args: any[]) => void;
 };
 
-const createeventBus = () => {
+const createEventBus = () => {
   const eventBus: EventBus = {
     registry: {},
     register: (registerArgs: EventDef, callback: EventBusCallback) => {
@@ -44,6 +44,7 @@ const createeventBus = () => {
         entity,
       };
 
+      // Lmao does this really work like that? Very fucking cool if so, that's way better than classes or `this`
       eventBus.registry[event] = [ ...(eventBus.registry[event] || []), record ];
 
       return record;
@@ -86,4 +87,4 @@ const createeventBus = () => {
   return eventBus;
 };
 
-export default createeventBus;
+export default createEventBus;

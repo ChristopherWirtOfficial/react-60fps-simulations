@@ -1,13 +1,6 @@
 import { useAtomValue } from 'jotai';
+import { Box } from 'types/Boxes';
 import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
-
-
-export interface Box {
-  key: string;
-  x: number;
-  y: number;
-  size: number;
-}
 
 /*
   All Boxes are positioned with cartesian coordinates with the origin at the center of the screen.

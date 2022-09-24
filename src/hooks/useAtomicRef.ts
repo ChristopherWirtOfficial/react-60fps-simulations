@@ -17,7 +17,7 @@ import { ScreenNodeAtom } from '../atoms/Screen/ScreenNodeAtom';
 
 type AtomicRefAtom<T> = WritableAtom<T, T, void>;
 
-// PICKUP: I need to create a type that's literally anything, but definitely not a Promise
+// OLD-PU: I need to create a type that's literally anything, but definitely not a Promise
 // I think I can do this with a union type, but I'm not sure how to do that
 
 

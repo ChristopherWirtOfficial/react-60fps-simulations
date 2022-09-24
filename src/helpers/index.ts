@@ -18,7 +18,7 @@ export const getDistance = (x1: number, y1: number, x2: number, y2: number) => {
   return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 };
 
-export const uuid = uuidv4;
+export const uuid = (type?: string) => `${type ?? ''}${uuidv4()}`;
 
 // NOTE: This throttle is UNTESTED because I implemented it (from partial copy/paste) for log, but then I didn't use it.
 const throttle = (callback: Function, time: number) => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Projectile } from '../atoms/Projectiles/ProjectileAtomFamily';
 // TODO: This file needs to be cleaned and code-split pretty urgently!
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
-import { now, uuid } from '../helpers';
+import { now, uuid } from 'helpers';
 import { Enemy } from '../atoms/Enemies/EnemyAtomFamily';
 
 import createEventBus, { EventBus } from './EventBus';
@@ -181,21 +181,14 @@ const useBaseTick = (functorArg: TickFunctor, frequency = 1, isPhysics = false) 
   const [ id ] = useState(uuid());
 
 
-  // TODO: PICKUP
-  /*
-
-
-      Rewrite useTick functors to also manage physics state (or not)
-
-
-    */
-
-
   useEffect(() => {
     const functor = (state: TickAccessor) => {
       // TODO: This is like this to let us track progress, but that code wasn't working. It's in git somewhere, but also it didn't work lol
       // setProgress here or something
       console.log('functor called', state);
+
+      // TODO: PICKUP: I think? Shouldn't I be capturing the return value of the state here?
+      // And if it's undefined, I should be returning the previous state? Not touching this today though lol
       functorArg(state);
     };
 
@@ -230,6 +223,8 @@ const useTick = (functorArg: TickFunctor, frequency = 1) => useBaseTick(functorA
 export default useTick;
 
 // TODO: PICKUP eventually
+// NOTE: I wasn't writing this as the first implementation of the collision code, I was actually REFACTORING
+//   the existing collision code into the new useTick system as a test.
 const useCollision = (projectileKey: string) => {
   useTick(({ state, bus }) => {
     const { projectiles, enemies }: { projectiles: ProjectileDictionary, enemies: Enemy[] } = state;

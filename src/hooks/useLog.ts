@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uuid } from '../helpers';
+import { uuid } from 'helpers';
 
 const logMessage = (...message: any[]) => {
   console.log(...message);

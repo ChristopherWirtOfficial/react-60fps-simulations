@@ -1,72 +1,59 @@
-import { useAtom, useAtomValue } from 'jotai';
-import { ScreenDimensionsSelector } from '@atoms/Screen/ScreenNodeAtom';
-import useTick from '@hooks/useTick';
-import { useAtomCallback, useResetAtom } from 'jotai/utils';
-import { Projectile, ProjectileAtomFamily, Projectiles } from './ProjectileAtomFamily';
-import useProjectiles from './useProjectiles';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
+import useTick from 'hooks/useTick';
+import { useAtomCallback } from 'jotai/utils';
+import { Projectile } from 'types/Boxes';
+import projectCollision from 'helpers/collisions/projectCollisions';
+import checkCollisions from 'helpers/collisions/checkCollisions';
+import {
+  ProjectileAtomFamily,
+  Projectiles,
+} from './ProjectileAtomFamily';
+import useProjectiles from './useProjectileKeys';
 import EnemyListSelector from '../Enemies/EnemyListSelector';
 import EnemyIDListAtom from '../Enemies/EnemyIDListAtom';
-import useMovement, { MovementStep } from '../../hooks/Entities/useMovement';
-import { ACCELERATION_FACTOR, MAX_PROJECTILE_SPEED } from '../../knobs';
+import useMovement from '../../hooks/Entities/useMovement';
 
 /*
   Manage an individual projectile.
 */
 const useProjectileAtom = (key: string) => {
   const [ projectile, setProjectileAtom ] = useAtom(Projectiles(key));
-
-  const resetProjectile = useResetAtom(ProjectileAtomFamily(key));
   const { removeProjectile } = useProjectiles();
 
   return {
     projectile,
     setProjectileAtom,
-    resetProjectile,
     removeProjectile,
   };
 };
 
-
-export const accelerate: MovementStep<Projectile> = projectile => {
-  const { speed } = projectile;
-
-  return {
-    ...projectile,
-    speed: Math.min(speed + (ACCELERATION_FACTOR * speed), MAX_PROJECTILE_SPEED),
-  };
-};
-
-
-const useMove = (projectileOrKey: Projectile | string) => {
-  const key = typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
-  const { projectile, setProjectileAtom } = useProjectileAtom(key);
-  useMovement(projectile, setProjectileAtom, [ accelerate ]);
-};
-
 /* Check every few ticks if the projectile is off-screen, and just delete it if it is */
 const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
-  // TODO: Note: is there a way to pull off the 'self' part of this suggestion without a provider?
-  // const { projectile, resetProjectile, removeProjectile } = useProjectileAtom('self');
-
   const { key, x, y } = projectile;
-  const { resetProjectile, removeProjectile } = useProjectileAtom(key);
+  const { removeProjectile } = useProjectileAtom(key);
 
   const isOffscreenThreshold = 2000; // #px offscreen it should be before deleting. Generous and should be.
-  const { width: screenWidth, height: screenHeight } = useAtomValue(ScreenDimensionsSelector);
+  const { width: screenWidth, height: screenHeight } = useAtomValue(
+    ScreenDimensionsSelector,
+  );
 
   const distanceFromOrigin = Math.sqrt(x * x + y * y);
 
   const checkOffscreen = () => {
     if (distanceFromOrigin > 1500) {
-      console.warn('Yo we got a far one dude', projectile);
-    }
-    if (
-      x < -isOffscreenThreshold || x > screenWidth + isOffscreenThreshold ||
-      y < -isOffscreenThreshold || y > screenHeight + isOffscreenThreshold
-    ) {
-      resetProjectile();
+      console.warn('Yo we got a far one dude (deleting)', projectile);
       removeProjectile(key);
     }
+    // if (
+    //   x < -isOffscreenThreshold ||
+    //   x > screenWidth + isOffscreenThreshold ||
+    //   y < -isOffscreenThreshold ||
+    //   y > screenHeight + isOffscreenThreshold
+    // ) {
+    //   console.warn('Projectile offscreen, deleting', projectile);
+    //   removeProjectile(key);
+    // }
   };
 
   useTick(checkOffscreen, 5);
@@ -74,7 +61,7 @@ const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
 
 const useProjectileCheckCollision = (projectile: Projectile) => {
   const { key } = projectile;
-  const { resetProjectile, removeProjectile } = useProjectileAtom(key);
+  const { removeProjectile } = useProjectileAtom(key);
 
   const enemies = useAtomValue(EnemyListSelector);
 
@@ -88,36 +75,44 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
     set(EnemyIDListAtom, enemyIDList => enemyIDList.filter(id => id !== enemyKey));
   });
 
-
-  const checkCollisions = () => {
-    const { x, y, size } = projectile;
-
-    const collisions = enemies.filter(enemy => {
-      const { x: enemyX, y: enemyY, size: enemySize } = enemy;
-
-      return (
-        x + size > enemyX &&
-        x < enemyX + enemySize &&
-        y + size > enemyY &&
-        y < enemyY + enemySize
-      );
-    });
-
-    if (collisions.length > 0) {
+  const checkEnemyCollisions = () => {
+    const collidedEnemy = checkCollisions(projectile, enemies);
+    if (collidedEnemy) {
       // TODO: COMBAT Real damage calculations here, and probably encapsulate all of this in a COMBAT system
 
       // Destroy the first enemy we hit
-      const enemy = collisions[0];
-      removeEnemy(enemy.key);
+      removeEnemy(collidedEnemy.key);
 
-      resetProjectile();
+      // Remove ourselves, duh
       removeProjectile(key);
     }
   };
 
-  useTick(checkCollisions);
+  useTick(checkEnemyCollisions);
 };
 
+// Pretty basic wrapper around useMovement for this specific projectile
+const useMove = (projectileOrKey: Projectile | string) => {
+  const key =
+    typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
+
+  const projectileAtom = ProjectileAtomFamily(key);
+  useMovement(projectileAtom);
+};
+
+
+const useJumpToCollision = (projectile: Projectile) => {
+  const { key } = projectile;
+  const setProjectile = useSetAtom(ProjectileAtomFamily(key));
+  const enemies = useAtomValue(EnemyListSelector);
+
+  useTick(() => {
+    const collisionPoint = projectCollision(projectile, enemies);
+    if (collisionPoint) {
+      setProjectile(p => ({ ...p, x: collisionPoint.x, y: collisionPoint.y }));
+    }
+  });
+};
 
 const useProjectile = (projectileOrKey: Projectile | string) => {
   const key = typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
@@ -126,6 +121,11 @@ const useProjectile = (projectileOrKey: Projectile | string) => {
 
   /* Hooks to perform the really re-usable aspects of the projectile. */
   useMove(projectile);
+
+  // TODO: PICKUP - This idea doesn't really work unless it's much closer to perfect
+  //  And it's starting to stress me out now smh
+  useJumpToCollision(projectile);
+
   useDeleteSelfWhenOffscreen(projectile);
   useProjectileCheckCollision(projectile);
 

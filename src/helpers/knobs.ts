@@ -1,24 +1,32 @@
 export const PLAYER_SIZE = 20;
 
-export const TICKS_BETWEEN_ATTACKS = 1;
-export const BASE_PROJECTILE_SPEED = 15;
-export const ACCELERATION_FACTOR = 0.05;
-export const MAX_PROJECTILE_SPEED = 250;
+export const TICK_FACTOR = 1;
 
+// Core Projectile knobs
+export const TICKS_BETWEEN_ATTACKS = 2;
+export const BASE_PROJECTILE_SPEED = 30;
+export const ACCELERATION_FACTOR = 0.0;
+export const MAX_PROJECTILE_SPEED = 7;
+export const PROJECTILE_SIZE = 10;
+export const MAX_TARGET_DISTANCE = 350;
 
-export const DESIRED_ENEMY_SPAWN_RATE = 15; // One of the main real game knobs
+// Every tick there's a DESIRED_ENEMY_SPAWN_RATE / FRAMERATE chance of spawning an enemy (I guess lol)
+export const DESIRED_ENEMY_SPAWN_RATE = 20;
 export const ENEMY_DEATH_TIMEOUT = 300;
-export const ENEMY_SPEED = 15;
+export const ENEMY_SPEED = 13;
 
 export const ORBIT_RADIUS = 150;
 export const ORBIT_EAGERNESS = 30;
 
 // After switching to Jotai the Hard max seems to be 500, especially when calculating
 //   the distance between the player and the enemy when it takes a huge performance hit.
-export const MAX_ENEMIES = 150; // Soft cap of 300 probably
+export const MAX_ENEMIES = 100; // Soft cap of 300 probably
 
 export const MIN_ENEMY_SIZE = 10;
 export const MAX_ENEMY_SIZE = 30;
+
+// The max number of steps between each tick to simulate
+export const MAX_BETWEEN_TICK_RESOLUTION = 10;
 
 
 // If we fall more than the max behind, don't try to catch up too far

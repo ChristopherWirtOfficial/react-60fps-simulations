@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 // TODO: This file needs to be cleaned and code-split pretty urgently!
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
-import { now, uuid } from '../helpers';
-import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS } from '../knobs';
+import { now, uuid } from 'helpers';
+import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS, TICK_FACTOR } from 'helpers/knobs';
 
 export type TickFunctor = {
   readonly id: string;
@@ -16,8 +16,8 @@ export type TickFunctor = {
 //    This would be easy to do by just having another pane to the right of the play area. Even if squares draw over it lmao
 
 // TODO: This is basically doing nothing right now, but theoretically it could be used to have physics run at a higher rate than the framerate
-export const BASE_TICKRATE = 60;
-export const FRAMERATE = 60;
+export const BASE_TICKRATE = 60 * TICK_FACTOR;
+export const FRAMERATE = 60 * TICK_FACTOR;
 
 const TICK_LENGTH = 1000 / BASE_TICKRATE;
 if (TICK_LENGTH <= 1) {
@@ -147,8 +147,8 @@ setTimeout(deferPulse, timeout);
   @param frequency: How many ticks between each execution of the functor
 */
 const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) => {
-  const [id] = useState(uuid());
-  const [progress, setProgress] = useState(0);
+  const [ id ] = useState(uuid());
+  const [ progress, setProgress ] = useState(0);
 
   /*
     This useEffect will register or re-register a functor for the static `id` of this hook instance.
@@ -187,7 +187,7 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
     return () => {
       tickFunctors = tickFunctors.filter(f => f.functor !== functor);
     };
-  }, [id, functorArg, frequency, isPhysics]);
+  }, [ id, functorArg, frequency, isPhysics ]);
 
   return { progress };
 };
