@@ -11,6 +11,7 @@ const createCornersFromBox = (box: Moveable) => [
 const TOLERANCE = 1 + 0.25;
 
 // The most basic implementation, checks for EXACT collisions of two square boxes
+// this seems to not be a very general solution
 const checkCollisions = (subject: Moveable, moveables: Moveable[]) => {
   const subjectCorners = createCornersFromBox(subject);
 
