@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
-
 import { Flex } from '@chakra-ui/react';
 import useInitScreen from 'atoms/Screen/useScreen';
+import React, { FC } from 'react';
+
 import TileGridEnemies from './Enemies/TileGridEnemies';
 import TileMinerPlayerBox from './Player/TileMinerPlayer';
-import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
+import TileMinerDebug from './Player/TilePlayerDebug';
 import GunProjectiles from './Player/TilePlayerGun/GunProjectiles';
+import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
 
 
 const TileMiner: FC = () => {
@@ -29,6 +30,7 @@ const TileMiner: FC = () => {
       <GunProjectiles />
       <TileGridEnemies />
       <TileMinerPlayerBox />
+      <TileMinerDebug />
     </Flex>
   );
 };

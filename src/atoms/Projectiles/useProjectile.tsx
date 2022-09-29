@@ -1,65 +1,40 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import useTick from 'hooks/useTick';
-import { useAtomCallback } from 'jotai/utils';
-import { Projectile } from 'types/Boxes';
-import projectCollision from 'helpers/collisions/projectCollisions';
+import getBoxKey from 'helpers/boxes/getBoxKey';
 import checkCollisions from 'helpers/collisions/checkCollisions';
-import {
-  ProjectileAtomFamily,
-  Projectiles,
-} from './ProjectileAtomFamily';
-import useProjectiles from './useProjectileKeys';
-import EnemyListSelector from '../Enemies/EnemyListSelector';
-import EnemyIDListAtom from '../Enemies/EnemyIDListAtom';
+import projectCollision from 'helpers/collisions/projectCollisions';
+import useTick from 'hooks/useTick';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtomCallback } from 'jotai/utils';
+import { BoxTypeOrKey, Projectile } from 'types/Boxes';
+
 import useMovement from '../../hooks/Entities/useMovement';
+import EnemyIDListAtom from '../Enemies/EnemyIDListAtom';
+import EnemyListSelector from '../Enemies/EnemyListSelector';
+import { ProjectileAtomFamily } from './ProjectileAtomFamily';
+import useProjectileAtom from './useProjectileAtom';
 
-/*
-  Manage an individual projectile.
-*/
-const useProjectileAtom = (key: string) => {
-  const [ projectile, setProjectileAtom ] = useAtom(Projectiles(key));
-  const { removeProjectile } = useProjectiles();
-
-  return {
-    projectile,
-    setProjectileAtom,
-    removeProjectile,
-  };
-};
 
 /* Check every few ticks if the projectile is off-screen, and just delete it if it is */
-const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
+export const useDeleteSelfWhenOffscreen = (projectile: Projectile) => {
   const { key, x, y } = projectile;
   const { removeProjectile } = useProjectileAtom(key);
 
-  const isOffscreenThreshold = 2000; // #px offscreen it should be before deleting. Generous and should be.
-  const { width: screenWidth, height: screenHeight } = useAtomValue(
-    ScreenDimensionsSelector,
-  );
+  const IS_OFFSCREEN_THRESHOLD = 5000; // #px offscreen it should be before deleting. Generous and should be.
 
   const distanceFromOrigin = Math.sqrt(x * x + y * y);
 
   const checkOffscreen = () => {
-    if (distanceFromOrigin > 1500) {
-      console.warn('Yo we got a far one dude (deleting)', projectile);
+    if (distanceFromOrigin > IS_OFFSCREEN_THRESHOLD) {
+      // console.warn('Projectile is more than ', IS_OFFSCREEN_THRESHOLD, 'px away. Self-deleting.', projectile);
       removeProjectile(key);
     }
-    // if (
-    //   x < -isOffscreenThreshold ||
-    //   x > screenWidth + isOffscreenThreshold ||
-    //   y < -isOffscreenThreshold ||
-    //   y > screenHeight + isOffscreenThreshold
-    // ) {
-    //   console.warn('Projectile offscreen, deleting', projectile);
-    //   removeProjectile(key);
-    // }
   };
 
   useTick(checkOffscreen, 5);
 };
 
-const useProjectileCheckCollision = (projectile: Projectile) => {
+// TODO: Too tightly coupled to enemies, should be more generic
+export const useProjectileCheckCollision = (projectile: Projectile) => {
   const { key } = projectile;
   const { removeProjectile } = useProjectileAtom(key);
 
@@ -92,16 +67,15 @@ const useProjectileCheckCollision = (projectile: Projectile) => {
 };
 
 // Pretty basic wrapper around useMovement for this specific projectile
-const useMove = (projectileOrKey: Projectile | string) => {
-  const key =
-    typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
+export const useProjectileMove = (projectileOrKey: BoxTypeOrKey<Projectile>) => {
+  const key = getBoxKey(projectileOrKey);
 
   const projectileAtom = ProjectileAtomFamily(key);
   useMovement(projectileAtom);
 };
 
 
-const useJumpToCollision = (projectile: Projectile) => {
+export const useJumpToCollision = (projectile: Projectile) => {
   const { key } = projectile;
   const setProjectile = useSetAtom(ProjectileAtomFamily(key));
   const enemies = useAtomValue(EnemyListSelector);
@@ -114,15 +88,15 @@ const useJumpToCollision = (projectile: Projectile) => {
   });
 };
 
-const useProjectile = (projectileOrKey: Projectile | string) => {
-  const key = typeof projectileOrKey === 'string' ? projectileOrKey : projectileOrKey.key;
 
+const useProjectile = (projectileOrKey: BoxTypeOrKey<Projectile>) => {
+  const key = getBoxKey(projectileOrKey);
   const { projectile } = useProjectileAtom(key);
 
   /* Hooks to perform the really re-usable aspects of the projectile. */
-  useMove(projectile);
+  useProjectileMove(projectile);
 
-  // TODO: PICKUP - This idea doesn't really work unless it's much closer to perfect
+  // TODO: COLLISIONS - This idea doesn't really work unless it's much closer to perfect
   //  And it's starting to stress me out now smh
   useJumpToCollision(projectile);
 

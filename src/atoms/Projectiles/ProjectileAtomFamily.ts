@@ -4,6 +4,8 @@ import { Projectile, ProjectileAtomDefinition, ProjectileIntention } from 'types
 import { uuid } from 'helpers';
 import EnemyAtomFamily from 'atoms/Enemies/EnemyAtomFamily';
 
+// NOTE: Keep in mind, this approach might make very little sense by the time we
+//  have multiple projectile sources, or types of projectiles
 
 // This holds all of the data except for the target, since it would get stale
 // TODO: Consider not exposing the atom family at all, and just using Derived write atoms or something
@@ -14,6 +16,10 @@ export const ProjectileAtomFamily = atomFamily((key: string) => atomWithReset<Pr
 // The target is stored in the EnemyAtomFamily, but pulled into the Projectiles selector family to keep it all fresh
 export const Projectiles = atomFamily((key: string) => atom<Projectile, ProjectileAtomDefinition>(get => {
   const projectile = get(ProjectileAtomFamily(key));
+
+  // TODO: TARGETS - Decouple targets from projectiles
+  //  But also, yo I'm dumb, this literally just makes up an enemy to target if the key is fake lmao
+  //  That's why all of the projectiles end up sharing a color lmao
   const target = get(EnemyAtomFamily(projectile.targetKey));
 
   return {

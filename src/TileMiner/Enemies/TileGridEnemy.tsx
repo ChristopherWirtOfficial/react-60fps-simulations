@@ -1,26 +1,28 @@
 import { Box, Text } from '@chakra-ui/react';
-import { TileEnemy, TileEnemyIdentifer, TileGridEnemyAtomFamily } from 'atoms/Enemies/TileEnemies/TileGridEnemies';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
 import { useAtomValue } from 'jotai';
 import React, { FC } from 'react';
+import { TileEnemy, TileEnemyIdentifer, TileGridEnemyAtomFamily } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
 
 
 const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   const {
-    x, y, gridX, gridY,
+    gridX, gridY,
   } = tileEnemy;
   return (
     <Box
-      fontSize='20'
-      fontWeight='bold'
-      color='white'
+      fontSize='12'
+      fontWeight='semibold'
+      color='lightgray'
+      p={ 2 }
+      lineHeight='1em'
     >
       <Text>
-        { gridX }, { gridY }
+        ({ gridX }, { gridY })
       </Text>
-      <Text>
+      { /* <Text>
         { x.toFixed(0) }, { y.toFixed(0) }
-      </Text>
+      </Text> */ }
     </Box>
   );
 };
@@ -30,7 +32,8 @@ const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
   const styles = useBoxStyles(tileEnemy);
 
-  // TODO: Position the enemy based on the x and y coordinates
+  const { health } = tileEnemy;
+
   return (
     <Box
       pos='absolute'
@@ -45,6 +48,15 @@ const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
       border='1px solid white'
 
     >
+      <Box
+        pos='absolute'
+        top='50%'
+        left='50%'
+        transform='translate(-50%, -50%)'
+        fontSize='20'
+        color='white'
+      >{ health }
+      </Box>
       <TileGridEnemyDebug tileEnemy={ tileEnemy } />
     </Box>
   );

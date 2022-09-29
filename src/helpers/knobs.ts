@@ -5,17 +5,21 @@ export const TICK_FACTOR = 1;
 // Tile Miner knobs
 // Square, for now, but with an odd number of tiles to have a center
 export const TILE_ENEMY_DEBUG_ON = false;
-export const MAP_SIZE = 7;
+export const MAP_SIZE = 11; // SIZExSIZE grid of tiles (and enemies on most of those tiles)
 export const ENEMY_SPAWN_PADDING = 10;
 export const TILE_SIZE = 100;
 
 // Core Projectile knobs
-export const TICKS_BETWEEN_ATTACKS = 350;
-export const BASE_PROJECTILE_SPEED = 3;
+export const TICKS_BETWEEN_ATTACKS = 5;
+export const BASE_PROJECTILE_SPEED = 10;
 export const ACCELERATION_FACTOR = 0.0;
 export const MAX_PROJECTILE_SPEED = 7;
 export const PROJECTILE_SIZE = 10;
 export const MAX_TARGET_DISTANCE = 350;
+export const PROJECTILE_DAMAGE = 25;
+
+export const LOCK_FIRING_DIRECTION = false;
+export const FIRING_DIRECTION_LOCK = Math.PI / 4; // 45 degrees
 
 // Every tick there's a DESIRED_ENEMY_SPAWN_RATE / FRAMERATE chance of spawning an enemy (I guess lol)
 export const DESIRED_ENEMY_SPAWN_RATE = 20;

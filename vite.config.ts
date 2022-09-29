@@ -15,8 +15,10 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, './src'),
       "@components": path.resolve(__dirname, './src/components'),
+      "components": path.resolve(__dirname, './src/components'),
       "hooks": path.resolve(__dirname, './src/hooks'),
       "atoms": path.resolve(__dirname, './src/atoms'),
+      "TileMiner": path.resolve(__dirname, './src/TileMiner'),
       "helpers": path.resolve(__dirname, './src/helpers'),
     }
   }

@@ -1,5 +1,5 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import { TILE_SIZE } from 'helpers/knobs';
+import { FIRING_DIRECTION_LOCK, LOCK_FIRING_DIRECTION, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { TileMinerPlayer } from 'types/TileMinerPlayer';
 
@@ -39,12 +39,19 @@ export const PlayerSelector = atom(get => {
 
   const lastMouseClick = get(LastMouseClickSelector);
 
+  // TODO: FIRING DIRECTION - This is so important and so hard to find lmao. I should move it
+  //  I could make an AtomFamily for this, where every possible Player has a firing direction they can pull off of it
+  // TODO: PROJECTILE SOURCES - I'll think about this a lot LOT more when I actually have multiple projectile sources lmao
   const firingDirectionRad = lastMouseClick ?
     Math.atan2(lastMouseClick.y - y, lastMouseClick.x - x) :
     player.firingDirection ?? 0;
 
-  // Lock in the firing direction to the nearest 45 degrees
-  const firingDirection = Math.round(firingDirectionRad / (Math.PI / 4)) * (Math.PI / 4);
+  const lockAngle = FIRING_DIRECTION_LOCK;
+
+  // Lock in the firing direction to the lockAngle, or don't if that's undefined
+  const firingDirection = LOCK_FIRING_DIRECTION ?
+    Math.round(firingDirectionRad / lockAngle) * lockAngle :
+    firingDirectionRad;
 
   return {
     ...player,

@@ -7,6 +7,8 @@
   Track changes to the value of the metric over time for later analysis
 */
 
+// 6 months later and I'm just now remembering that I wrote this. I'm pretty sure this is really smart, but it could be dumb lmao.
+
 import { useEffect, useState } from 'react';
 import useTick from './useTick';
 
