@@ -12,6 +12,9 @@ export interface Box {
   color?: string;
 }
 
+// Useful for pulling the key out of a Box for library hooks, idk
+export type BoxTypeOrKey<BoxType extends Box> = BoxType | Pick<BoxType, 'key'>;
+
 
 /*
   Moveable boxes operate with vectors that are acted upon by specified Movement Step functions.
@@ -64,6 +67,18 @@ export interface Enemy extends Moveable {
 export interface Projectile extends Moveable {
   readonly key: string;
   damage: number;
+
+  // TODO: The new game's projectiles don't have a target, they just have a direction
+  // The only thing that needs to know about the target is new projectiles being spawned.
+  // And the only reason it "makes sense" to have it here is to recycle the target at the end of the projectile's lifecycle.
+  // Which only makes sense if the target is going to be killed by the projectile. It's not ACTUALLY the solution.
+  // The real solution is to track eligible targets based on bespoke game logic, and only fire toward targets that
+  //   are on that list. For a basic game, the list is all enemies that don't have projectiles flying toward them that
+  //   would perform a final blow on the enemy. This would have to also know how much damage is left to deal if all of the
+  //   other projectiles in flight for that target actually hit it. This is FAR from impossible, but if any projectiles miss it will
+  //   suddenly feel clunky. Targets are DEFINITELY business logic though, not library concerns.
+  // TODO: Decouple the DrawTest's targeting system from the Projectiles entirely
+  // Projectiles should NEVER AGAIN have a coupling to any specific Enemy or Player system. They just fly and hit.
   target: Moveable;
 
   // TODO: Projectile sources

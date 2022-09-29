@@ -1,34 +1,15 @@
-import React, { FC, useRef, useState } from 'react';
-import { createUseStyles } from 'react-jss';
+import FPSCounter from 'components/FPSCounter';
+import { SHOW_AXIS, SHOW_FPS } from 'helpers/knobs';
 import { useAtomValue } from 'jotai';
+import React, { FC } from 'react';
+import { createUseStyles } from 'react-jss';
+
+import MousePositionAtom from '../atoms/MousePositionAtom';
+import { ScreenDimensionsSelector } from '../atoms/Screen/ScreenNodeAtom';
 import useScreen from '../atoms/Screen/useScreen';
-import PlayerProjectiles from '../components/PlayerProjectiles';
 import Enemies from '../components/Enemies';
 import Player from '../components/Player';
-import { ScreenDimensionsSelector } from '../atoms/Screen/ScreenNodeAtom';
-import MousePositionAtom from '../atoms/MousePositionAtom';
-import useTick from '../hooks/useTick';
-import { SHOW_FPS, SHOW_AXIS } from 'helpers/knobs';
-
-let currentFps = 0;
-// Use requestAnimationFrame to truly compute the framerate
-const trackFps = (last: number) => {
-  if (!SHOW_FPS) {
-    return;
-  }
-
-  requestAnimationFrame(() => {
-    const now = Date.now();
-    const delta = now - last;
-
-    currentFps = 1000 / delta;
-
-    trackFps(now);
-  });
-};
-
-const startTime = performance.now();
-requestAnimationFrame(() => trackFps(startTime));
+import PlayerProjectiles from '../components/PlayerProjectiles';
 
 
 const useStyles = createUseStyles({
@@ -39,30 +20,6 @@ const useStyles = createUseStyles({
     height: '800px',
   },
 });
-
-
-const FPSCounter: FC = () => {
-  const [ last60TickTimes, setLast60TickTimes ] = useState<number[]>([]);
-  const lastFrameTimeRef = useRef<number>(performance.now());
-
-  useTick(() => {
-    // Rolling average FPS based on timerRef.current
-    const now = performance.now();
-    const lastFrameTime = lastFrameTimeRef.current;
-    const delta = now - lastFrameTime;
-    lastFrameTimeRef.current = now;
-    setLast60TickTimes(prevVal => [ ...prevVal, delta ].slice(-60));
-  });
-
-  const averageTickLength = last60TickTimes.reduce((acc, curr) => acc + curr, 0) / last60TickTimes.length;
-  const fps = 1000 / averageTickLength;
-
-  return (
-    <div>
-      <span>FPS: { fps.toFixed(0) } ({ currentFps.toFixed(0) })</span>
-    </div>
-  );
-};
 
 const DrawTest: FC = () => {
   const {

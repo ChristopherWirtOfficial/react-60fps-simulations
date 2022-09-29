@@ -20,27 +20,9 @@ export const getDistance = (x1: number, y1: number, x2: number, y2: number) => {
 
 export const uuid = (type?: string) => `${type ?? ''}${uuidv4()}`;
 
-// NOTE: This throttle is UNTESTED because I implemented it (from partial copy/paste) for log, but then I didn't use it.
-const throttle = (callback: Function, time: number) => {
-  // initialize throttlePause variable outside throttle function
-  let throttlePause: boolean;
-
-  const throt = () => {
-  // don't run the function if throttlePause is true
-    if (throttlePause) return;
-
-    // set throttlePause to true after the if condition. This allows the function to be run once
-    throttlePause = true;
-
-    // setTimeout runs the callback within the specified time
-    setTimeout(() => {
-      callback();
-
-      // throttlePause is set to false once the function has been called, allowing the throttle function to loop
-      throttlePause = false;
-    }, time);
-  };
-
-  return throt;
-};
-
+// eslint-disable-next-line max-len
+export const randomColor = (highestVal: number = 220) => `rgb(
+  ${Math.floor(Math.random() * highestVal)},
+  ${Math.floor(Math.random() * highestVal)},
+  ${Math.floor(Math.random() * highestVal)}
+)`;

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from 'helpers';
 import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS, TICK_FACTOR } from 'helpers/knobs';
+import { useAtomValue } from 'jotai';
+import { EverythingLoadedGameIsInitialized } from 'atoms/InitializationLoading';
 
 export type TickFunctor = {
   readonly id: string;
@@ -150,6 +152,9 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
   const [ id ] = useState(uuid());
   const [ progress, setProgress ] = useState(0);
 
+  // Only queue up ticks to run if the atomic state of the game is considered to be initialized
+  const ticksCanRun = useAtomValue(EverythingLoadedGameIsInitialized);
+
   /*
     This useEffect will register or re-register a functor for the static `id` of this hook instance.
     For every use of the useTick hook, an ID is generated and remains static to the hook instance. We
@@ -162,6 +167,10 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
      has 0 stale references to other Reactive properties, instead of letting them get stale in the old functor that was passed in.
   */
   useEffect(() => {
+    if (!ticksCanRun) {
+      return () => {};
+    }
+
     const functor = () => {
       // TODO: This is like this to let us track progress, but that code wasn't working. It's in git somewhere, but also it didn't work lol
       // setProgress here or something
@@ -184,10 +193,12 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
 
 
     tickFunctors = newTickFunctors;
-    return () => {
+    const cleanUp = () => {
       tickFunctors = tickFunctors.filter(f => f.functor !== functor);
     };
-  }, [ id, functorArg, frequency, isPhysics ]);
+
+    return cleanUp;
+  }, [ ticksCanRun, id, functorArg, frequency, isPhysics ]);
 
   return { progress };
 };

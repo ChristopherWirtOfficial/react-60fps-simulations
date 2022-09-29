@@ -139,7 +139,7 @@ const checkCollision =
         return true;
       }
 
-      // TODO: PICKUP: The other half of this function is unfinished
+      // TODO: COLLISIONS: The other half of this function is unfinished
       return false;
 
       // Check if any of the moveable's CV's edge vectors are intersecting with any of the subject's CV's edge vectors

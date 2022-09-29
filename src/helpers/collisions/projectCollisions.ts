@@ -36,7 +36,7 @@ const checkDeltaVectorCollision = (deltaVectorA: DeltaVector, deltaVectorB: Delt
 };
 
 
-// TODO: PICKUP - Go back to the original idea for a collision method
+// TODO: COLLISIONS - Go back to the original idea for a collision method
 // Check between 0 and MAX_BETWEEN_TICK_RESOLUTION fake steps along the Delta Vector
 
 // const checkCollisionsSimple = (subject: Moveable, moveables: Moveable[]) => {
@@ -76,7 +76,7 @@ const generateFakeBoxes = (moveable: Moveable) => {
 };
 
 
-// TODO: PICKUP - Although this is basically how it should work, the collision detection needs to be closer to perfect.
+// TODO: COLLISIONS - Although this is basically how it should work, the collision detection needs to be closer to perfect.
 //   My naive "fix" is to find a more "middle" fake box that collides much more closesly with the average of the enemy's fake boxes idk
 // The real answer is definitely to just do this more correctly and find the exact point of collision and warp both parties to it
 // Know which enemy we'll hit and where we should be to hit them

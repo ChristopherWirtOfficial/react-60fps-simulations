@@ -2,6 +2,7 @@ import { atomFamily, atomWithDefault } from 'jotai/utils';
 
 import enterOrbit from 'hooks/Entities/movement-steps/enterOrbit';
 import { Enemy } from 'types/Boxes';
+import { randomColor } from 'helpers';
 import { ENEMY_SPEED, MIN_ENEMY_SIZE, ORBIT_RADIUS, MAX_ENEMY_SIZE } from '../../helpers/knobs';
 import { ScreenDimensionsSelector } from '../Screen/ScreenNodeAtom';
 
@@ -40,7 +41,7 @@ export default atomFamily((key: string) => atomWithDefault(get => {
     damage: 10,
     orbitRadius,
     // Pick a random color from rgb values with high contrast to white
-    color: `rgb(${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)}, ${Math.floor(Math.random() * 220)})`,
+    color: randomColor(),
     movementSteps: [ enterOrbit ],
     direction,
   };
