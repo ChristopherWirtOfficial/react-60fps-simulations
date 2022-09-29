@@ -1,3 +1,4 @@
+import { ScreenDimensionsLoaded } from 'atoms/InitializationLoading';
 import { useAtomValue } from 'jotai';
 
 import useAtomicRef from '../../hooks/useAtomicRef';
@@ -28,13 +29,14 @@ import { ScreenDimensionsSelector, ScreenNodeAtom } from './ScreenNodeAtom';
 
 // Small bridge between the Mouse hook, the ScreenRef AtomicRef, and the MousePositionAtom
 const useInitScreen = () => {
-  const [ callbackRef, node ] = useAtomicRef(ScreenNodeAtom as any);
-
+  const [ callbackRef, node ] = useAtomicRef(ScreenNodeAtom);
 
   const screenDimensions = useAtomValue(ScreenDimensionsSelector);
+  const screenDimensionsLoaded = useAtomValue(ScreenDimensionsLoaded);
   // const { mouseX, mouseY } = useMousePosition();
 
   return {
+    screenDimensionsLoaded,
     screenRef: callbackRef, // Mileage may vary lmao this can only get tagged on to an element, not passed to most libraries I guess
     width: screenDimensions.width,
     height: screenDimensions.height,

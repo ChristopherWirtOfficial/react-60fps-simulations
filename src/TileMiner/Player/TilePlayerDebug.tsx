@@ -50,8 +50,8 @@ const TileMinerDebug: FC = () => {
       >
         <FPSCounter />
 
-        { /* <Box>Firing Direction: { player.firingDirection?.toFixed(3) }rad</Box> */ }
-        { /* <Box>Gun Tip Position: { gunTipPos?.x.toFixed(2) }, { gunTipPos?.y.toFixed(2) }</Box> */ }
+        <Box>Firing Direction: { player.firingDirection?.toFixed(3) }rad</Box>
+        <Box>Gun Tip Position: { gunTipPos?.x.toFixed(2) }, { gunTipPos?.y.toFixed(2) }</Box>
         { /* <Box>Gun Tip Screen Position: { gunTipScreenPos?.x.toFixed(2) }, { gunTipScreenPos?.y.toFixed(2) }</Box> */ }
         { /* <Box>Last Mouse Click (Screen):
           <Box as='span' color='gold'>

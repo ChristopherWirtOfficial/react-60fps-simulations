@@ -1,6 +1,7 @@
+import { ScreenDimensionsLoaded } from 'atoms/InitializationLoading';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { TileMinerPlayer } from 'types/TileMinerPlayer';
 
 export const GunTipScreenPositionAtom = atom<{ x: number; y: number } | undefined>(undefined);
@@ -30,25 +31,22 @@ export const GunTipPositionSelector = atom<TileMinerGun | undefined>(get => {
 // TODO: For now, we're just going to use the player's position as the gun's position.
 const useGun = (gun: TileMinerPlayer) => {
   const ref = useRef<HTMLDivElement>(null);
-
+  const screenDimensionsLoaded = useAtomValue(ScreenDimensionsLoaded);
   const setGunTipScreenPosition = useSetAtom(GunTipScreenPositionAtom);
 
-  const setGunTipPosition = useCallback(() => {
-    if (!ref.current) {
-      return;
+
+  // I don't think this is perfect, but it's not too bad
+  useLayoutEffect(() => {
+    if (ref.current && screenDimensionsLoaded) {
+      const rect = ref.current.getBoundingClientRect();
+      const x = rect.x + rect.width / 2;
+      const y = rect.y + rect.height / 2;
+
+      setGunTipScreenPosition({ x, y });
+    } else {
+      console.warn('No ref.current for guntip');
     }
-
-    const rect = ref.current.getBoundingClientRect();
-    const x = rect.x + rect.width / 2;
-    const y = rect.y + rect.height / 2;
-
-    setGunTipScreenPosition({ x, y });
-  }, [ setGunTipScreenPosition ]);
-
-  // TODO: How the fuck do you get the position of the gun tip the first time?
-  useEffect(() => {
-    setGunTipPosition();
-  }, [ gun.firingDirection, setGunTipPosition ]);
+  }, [ gun, setGunTipScreenPosition, screenDimensionsLoaded ]);
 
   const gunTipPosition = useAtomValue(GunTipPositionSelector);
 
