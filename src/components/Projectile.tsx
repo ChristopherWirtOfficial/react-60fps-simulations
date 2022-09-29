@@ -17,7 +17,6 @@ const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
 
   const styles = useBoxStyles(projectile);
 
-  // TODO: Make this (and every other box in the useBoxStyles family) a Chakra component that speaks Box
   return (
     <>
 

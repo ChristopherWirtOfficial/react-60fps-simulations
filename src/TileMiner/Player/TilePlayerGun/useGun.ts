@@ -1,6 +1,6 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { TileMinerPlayer } from 'types/TileMinerPlayer';
 
 export const GunTipScreenPositionAtom = atom<{ x: number; y: number } | undefined>(undefined);
