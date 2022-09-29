@@ -7,7 +7,7 @@ export const TICK_FACTOR = 1;
 export const TILE_ENEMY_DEBUG_ON = false;
 export const MAP_SIZE = 7;
 export const ENEMY_SPAWN_PADDING = 10;
-export const TILE_SIZE = 250;
+export const TILE_SIZE = 100;
 
 // Core Projectile knobs
 export const TICKS_BETWEEN_ATTACKS = 2;

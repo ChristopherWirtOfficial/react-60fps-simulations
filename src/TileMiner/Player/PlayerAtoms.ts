@@ -37,9 +37,12 @@ export const PlayerSelector = atom(get => {
 
   const lastMouseClick = get(LastMouseClickSelector);
 
-  const firingDirection = lastMouseClick ?
+  const firingDirectionRad = lastMouseClick ?
     Math.atan2(lastMouseClick.y - y, lastMouseClick.x - x) :
-    player.firingDirection;
+    player.firingDirection ?? 0;
+
+  // Lock in the firing direction to the nearest 45 degrees
+  const firingDirection = Math.round(firingDirectionRad / (Math.PI / 4)) * (Math.PI / 4);
 
   return {
     ...player,

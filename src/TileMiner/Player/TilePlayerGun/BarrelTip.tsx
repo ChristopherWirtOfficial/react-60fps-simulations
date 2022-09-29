@@ -1,6 +1,6 @@
+import { Box } from '@chakra-ui/react';
 import React, { FC } from 'react';
 
-import { Box } from '@chakra-ui/react';
 import { useTileMiner } from '../useTileMinerPlayer';
 import useGun from './useGun';
 
