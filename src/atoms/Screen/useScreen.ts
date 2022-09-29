@@ -1,5 +1,4 @@
 import { useAtomValue } from 'jotai';
-import { useEffect } from 'react';
 
 import useAtomicRef from '../../hooks/useAtomicRef';
 import { ScreenDimensionsSelector, ScreenNodeAtom } from './ScreenNodeAtom';
@@ -33,7 +32,7 @@ const useInitScreen = () => {
 
 
   const screenDimensions = useAtomValue(ScreenDimensionsSelector);
-  const { mouseX, mouseY } = useMousePosition();
+  // const { mouseX, mouseY } = useMousePosition();
 
   return {
     screenRef: callbackRef, // Mileage may vary lmao this can only get tagged on to an element, not passed to most libraries I guess
@@ -41,8 +40,8 @@ const useInitScreen = () => {
     height: screenDimensions.height,
     screenX: screenDimensions.x,
     screenY: screenDimensions.y,
-    mouseX,
-    mouseY,
+    // mouseX,
+    // mouseY,
   };
 };
 
