@@ -14,6 +14,7 @@ module.exports = {
         "react/self-closing-comp": 0,
         "react/jsx-props-no-spreading": 0,
         "@typescript-eslint/no-use-before-define": 0,
+        "react/react-in-jsx-scope": 0,
         // END TEST OVERRIDES
 
         // Rules below this point are real overrides. Rules above this are likely temporary overrides

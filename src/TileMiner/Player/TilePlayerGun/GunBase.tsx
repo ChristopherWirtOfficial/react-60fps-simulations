@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
 import React, { FC } from 'react';
-import TileMinerGunBarrel from './GunBarrel';
+
 import { PlayerSelector } from '../PlayerAtoms';
+import TileMinerGunBarrel from './GunBarrel';
 
 
 // Positioned inside of the TileMinerPlayerBox component as a barrel that spins
@@ -20,10 +21,10 @@ const TileMinerGun: FC = () => {
       pos='absolute'
       top='50%'
       left='50%'
-        // transform and rotate the barrel
-      transform={ `translate(-50%, -50%) rotate(${firingDirection}rad)` }
+      // transform and rotate the barrel
+      // TODO: Rotation is negated because our angle is currently measured counter-clockwise lmao
+      transform={ `translate(-50%, -50%) rotate(${-firingDirection}rad)` }
       transition='rotate 0.1s'
-      rotate=''
       w={ sizeInEm }
       h={ sizeInEm }
       bg='darkgray'

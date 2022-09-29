@@ -9,6 +9,8 @@ export const useTileMinerClickHandler = () => {
     const handleMouseUp = (e: MouseEvent) => {
       const { clientX, clientY } = e;
 
+      console.log('MOUSE UP', clientX, clientY);
+
       setLastMouseClick({ x: clientX, y: clientY });
     };
     window.addEventListener('mouseup', handleMouseUp);

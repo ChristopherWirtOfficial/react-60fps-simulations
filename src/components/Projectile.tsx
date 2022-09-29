@@ -8,6 +8,8 @@ import useBoxStyles from '../hooks/Entities/useBoxStyles';
 
 const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
   const projectile = useProjectile(projectileKey);
+
+  // console.log(projectile);
   const { target } = projectile;
 
   const nextPosition = collapseMovementSteps(projectile);
@@ -18,13 +20,14 @@ const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
   // TODO: Make this (and every other box in the useBoxStyles family) a Chakra component that speaks Box
   return (
     <>
-      <div
-        style={ {
-          ...styles,
-          opacity: target ? 1 : 1,
-          background: target?.color ?? 'black',
-        } }
-      />
+
+      <Box
+        { ...styles }
+        bg='red'
+        // zIndex={ 100 }
+      >
+        { /* <Box pos='absolute'>{ projectile.x } { projectile.y }</Box> */ }
+      </Box>
       { /* <div
         style={ {
           ...otherStyles,

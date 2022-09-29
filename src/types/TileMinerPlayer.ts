@@ -1,4 +1,4 @@
-import { Box, Moveable } from './Boxes';
+import { Box } from './Boxes';
 
 export interface TileMinerPlayer extends Box {
   damage: number;

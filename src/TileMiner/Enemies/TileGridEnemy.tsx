@@ -7,7 +7,7 @@ import React, { FC } from 'react';
 
 const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   const {
-    x, y, gridX, gridY, size, color,
+    x, y, gridX, gridY,
   } = tileEnemy;
   return (
     <Box
@@ -17,6 +17,9 @@ const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
     >
       <Text>
         { gridX }, { gridY }
+      </Text>
+      <Text>
+        { x.toFixed(0) }, { y.toFixed(0) }
       </Text>
     </Box>
   );

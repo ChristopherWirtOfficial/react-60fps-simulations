@@ -3,13 +3,17 @@ import React, { FC } from 'react';
 
 import { useTileMiner } from '../useTileMinerPlayer';
 import useGun from './useGun';
+import useShootProjectiles from './useShootProjectiles';
 
 const TIP_VISIBLE = false;
 
 // We go this deep to get the POSITION of the tip of the gun barrel, so we can spawn bullets from there.
 const TileMinerBarrelTip: FC = () => {
   const player = useTileMiner();
-  const { ref } = useGun(player);
+  const { ref, gunTipPosition } = useGun(player);
+
+  useShootProjectiles(player, gunTipPosition);
+
 
   // Define the "tip" of the barrel
   return (

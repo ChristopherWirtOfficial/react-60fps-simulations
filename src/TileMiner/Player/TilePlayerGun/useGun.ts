@@ -1,11 +1,17 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import { atom, useSetAtom } from 'jotai';
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { TileMinerPlayer } from 'types/TileMinerPlayer';
 
-const GunTipScreenPositionAtom = atom<{ x: number; y: number } | undefined>(undefined);
+export const GunTipScreenPositionAtom = atom<{ x: number; y: number } | undefined>(undefined);
 
-export const GunTipPositionSelector = atom(get => {
+// Position of the gun tip in the game's coordinates
+export type TileMinerGun = {
+  x: number;
+  y: number;
+};
+
+export const GunTipPositionSelector = atom<TileMinerGun | undefined>(get => {
   const { center } = get(ScreenDimensionsSelector);
   const gunTip = get(GunTipScreenPositionAtom);
 
@@ -15,9 +21,12 @@ export const GunTipPositionSelector = atom(get => {
 
   return {
     x: gunTip.x - center.x,
-    y: gunTip.y - center.y,
+
+    // NOTE: Screen Y is inverted from game Y since the screen's origin is at the top left
+    y: center.y - gunTip.y,
   };
 });
+
 // TODO: For now, we're just going to use the player's position as the gun's position.
 const useGun = (gun: TileMinerPlayer) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,12 +46,15 @@ const useGun = (gun: TileMinerPlayer) => {
   }, [ setGunTipScreenPosition ]);
 
   // TODO: How the fuck do you get the position of the gun tip the first time?
-  useLayoutEffect(() => {
+  useEffect(() => {
     setGunTipPosition();
   }, [ gun.firingDirection, setGunTipPosition ]);
 
+  const gunTipPosition = useAtomValue(GunTipPositionSelector);
+
   return {
     ref,
+    gunTipPosition,
   };
 };
 

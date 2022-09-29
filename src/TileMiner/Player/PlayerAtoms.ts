@@ -27,7 +27,9 @@ export const LastMouseClickSelector = atom(get => {
 
   return {
     x: lastMouseClick.x - center.x,
-    y: lastMouseClick.y - center.y,
+
+    // NOTE: Screen Y is inverted from game Y since the screen's origin is at the top left
+    y: center.y - lastMouseClick.y,
   };
 });
 

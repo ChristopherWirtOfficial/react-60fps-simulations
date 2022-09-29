@@ -5,6 +5,7 @@ import useInitScreen from 'atoms/Screen/useScreen';
 import TileGridEnemies from './Enemies/TileGridEnemies';
 import TileMinerPlayerBox from './Player/TileMinerPlayer';
 import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
+import GunProjectiles from './Player/TilePlayerGun/GunProjectiles';
 
 
 const TileMiner: FC = () => {
@@ -25,6 +26,7 @@ const TileMiner: FC = () => {
       alignItems='center'
       bg='darkslategray'
     >
+      <GunProjectiles />
       <TileGridEnemies />
       <TileMinerPlayerBox />
     </Flex>

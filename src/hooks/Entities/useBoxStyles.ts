@@ -14,7 +14,7 @@ export const useBoxPositioning = <T extends Box>(box: T) => {
 
   // Convert from our cartesian coordinates to CSS coordinates for transform
   const cssX = x + center.x;
-  const cssY = y + center.y;
+  const cssY = center.y - y;
 
   // Offset the X and Y by half the size of the box
   const trueX = cssX - size / 2;

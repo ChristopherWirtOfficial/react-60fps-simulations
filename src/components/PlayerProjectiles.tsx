@@ -36,17 +36,16 @@ const PlayerProjectiles: FC = () => {
   useFireProjectiles();
 
   return (
-    <div className="player-projectiles">
-
+    <div>
       <Box
-        pos="absolute"
+        pos='absolute'
         width={ `${MAX_TARGET_DISTANCE}px` }
         height={ MAX_TARGET_DISTANCE }
-        rounded="full"
-        border="4px solid red"
-        top="50%"
-        left="50%"
-        transform="translate(-50%, -50%)"
+        rounded='full'
+        border='4px solid red'
+        top='50%'
+        left='50%'
+        transform='translate(-50%, -50%)'
       />
       <div>Projectiles: { projectileKeys.length } </div>
       <div>Registered Functors: { getTickFunctors().length } </div>
