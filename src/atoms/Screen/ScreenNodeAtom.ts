@@ -3,7 +3,7 @@ import { atom } from 'jotai';
 export const ScreenNodeAtom = atom<HTMLDivElement | null>(null);
 
 // Viewport Camera position is defined in game coordinates, not screen coordinates
-export const ViewportCameraAtom = atom({ x: 0, y: 0 });
+export const ViewportCameraAtom = atom({ x: 0, y: 0, zoom: 1 });
 
 export const ScreenDimensionsSelector = atom(get => {
   const viewportCamera = get(ViewportCameraAtom);

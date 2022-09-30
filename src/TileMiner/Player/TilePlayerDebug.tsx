@@ -6,7 +6,7 @@ import useBoxStyles from 'hooks/Entities/useBoxStyles';
 import { getTickFunctors } from 'hooks/useTick';
 import { useAtomValue } from 'jotai';
 import React, { FC, useMemo } from 'react';
-import { TileGridEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
+import { EnemiesToRender, EnemiesWithHits, TileGridEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
 import { Box as BoxType } from 'types/Boxes';
 import { LastMouseClickAtom, LastMouseClickSelector, PlayerSelector } from './PlayerAtoms';
 import { GunTipPositionSelector, GunTipScreenPositionAtom } from './TilePlayerGun/useGun';
@@ -22,6 +22,8 @@ const TileMinerDebug: FC = () => {
   const { projectileKeys } = useProjectileKeys();
   const enemyKeys = useAtomValue(TileGridEnemyIDList);
   const onscreenEnemyKeys = useAtomValue(TileGridOnscreenEnemyIDList);
+  const enemiesWithHits = useAtomValue(EnemiesWithHits);
+  const enemiesToRender = useAtomValue(EnemiesToRender);
 
   const fakeMouseClickBox: BoxType = useMemo(() => ({
     key: 'fakeMouseClickBox',
@@ -50,8 +52,8 @@ const TileMinerDebug: FC = () => {
       >
         <FPSCounter />
 
-        <Box>Firing Direction: { player.firingDirection?.toFixed(3) }rad</Box>
-        <Box>Gun Tip Position: { gunTipPos?.x.toFixed(2) }, { gunTipPos?.y.toFixed(2) }</Box>
+        { /* <Box>Firing Direction: { player.firingDirection?.toFixed(3) }rad</Box> */ }
+        { /* <Box>Gun Tip Position: { gunTipPos?.x.toFixed(2) }, { gunTipPos?.y.toFixed(2) }</Box> */ }
         { /* <Box>Gun Tip Screen Position: { gunTipScreenPos?.x.toFixed(2) }, { gunTipScreenPos?.y.toFixed(2) }</Box> */ }
         { /* <Box>Last Mouse Click (Screen):
           <Box as='span' color='gold'>
@@ -62,10 +64,12 @@ const TileMinerDebug: FC = () => {
           <Box as='span' color='yellow'>{ lastMouseClick?.x.toFixed(2) }, { lastMouseClick?.y.toFixed(2) }</Box>
         </Box> */ }
         { /* <Box>Center: { center?.x.toFixed(2) }, { center?.y.toFixed(2) }</Box> */ }
-        <Box>Registered Functors: { getTickFunctors().length }</Box>
-        <Box>Projectiles: { projectileKeys.length } </Box>
-        <Box>Enemies: { enemyKeys.length } </Box>
-        <Box>Onscreen Enemies: { onscreenEnemyKeys.length } </Box>
+        { /* <Box>Registered Functors: { getTickFunctors().length }</Box> */ }
+        { /* <Box>Projectiles: { projectileKeys.length } </Box> */ }
+        { /* <Box>Enemies: { enemyKeys.length } </Box> */ }
+        { /* <Box>Onscreen Enemies: { onscreenEnemyKeys.length } </Box> */ }
+        <Box>Enemies With Hits: { enemiesWithHits.length } </Box>
+        { /* <Box>Enemies To Render: { enemiesToRender.length } </Box> */ }
       </Box>
       <Box { ...styles } bg='white' fontWeight='bold' />
     </>

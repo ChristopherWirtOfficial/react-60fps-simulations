@@ -10,8 +10,8 @@ export const ENEMY_SPAWN_PADDING = 10;
 export const TILE_SIZE = 100;
 
 // Core Projectile knobs
-export const TICKS_BETWEEN_ATTACKS = 5;
-export const BASE_PROJECTILE_SPEED = 10;
+export const TICKS_BETWEEN_ATTACKS = 10;
+export const BASE_PROJECTILE_SPEED = 5;
 export const ACCELERATION_FACTOR = 0.0;
 export const MAX_PROJECTILE_SPEED = 7;
 export const PROJECTILE_SIZE = 10;

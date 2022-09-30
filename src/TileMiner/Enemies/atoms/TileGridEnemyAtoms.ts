@@ -48,7 +48,10 @@ export const TileGridEnemyIDList = atomWithDefault(get => {
 
 export const TileGridOnscreenEnemyIDList = atom(get => {
   const enemies = get(TileGridEnemyIDList);
-  const { viewportCamera, width, height } = get(ScreenDimensionsSelector);
+  const { viewportCamera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
+
+  const width = realWidth / viewportCamera.zoom;
+  const height = realHeight / viewportCamera.zoom;
 
   // Based on the viewport and the enemies' grid positions, determine which enemies are onscreen
   const onscreenEnemies = enemies.filter(({ gridX, gridY }) => {
@@ -65,6 +68,18 @@ export const TileGridOnscreenEnemyIDList = atom(get => {
 
   return onscreenEnemies;
 });
+
+export const EnemiesWithHits = atom(get => {
+  const enemies = get(TileGridEnemyIDList);
+
+  const enemiesWithHits = enemies.filter(enemyId => {
+    const hits = get(ProjectileHitsAtomFamily(enemyId));
+    return hits.length > 0;
+  });
+
+  return enemiesWithHits;
+});
+
 
 // A pure function that calculates damage on an enemy and returns a new enemy
 // Doesn't help solve the problem of mutating the specific enemy that was hit. At all.
@@ -122,3 +137,20 @@ export const TileGridEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentif
     set(TileGridEnemyAtomFamily(enemyId), newEnemy);
   },
 ), compareTileEnemyIdentifiers);
+
+
+// The real list of Enemy Keys to actually render components for
+export const EnemiesToRender = atom(get => {
+  const onscreenEnemies = get(TileGridOnscreenEnemyIDList);
+  const enemiesWithHits = get(EnemiesWithHits);
+
+  const enemiesWithARenderReason = [ onscreenEnemies, enemiesWithHits ];
+  const enemyKeys = enemiesWithARenderReason.flat().map(({ key }) => key);
+
+  const uniqueEnemyKeys = Array.from(new Set(enemyKeys));
+
+  const allEnemyIds = get(TileGridEnemyIDList);
+  const enemiesToRender = allEnemyIds.filter(({ key }) => uniqueEnemyKeys.includes(key));
+
+  return enemiesToRender;
+});
