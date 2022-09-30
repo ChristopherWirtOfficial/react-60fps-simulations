@@ -18,7 +18,7 @@ export const MapSeedAtom = atom(0xB00B1E5);
 const CENTER = Math.ceil(MAP_SIZE / 2);
 
 // Create a simple 2D array of enemies, without the seed for now
-export const TileGridEnemyIDList = atomWithDefault(get => {
+export const TileEnemyIDList = atomWithDefault(get => {
   // Eventually, we'll use the seed to generate the map.
   // COOL: And maybe base all actor's RNG off of their uuid (which would also be based on the seed)
 
@@ -47,7 +47,7 @@ export const TileGridEnemyIDList = atomWithDefault(get => {
 });
 
 export const TileGridOnscreenEnemyIDList = atom(get => {
-  const enemies = get(TileGridEnemyIDList);
+  const enemies = get(TileEnemyIDList);
   const { viewportCamera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
 
   const width = realWidth / viewportCamera.zoom;
@@ -70,7 +70,7 @@ export const TileGridOnscreenEnemyIDList = atom(get => {
 });
 
 export const EnemiesWithHits = atom(get => {
-  const enemies = get(TileGridEnemyIDList);
+  const enemies = get(TileEnemyIDList);
 
   const enemiesWithHits = enemies.filter(enemyId => {
     const hits = get(ProjectileHitsAtomFamily(enemyId));
@@ -91,7 +91,7 @@ export const calculateDamage = <MoveableType extends Enemy>(enemy: MoveableType,
   };
 };
 
-export const TileGridEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyIdentifer) => {
+export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyIdentifer) => {
   // TODO: If I'm seriously going to stick to the tiles then I can make `Tile` components that know what's in them
   //  So instead of rendering out a bunch of enemies whose centers are in the location of the tile's center,
   //   and using a padding to make that center a little further away from the "edge of the tile", I can place
@@ -118,9 +118,9 @@ export const TileGridEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEn
   // NOTE: We need the compareTileEnemyIdentifiers here because we just want to make sure the identifier is the same, not the same actual object
 }, compareTileEnemyIdentifiers);
 
-export const TileGridEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(
+export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(
   get => {
-    const enemyAtom = get(TileGridEnemyAtomFamily(enemyId));
+    const enemyAtom = get(TileEnemyAtomFamily(enemyId));
 
     const damageTaken = get(EnemyDamageTakenAtomFamily(enemyId));
     const health = enemyAtom.maxHealth - damageTaken;
@@ -134,7 +134,7 @@ export const TileGridEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentif
     };
   },
   (get, set, newEnemy: TileEnemyBase | typeof RESET) => {
-    set(TileGridEnemyAtomFamily(enemyId), newEnemy);
+    set(TileEnemyAtomFamily(enemyId), newEnemy);
   },
 ), compareTileEnemyIdentifiers);
 
@@ -149,7 +149,7 @@ export const EnemiesToRender = atom(get => {
 
   const uniqueEnemyKeys = Array.from(new Set(enemyKeys));
 
-  const allEnemyIds = get(TileGridEnemyIDList);
+  const allEnemyIds = get(TileEnemyIDList);
   const enemiesToRender = allEnemyIds.filter(({ key }) => uniqueEnemyKeys.includes(key));
 
   return enemiesToRender;
