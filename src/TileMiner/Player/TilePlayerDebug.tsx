@@ -6,7 +6,7 @@ import useBoxStyles from 'hooks/Entities/useBoxStyles';
 import { getTickFunctors } from 'hooks/useTick';
 import { useAtomValue } from 'jotai';
 import React, { FC, useMemo } from 'react';
-import { EnemiesToRender, EnemiesWithHits, TileGridEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
+import { EnemiesToRender, EnemiesWithHits, TileEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileEnemyAtoms';
 import { Box as BoxType } from 'types/Boxes';
 import { LastMouseClickAtom, LastMouseClickSelector, PlayerSelector } from './PlayerAtoms';
 import { GunTipPositionSelector, GunTipScreenPositionAtom } from './TilePlayerGun/useGun';
@@ -20,7 +20,7 @@ const TileMinerDebug: FC = () => {
   const gunTipScreenPos = useAtomValue(GunTipScreenPositionAtom);
   const { center } = useAtomValue(ScreenDimensionsSelector);
   const { projectileKeys } = useProjectileKeys();
-  const enemyKeys = useAtomValue(TileGridEnemyIDList);
+  const enemyKeys = useAtomValue(TileEnemyIDList);
   const onscreenEnemyKeys = useAtomValue(TileGridOnscreenEnemyIDList);
   const enemiesWithHits = useAtomValue(EnemiesWithHits);
   const enemiesToRender = useAtomValue(EnemiesToRender);
@@ -66,10 +66,10 @@ const TileMinerDebug: FC = () => {
         { /* <Box>Center: { center?.x.toFixed(2) }, { center?.y.toFixed(2) }</Box> */ }
         { /* <Box>Registered Functors: { getTickFunctors().length }</Box> */ }
         { /* <Box>Projectiles: { projectileKeys.length } </Box> */ }
-        { /* <Box>Enemies: { enemyKeys.length } </Box> */ }
+        <Box>Enemies: { enemyKeys.length } </Box>
         { /* <Box>Onscreen Enemies: { onscreenEnemyKeys.length } </Box> */ }
         <Box>Enemies With Hits: { enemiesWithHits.length } </Box>
-        { /* <Box>Enemies To Render: { enemiesToRender.length } </Box> */ }
+        <Box>Enemies To Render: { enemiesToRender.length } </Box>
       </Box>
       <Box { ...styles } bg='white' fontWeight='bold' />
     </>

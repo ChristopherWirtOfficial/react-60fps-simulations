@@ -5,7 +5,7 @@ export const TICK_FACTOR = 1;
 // Tile Miner knobs
 // Square, for now, but with an odd number of tiles to have a center
 export const TILE_ENEMY_DEBUG_ON = false;
-export const MAP_SIZE = 11; // SIZExSIZE grid of tiles (and enemies on most of those tiles)
+export const MAP_SIZE = 20; // SIZExSIZE grid of tiles (and enemies on most of those tiles)
 export const ENEMY_SPAWN_PADDING = 10;
 export const TILE_SIZE = 100;
 

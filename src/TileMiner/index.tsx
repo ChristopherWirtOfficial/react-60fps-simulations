@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import useInitScreen from 'atoms/Screen/useScreen';
 import React, { FC } from 'react';
 
-import TileGridEnemies from './Enemies/TileGridEnemies';
+import TileEnemies from './Enemies/TileEnemies';
 import TileMinerPlayerBox from './Player/TileMinerPlayer';
 import TileMinerDebug from './Player/TilePlayerDebug';
 import GunProjectiles from './Player/TilePlayerGun/GunProjectiles';
@@ -28,7 +28,7 @@ const TileMiner: FC = () => {
       bg='darkslategray'
     >
       <GunProjectiles />
-      <TileGridEnemies />
+      <TileEnemies />
       <TileMinerPlayerBox />
       <TileMinerDebug />
     </Flex>

@@ -5,10 +5,10 @@ import { FC, useEffect } from 'react';
 import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
 
 import HandleEnemyDeath from './atoms/HandleEnemyDeath';
-import { TileGridEnemySelectorFamily } from './atoms/TileGridEnemyAtoms';
+import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
 
 
-const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
+const TileEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   const {
     gridX, gridY,
   } = tileEnemy;
@@ -30,9 +30,9 @@ const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   );
 };
 
-const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
+const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // TODO: PICKUP potentially - useTileEnemy instead
-  const [ tileEnemy, setTileEnemy ] = useAtom(TileGridEnemySelectorFamily(enemyId));
+  const [ tileEnemy, setTileEnemy ] = useAtom(TileEnemySelectorFamily(enemyId));
   const { health, hits } = tileEnemy;
   // If the enemy is dead, kill it
   const handleEnemyDeath = useSetAtom(HandleEnemyDeath);
@@ -71,10 +71,10 @@ const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
         { /* Put stuff in here to show on the enemy */ }
         { health }
       </Box>
-      <TileGridEnemyDebug tileEnemy={ tileEnemy } />
+      <TileEnemyDebug tileEnemy={ tileEnemy } />
     </Box>
   );
 };
 
 
-export default TileGridEnemy;
+export default TileEnemyComp;

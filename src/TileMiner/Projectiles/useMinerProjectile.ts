@@ -4,7 +4,7 @@ import getBoxKey from 'helpers/boxes/getBoxKey';
 import checkCollisions from 'helpers/collisions/checkCollisions';
 import useTick from 'hooks/useTick';
 import { useAtomValue } from 'jotai';
-import ProjectileTileGridEnemySelectorFamily from 'TileMiner/Enemies/atoms/ProjectileTileGridEnemySelectorFamily';
+import ProjectileTileEnemySelectorFamily from 'TileMiner/Enemies/atoms/ProjectileTileEnemySelectorFamily';
 import useProjectileHit from 'TileMiner/Enemies/atoms/useProjectileHit';
 import { BoxTypeOrKey, Moveable, Projectile } from 'types/Boxes';
 import { TileEnemyIdentifer } from 'types/TileEnemy';
@@ -39,7 +39,7 @@ const useMinerProjectile = (projectileOrKey: BoxTypeOrKey<Projectile>) => {
   const { projectile } = useProjectileAtom(key);
 
   // Gets only the enemies that are in the same neighborhood as the projectile to check for collisions
-  const enemies = useAtomValue(ProjectileTileGridEnemySelectorFamily(key));
+  const enemies = useAtomValue(ProjectileTileEnemySelectorFamily(key));
 
   const { addProjectileHit } = useProjectileHit();
 
