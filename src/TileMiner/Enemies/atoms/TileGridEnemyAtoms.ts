@@ -1,10 +1,12 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import deepEqual from 'fast-deep-equal';
 import { randomColor, uuid } from 'helpers';
 import { ENEMY_SPAWN_PADDING, MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
-import { atomFamily, atomWithDefault, atomWithReset } from 'jotai/utils';
+import { atomFamily, atomWithDefault, atomWithReset, RESET } from 'jotai/utils';
 import { Enemy } from 'types/Boxes';
+import { compareTileEnemyIdentifiers, TileEnemyBase, TileEnemyIdentifer } from 'types/TileEnemy';
+
+import { EnemyDamageTakenAtomFamily, ProjectileHitsAtomFamily } from './useProjectileHit';
 
 export const gridToReal = (gridX: number, gridY: number) => ({
   realX: gridX * (TILE_SIZE + (gridX !== 0 ? ENEMY_SPAWN_PADDING : 0)),
@@ -12,14 +14,6 @@ export const gridToReal = (gridX: number, gridY: number) => ({
 });
 
 export const MapSeedAtom = atom(0xB00B1E5);
-
-export interface TileEnemy extends Enemy {
-  // Any other properties that are SPECIFIC to tile enemies (maybe none)
-  gridX: number;
-  gridY: number;
-}
-
-export type TileEnemyIdentifer = Pick<TileEnemy, 'key' | 'gridX' | 'gridY'>;
 
 const CENTER = Math.ceil(MAP_SIZE / 2);
 
@@ -90,14 +84,13 @@ export const TileGridEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEn
   //   and that's laid out more traditionally with the same absolute position, transform, and grid logic.
   const { realX, realY } = gridToReal(gridX, gridY);
 
-  const newEnemy: TileEnemy = {
+  const newEnemy: TileEnemyBase = {
     key,
     x: realX,
     y: realY,
     gridX,
     gridY,
     speed: 0,
-    health: 100,
     maxHealth: 100,
     damage: 0,
     size: TILE_SIZE,
@@ -107,10 +100,25 @@ export const TileGridEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEn
   };
 
   return atomWithReset(newEnemy);
-  // NOTE: We need the deep equal here because we just want to make sure the identifier is the same, not the same actual object
-}, deepEqual);
+  // NOTE: We need the compareTileEnemyIdentifiers here because we just want to make sure the identifier is the same, not the same actual object
+}, compareTileEnemyIdentifiers);
 
-export const TileGridEnemiesSelector = atom(get => {
-  const enemies = get(TileGridEnemyIDList);
-  return enemies.map(enemy => get(TileGridEnemyAtomFamily(enemy)));
-});
+export const TileGridEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(
+  get => {
+    const enemyAtom = get(TileGridEnemyAtomFamily(enemyId));
+
+    const damageTaken = get(EnemyDamageTakenAtomFamily(enemyId));
+    const health = enemyAtom.maxHealth - damageTaken;
+
+    const hits = get(ProjectileHitsAtomFamily(enemyId));
+
+    return {
+      ...enemyAtom,
+      health,
+      hits,
+    };
+  },
+  (get, set, newEnemy: TileEnemyBase | typeof RESET) => {
+    set(TileGridEnemyAtomFamily(enemyId), newEnemy);
+  },
+), compareTileEnemyIdentifiers);

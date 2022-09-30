@@ -3,7 +3,7 @@ import { ENEMY_SPAWN_PADDING, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 
-import { gridToReal, TileGridEnemyAtomFamily, TileGridEnemyIDList } from './TileGridEnemyAtoms';
+import { gridToReal, TileGridEnemyIDList, TileGridEnemySelectorFamily } from './TileGridEnemyAtoms';
 
 const TILE_DIAGONAL = Math.sqrt(TILE_SIZE + (2 * ENEMY_SPAWN_PADDING));
 
@@ -27,7 +27,7 @@ const ProjectileTileGridEnemySelectorFamily = atomFamily((projectileKey: string)
       Math.abs(realY - neighborhoodCenter.y) < (TILE_SIZE + 2 * ENEMY_SPAWN_PADDING);
   });
 
-  return nearbyEnemies.map(tileId => get(TileGridEnemyAtomFamily(tileId)));
+  return nearbyEnemies.map(tileId => get(TileGridEnemySelectorFamily(tileId)));
 }));
 
 export default ProjectileTileGridEnemySelectorFamily;

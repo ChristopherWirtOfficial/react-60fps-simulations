@@ -20,6 +20,7 @@ export default defineConfig({
       "atoms": path.resolve(__dirname, './src/atoms'),
       "TileMiner": path.resolve(__dirname, './src/TileMiner'),
       "helpers": path.resolve(__dirname, './src/helpers'),
+      "types": path.resolve(__dirname, './src/types'),
     }
   }
 })

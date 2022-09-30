@@ -1,8 +1,11 @@
 import { Box, Text } from '@chakra-ui/react';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
-import { useAtomValue } from 'jotai';
-import React, { FC } from 'react';
-import { TileEnemy, TileEnemyIdentifer, TileGridEnemyAtomFamily } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { FC, useEffect } from 'react';
+import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
+
+import HandleEnemyDeath from './atoms/HandleEnemyDeath';
+import { TileGridEnemySelectorFamily } from './atoms/TileGridEnemyAtoms';
 
 
 const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
@@ -28,11 +31,20 @@ const TileGridEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
 };
 
 const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
-  const tileEnemy = useAtomValue(TileGridEnemyAtomFamily(enemyId));
+  // TODO: PICKUP potentially - useTileEnemy instead
+  const [ tileEnemy, setTileEnemy ] = useAtom(TileGridEnemySelectorFamily(enemyId));
+  const { health, hits } = tileEnemy;
+  // If the enemy is dead, kill it
+  const handleEnemyDeath = useSetAtom(HandleEnemyDeath);
+
+  useEffect(() => {
+    if (health <= 0) {
+      handleEnemyDeath(enemyId);
+    }
+  }, [ health, handleEnemyDeath, enemyId ]);
+
 
   const styles = useBoxStyles(tileEnemy);
-
-  const { health } = tileEnemy;
 
   return (
     <Box
@@ -55,7 +67,9 @@ const TileGridEnemy: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
         transform='translate(-50%, -50%)'
         fontSize='20'
         color='white'
-      >{ health }
+      >
+        { /* Put stuff in here to show on the enemy */ }
+        { health }
       </Box>
       <TileGridEnemyDebug tileEnemy={ tileEnemy } />
     </Box>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 import { now, uuid } from 'helpers';
 import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS, TICK_FACTOR } from 'helpers/knobs';
-import { useAtomValue } from 'jotai';
+import { atom, useAtomValue } from 'jotai';
 import { EverythingLoadedGameIsInitialized } from 'atoms/InitializationLoading';
 
 export type TickFunctor = {
@@ -48,9 +48,10 @@ const HARD_STOP = MAX_EXECUTED_TICKS;
 let frameCount = 0;
 
 let leftoverTickTime = 0;
-
-
 let tickLatch = 0;
+
+// TODO: Add a way to keep track of which Pulse we're on
+// export const PulseCountAtom = atom(0);
 
 // The main tick execution loop function, looped with setTimeout(deferPulse)
 const pulse = () => {
@@ -66,7 +67,6 @@ const pulse = () => {
   }
 
   const currentTickTime = now();
-
 
   // How long has it been since we last started executing ticks?
   const elapsed = currentTickTime - lastTickTime;
