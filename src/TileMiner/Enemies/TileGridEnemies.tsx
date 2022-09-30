@@ -1,11 +1,11 @@
 import { useAtomValue } from 'jotai';
 import React, { FC } from 'react';
-import { TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileGridEnemyAtoms';
+import { EnemiesToRender } from './atoms/TileGridEnemyAtoms';
 
 import TileGridEnemy from './TileGridEnemy';
 
 const TileGridEnemies: FC = () => {
-  const enemiesGrid = useAtomValue(TileGridOnscreenEnemyIDList);
+  const enemiesGrid = useAtomValue(EnemiesToRender);
 
   return (
     <>
