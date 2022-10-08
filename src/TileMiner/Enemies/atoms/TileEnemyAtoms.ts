@@ -142,19 +142,3 @@ export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) 
   },
 ), compareTileEnemyIdentifiers);
 
-
-// The real list of Enemy Keys to actually render components for
-export const EnemiesToRender = atom(get => {
-  const onscreenEnemies = get(TileGridOnscreenEnemyIDList);
-  const enemiesWithHits = get(EnemiesWithHits);
-
-  const enemiesWithARenderReason = [ onscreenEnemies, enemiesWithHits ];
-  const enemyKeys = enemiesWithARenderReason.flat().map(({ key }) => key);
-
-  const uniqueEnemyKeys = Array.from(new Set(enemyKeys));
-
-  const allEnemyIds = get(TileEnemyIDList);
-  const enemiesToRender = allEnemyIds.filter(({ key }) => uniqueEnemyKeys.includes(key));
-
-  return enemiesToRender;
-});

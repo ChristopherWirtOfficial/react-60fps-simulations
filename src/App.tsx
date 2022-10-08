@@ -1,23 +1,22 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import { FC } from 'react';
 import useCameraMovement from 'TileMiner/Player/Camera/useCameraMovement';
-import useZoom from 'TileMiner/Player/Camera/useZoom';
 
 import TileMiner from './TileMiner';
 
-// import DrawTest from './tests/DrawTest';
 
-
-function App() {
-  // TODO: Consider putting this in a hook that's more isolated from getting re-rendered
+const AppHooks: FC = () => {
   useCameraMovement();
-  useZoom();
-  console.log('Camera movement hook ran, app re-rendered');
+  // useZoom();
 
-  return (
-    <ChakraProvider>
-      <TileMiner />
-    </ChakraProvider>
-  );
-}
+  return null;
+};
+
+const App: FC = () => (
+  <ChakraProvider>
+    <TileMiner />
+    { /* <AppHooks /> */ }
+  </ChakraProvider>
+);
 
 export default App;

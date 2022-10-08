@@ -1,6 +1,6 @@
 import { atom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 
 export const KeyPressed = atomFamily((key: string) => atom(false));
@@ -54,8 +54,12 @@ export const S = 's';
 export const D = 'd';
 
 export const useCameraKeyboardCapture = () => {
-  useKey(W);
-  useKey(A);
-  useKey(S);
-  useKey(D);
+  const w = useMemo(() => 'w', []);
+  const a = useMemo(() => 'a', []);
+  const s = useMemo(() => 's', []);
+  const d = useMemo(() => 'd', []);
+  useKey(w);
+  useKey(a);
+  useKey(s);
+  useKey(d);
 };

@@ -29,6 +29,7 @@ const useProjectileCollision = <MoveableType extends Moveable>(
     }
   };
 
+
   useTick(checkEnemyCollisions);
 };
 
