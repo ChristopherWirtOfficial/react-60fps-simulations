@@ -24,8 +24,6 @@ const TileMinerDebug: FC = () => {
   const { projectileKeys } = useProjectileKeys();
   const enemyKeys = useAtomValue(TileEnemyIDList);
   const onscreenEnemyKeys = useAtomValue(TileGridOnscreenEnemyIDList);
-  const enemiesWithHits = useAtomValue(EnemiesWithHits);
-  const enemiesToRender = useAtomValue(EnemiesToRender);
   const { width, height, camera, viewport } = useAtomValue(ScreenDimensionsSelector);
 
   const fakeMouseClickBox: BoxType = useMemo(() => ({
@@ -83,10 +81,7 @@ const TileMinerDebug: FC = () => {
         { /* <Box>Center: { center?.x.toFixed(2) }, { center?.y.toFixed(2) }</Box> */ }
         { /* <Box>Registered Functors: { getTickFunctors().length }</Box> */ }
         { /* <Box>Projectiles: { projectileKeys.length } </Box> */ }
-        <Box>Enemies: { enemyKeys.length } </Box>
         { /* <Box>Onscreen Enemies: { onscreenEnemyKeys.length } </Box> */ }
-        <Box>Enemies With Hits: { enemiesWithHits.length } </Box>
-        <Box>Enemies To Render: { enemiesToRender.length } </Box>
       </Box>
       <Box { ...styles } bg='white' fontWeight='bold' />
     </>
