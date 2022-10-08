@@ -48,16 +48,20 @@ export const TileEnemyIDList = atomWithDefault(get => {
 
 export const TileGridOnscreenEnemyIDList = atom(get => {
   const enemies = get(TileEnemyIDList);
-  const { viewportCamera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
+  const { camera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
 
-  const width = realWidth / viewportCamera.zoom;
-  const height = realHeight / viewportCamera.zoom;
+  // TODO: This might not be exactly right, or expecially it might not be obviously wrong
+  const width = realWidth / camera.zoom;
+  const height = realHeight / camera.zoom;
 
   // Based on the viewport and the enemies' grid positions, determine which enemies are onscreen
   const onscreenEnemies = enemies.filter(({ gridX, gridY }) => {
-    const { x, y } = viewportCamera;
+    const { x, y } = camera;
     const { realX, realY } = gridToReal(gridX, gridY);
 
+    // Relativelty easy to see this is working by just drawing a box around the viewport
+    //  and seeing which enemies are inside it, especially while on over-cranked zoom levels
+    //  compared to what can actually be seen on the screen.
     return (
       realX >= x - width / 2 - TILE_SIZE &&
       realX <= x + width / 2 + TILE_SIZE &&

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import useProjectileKeys from 'atoms/Projectiles/useProjectileKeys';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import FPSCounter from 'components/FPSCounter';
@@ -7,7 +7,9 @@ import { getTickFunctors } from 'hooks/useTick';
 import { useAtomValue } from 'jotai';
 import React, { FC, useMemo } from 'react';
 import { EnemiesToRender, EnemiesWithHits, TileEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileEnemyAtoms';
+import { useRenderCount } from 'TileMiner/Enemies/TileEnemy';
 import { Box as BoxType } from 'types/Boxes';
+import useCamera from './Camera/useCamera';
 import { LastMouseClickAtom, LastMouseClickSelector, PlayerSelector } from './PlayerAtoms';
 import { GunTipPositionSelector, GunTipScreenPositionAtom } from './TilePlayerGun/useGun';
 
@@ -24,6 +26,7 @@ const TileMinerDebug: FC = () => {
   const onscreenEnemyKeys = useAtomValue(TileGridOnscreenEnemyIDList);
   const enemiesWithHits = useAtomValue(EnemiesWithHits);
   const enemiesToRender = useAtomValue(EnemiesToRender);
+  const { width, height, camera, viewport } = useAtomValue(ScreenDimensionsSelector);
 
   const fakeMouseClickBox: BoxType = useMemo(() => ({
     key: 'fakeMouseClickBox',
@@ -34,6 +37,8 @@ const TileMinerDebug: FC = () => {
   }), [ lastMouseClick ]);
 
   const styles = useBoxStyles(fakeMouseClickBox);
+
+  const renderCount = useRenderCount();
 
   // TODO: Make a generic debug component that can be used for any metric, and make it toggleable from a list or something
   // Persist the debug state in local storage
@@ -51,6 +56,18 @@ const TileMinerDebug: FC = () => {
         p={ 6 }
       >
         <FPSCounter />
+        <Text>
+          (This) Render Count: { renderCount }
+        </Text>
+        <Text>
+          Camera ( { camera.x }, { camera.y } ) ({ camera.zoom })
+        </Text>
+        <Text>
+          Viewport ( { viewport.x }, { viewport.y }, { viewport.width }, { viewport.height } )
+        </Text>
+        <Text>
+          Screen ( { width }, { height } )
+        </Text>
 
         { /* <Box>Firing Direction: { player.firingDirection?.toFixed(3) }rad</Box> */ }
         { /* <Box>Gun Tip Position: { gunTipPos?.x.toFixed(2) }, { gunTipPos?.y.toFixed(2) }</Box> */ }

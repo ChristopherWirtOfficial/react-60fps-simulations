@@ -1,6 +1,7 @@
 import { BoxProps } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
 import { Box } from 'types/Boxes';
+
 import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
 
 /*
@@ -32,7 +33,6 @@ const useBoxStyles = <T extends Box>(box: T) => {
   const { trueX, trueY } = useBoxPositioning(box);
   const { size } = box ?? {};
 
-
   const boxStyles: BoxProps = {
     position: 'absolute',
     width: `${size}px`,
@@ -42,6 +42,7 @@ const useBoxStyles = <T extends Box>(box: T) => {
     right: 0,
     bottom: 0,
     transform: `translate(${trueX}px, ${trueY}px)`,
+    // transition: 'all 0.5s ease-in-out',
   };
 
   return boxStyles;
