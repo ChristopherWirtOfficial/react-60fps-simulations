@@ -1,17 +1,27 @@
 import { Box, Text } from '@chakra-ui/react';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
 import { useAtom, useSetAtom } from 'jotai';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
 
 import HandleEnemyDeath from './atoms/HandleEnemyDeath';
 import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
+
+export const useRenderCount = () => {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+
+  return renderCount.current;
+};
 
 
 const TileEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   const {
     gridX, gridY,
   } = tileEnemy;
+
+  const renderCount = useRenderCount();
+
   return (
     <Box
       fontSize='12'
@@ -22,6 +32,9 @@ const TileEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
     >
       <Text>
         ({ gridX }, { gridY })
+      </Text>
+      <Text>
+        { renderCount }
       </Text>
       { /* <Text>
         { x.toFixed(0) }, { y.toFixed(0) }
