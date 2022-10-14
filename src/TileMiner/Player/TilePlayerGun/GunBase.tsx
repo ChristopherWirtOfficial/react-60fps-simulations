@@ -1,8 +1,8 @@
 import { Box } from '@chakra-ui/react';
 import { useAtomValue } from 'jotai';
 import React, { FC } from 'react';
+import PlayerSelector from '../PlayerSelector';
 
-import { PlayerSelector } from '../PlayerAtoms';
 import TileMinerGunBarrel from './GunBarrel';
 
 
@@ -22,9 +22,11 @@ const TileMinerGun: FC = () => {
       top='50%'
       left='50%'
       // transform and rotate the barrel
-      // TODO: Rotation is negated because our angle is currently measured counter-clockwise lmao
+      // Rotation is negated because our angle (like most `phase` angles) is measured counter-clockwise
       transform={ `translate(-50%, -50%) rotate(${-firingDirection}rad)` }
-      transition='rotate 0.1s'
+      // TODO: THis makes us spin smoothly, but the guntip doesn't track as well as I'd like, and
+      ///   there's a problem with it going over the 0/360 boundary (which is on the wrong side because of counter-clockwise lol)
+      // transition='all 10s'
       w={ sizeInEm }
       h={ sizeInEm }
       bg='darkgray'

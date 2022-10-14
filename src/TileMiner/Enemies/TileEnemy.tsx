@@ -1,4 +1,5 @@
 import { Box, Text } from '@chakra-ui/react';
+import { TILE_ENEMY_DEBUG_ON } from 'helpers/knobs';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
 import { useAtom, useSetAtom } from 'jotai';
 import { FC, useEffect, useRef } from 'react';
@@ -21,6 +22,10 @@ const TileEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
   } = tileEnemy;
 
   const renderCount = useRenderCount();
+
+  if (!TILE_ENEMY_DEBUG_ON) {
+    return null;
+  }
 
   return (
     <Box

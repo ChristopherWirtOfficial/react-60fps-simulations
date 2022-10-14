@@ -1,13 +1,12 @@
 import { Getter } from 'jotai';
+import { GameCoords } from './Game';
 
 /*
   Box - Something that can be positioned on the screen
   Moveable - Something that can be moved with MovementSteps
 */
-export interface Box {
+export interface Box extends GameCoords {
   key: string;
-  x: number;
-  y: number;
   size: number;
   color?: string;
 }
@@ -45,14 +44,10 @@ export type MovementStep<T extends Moveable> = (box: T, get?: WriteGetter) => T;
 
 
 export interface Enemy extends Moveable {
-  x: number;
-  y: number;
-  speed: number;
   health: number;
   maxHealth: number;
   damage: number;
   color: string;
-  direction: number;
 
   // Random debug bullshit lol
   insertionPointX?: number;

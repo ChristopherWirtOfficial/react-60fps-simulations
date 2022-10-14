@@ -32,6 +32,8 @@ const TileMiner: FC = () => {
     y: camera.y * CAMERA_POSITION_SCALING_FACTOR,
   };
 
+  console.log('Main thing re-rendered');
+
 
   return (
     <>

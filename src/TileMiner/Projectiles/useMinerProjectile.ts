@@ -39,7 +39,7 @@ const useMinerProjectile = (projectileOrKey: BoxTypeOrKey<Projectile>) => {
 
   const { projectile } = useProjectileAtom(key);
 
-  // Gets only the enemies that are in the same neighborhood as the projectile to check for collisions
+  // Gets only the alive enemies that are in the same neighborhood as the projectile to check for collisions
   const enemies = useAtomValue(ProjectileTileEnemySelectorFamily(key));
 
   const { addProjectileHit } = useProjectileHit();

@@ -4,7 +4,7 @@ export const TICK_FACTOR = 1;
 
 export const CAMERA_SPEED = 25; // How much the camera moves per tick.
 export const CAMERA_POSITION_SCALING_FACTOR = 1; // How much the camera moves in pixels per unit of distance.
-export const DEFAULT_ZOOM = 2; // Initial zoom level
+export const DEFAULT_ZOOM = 1; // Initial zoom level
 export const ZOOM_SCROLL_SCALING_FACTOR = 0.1; // How much the camera zooms in in proportion to the scroll delta
 export const ZOOM_MIN = 0.1; // The minimum zoom level
 export const ZOOM_MAX = 10; // The maximum zoom level
@@ -14,7 +14,7 @@ export const ZOOM_MAX = 10; // The maximum zoom level
 export const MAP_SIZE = 70; // SIZExSIZE grid of tiles (and enemies on most of those tiles)
 export const ENEMY_SPAWN_PADDING = 10;
 export const TILE_ENEMY_DEBUG_ON = false;
-export const TILE_SIZE = 100;
+export const TILE_SIZE = 50;
 
 // Core Projectile knobs
 export const TICKS_BETWEEN_ATTACKS = 10;
@@ -23,10 +23,7 @@ export const ACCELERATION_FACTOR = 0.0;
 export const MAX_PROJECTILE_SPEED = 7;
 export const PROJECTILE_SIZE = 10;
 export const MAX_TARGET_DISTANCE = 350;
-export const PROJECTILE_DAMAGE = 25;
-
-export const LOCK_FIRING_DIRECTION = false;
-export const FIRING_DIRECTION_LOCK = Math.PI / 4; // 45 degrees
+export const PROJECTILE_DAMAGE = 100;
 
 // Every tick there's a DESIRED_ENEMY_SPAWN_RATE / FRAMERATE chance of spawning an enemy (I guess lol)
 export const DESIRED_ENEMY_SPAWN_RATE = 20;
