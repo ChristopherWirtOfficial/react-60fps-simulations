@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-// TODO: This file needs to be cleaned and code-split pretty urgently!
-// Probably going to keep kicking the can until I actually start making game content and need specific useTick features
+import { EverythingLoadedGameIsInitialized } from 'atoms/InitializationLoading';
 import { now, uuid } from 'helpers';
 import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS, TICK_FACTOR } from 'helpers/knobs';
-import { atom, useAtomValue } from 'jotai';
-import { EverythingLoadedGameIsInitialized } from 'atoms/InitializationLoading';
+import { useAtomValue } from 'jotai';
+import { useEffect, useState } from 'react';
 
+// TODO: This file needs to be cleaned and code-split pretty urgently!
+// Probably going to keep kicking the can until I actually start making game content and need specific useTick features
 export type TickFunctor = {
   readonly id: string;
   readonly functor: (tickNumber?: number) => void;
@@ -116,15 +116,20 @@ const pulse = () => {
     });
 
     const reportTimes = () => {
-      console.log(times);
       const totalTimeExecuting = times.reduce((a, b) => a + b, 0);
       const timeUntilNextTick = TICK_LENGTH - leftoverTickTime - (now() - currentTickTime);
-      console.log('TIME UNTIL NEXT TICK', timeUntilNextTick);
-      console.log('Percent of time used this tick', totalTimeExecuting / TICK_LENGTH);
-      console.log('Percent of time used this tick', totalTimeExecuting / timeUntilNextTick);
+      if (timeUntilNextTick < 1) {
+        console.log(times);
+        console.log('TIME UNTIL NEXT TICK', timeUntilNextTick);
+        console.log('Percent of time used this tick', totalTimeExecuting / TICK_LENGTH);
+        console.log('Percent of time used this tick', totalTimeExecuting / timeUntilNextTick);
+
+        console.warn('TIME UNTIL NEXT TICK WAS WAY TOO LOW', timeUntilNextTick);
+      }
     };
     // Enable to see some valuable timing statistics
     // reportTimes();
+
 
     tickLatch--;
   };

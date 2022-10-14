@@ -3,14 +3,14 @@ import useProjectileKeys from 'atoms/Projectiles/useProjectileKeys';
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import FPSCounter from 'components/FPSCounter';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
-import { getTickFunctors } from 'hooks/useTick';
 import { useAtomValue } from 'jotai';
-import React, { FC, useMemo } from 'react';
-import { EnemiesToRender, EnemiesWithHits, TileEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileEnemyAtoms';
+import { FC, useMemo } from 'react';
+import { TileEnemyIDList, TileGridOnscreenEnemyIDList } from 'TileMiner/Enemies/atoms/TileEnemyAtoms';
 import { useRenderCount } from 'TileMiner/Enemies/TileEnemy';
 import { Box as BoxType } from 'types/Boxes';
-import useCamera from './Camera/useCamera';
-import { LastMouseClickAtom, LastMouseClickSelector, PlayerSelector } from './PlayerAtoms';
+import { LastMouseClickAtom, LastMouseClickSelector } from './FiringDirectionSelector';
+import PlayerSelector from './PlayerSelector';
+
 import { GunTipPositionSelector, GunTipScreenPositionAtom } from './TilePlayerGun/useGun';
 
 

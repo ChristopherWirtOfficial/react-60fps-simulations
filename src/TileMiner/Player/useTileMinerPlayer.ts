@@ -1,6 +1,7 @@
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useEffect } from 'react';
-import { LastMouseClickAtom, PlayerSelector } from './PlayerAtoms';
+import { LastMouseClickAtom } from './FiringDirectionSelector';
+import PlayerSelector from './PlayerSelector';
 
 export const useTileMinerClickHandler = () => {
   const setLastMouseClick = useSetAtom(LastMouseClickAtom);
