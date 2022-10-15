@@ -1,6 +1,7 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { randomColor, uuid } from 'helpers';
-import { ENEMY_SPAWN_PADDING, MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
+import gridToReal from 'helpers/grid/gridToScreenCoords';
+import { MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithReset, RESET } from 'jotai/utils';
 import { Enemy } from 'types/Boxes';
@@ -8,10 +9,6 @@ import { compareTileEnemyIdentifiers, TileEnemyBase, TileEnemyIdentifer } from '
 
 import { EnemyDamageTakenAtomFamily, ProjectileHitsAtomFamily } from './useProjectileHit';
 
-export const gridToReal = (gridX: number, gridY: number) => ({
-  realX: gridX * (TILE_SIZE + (gridX !== 0 ? ENEMY_SPAWN_PADDING : 0)),
-  realY: gridY * (TILE_SIZE + (gridY !== 0 ? ENEMY_SPAWN_PADDING : 0)),
-});
 
 export const MapSeedAtom = atom(0xB00B1E5);
 

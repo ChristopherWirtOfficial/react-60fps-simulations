@@ -1,13 +1,21 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
+import gridToReal from 'helpers/grid/gridToScreenCoords';
 import { TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy';
-import { gridToReal, TileGridOnscreenEnemyIDList } from './TileEnemyAtoms';
+
 import { ProjectileHitsAtomFamily } from './useProjectileHit';
 
+let calls = 0;
+
 // A family that indicates whether an enemy is onscreen or not (for rendering purposes)
+// PROBLEM: Every time the camera changes, absolutely every single enemy wrapper component gets an updated version of the atom from this family.
+// How can we de-couple the camera from the enemy rendering?
+// Something like this:
+//
 const EnemyIsOnscreenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
+  console.log('EnemyIsOnscreenAtomFamily', ++calls);
   const { camera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
   const { gridX, gridY } = enemyId;
 

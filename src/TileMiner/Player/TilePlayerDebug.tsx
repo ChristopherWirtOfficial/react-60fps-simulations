@@ -80,7 +80,7 @@ const TileMinerDebug: FC = () => {
         </Box> */ }
         { /* <Box>Center: { center?.x.toFixed(2) }, { center?.y.toFixed(2) }</Box> */ }
         { /* <Box>Registered Functors: { getTickFunctors().length }</Box> */ }
-        { /* <Box>Projectiles: { projectileKeys.length } </Box> */ }
+        <Box>Projectiles: { projectileKeys.length } </Box>
         { /* <Box>Onscreen Enemies: { onscreenEnemyKeys.length } </Box> */ }
       </Box>
       <Box { ...styles } bg='white' fontWeight='bold' />

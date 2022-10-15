@@ -20,6 +20,7 @@ export const useTargetMovementSteps = (key: string): MovementStep<Moveable>[] =>
   return steps;
 };
 
+// TODO: This should be generic of T extends Moveable, which is at least part of the BUG down there
 export const collapseMovementSteps = (moveable: Moveable, get?: Getter): Moveable => {
   const { movementSteps } = moveable;
   // Pass the box through each movement step, always ending with the stepMovementVector step which executes our vector

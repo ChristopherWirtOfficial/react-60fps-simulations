@@ -19,16 +19,15 @@ const TileEnemyWrapper: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
     <TileEnemy enemyId={ enemyId } />
   );
 };
-// TODO: PICKUP - Switch this to use a static list and track death on a per-enemy basis
+
+
 const TileEnemies: FC = () => {
   const enemiesGrid = useAtomValue(TileEnemyIDList);
-
-  console.log('Enemies re-rendered', enemiesGrid.length);
 
   return (
     <>
       { enemiesGrid.map(enemyId => (
-        <TileEnemyWrapper key={ enemyId.key } enemyId={ enemyId } />
+        <TileEnemyWrapper key={ `${enemyId.gridX}-${enemyId.gridY}` } enemyId={ enemyId } />
       )) }
     </>
   );
