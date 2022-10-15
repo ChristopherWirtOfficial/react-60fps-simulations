@@ -1,7 +1,7 @@
 import { EverythingLoadedGameIsInitialized } from 'atoms/InitializationLoading';
 import { now, uuid } from 'helpers';
 import { MAX_EXECUTED_TICKS, MAX_QUEUED_TICKS, TICK_FACTOR } from 'helpers/knobs';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom, WritableAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 
 // TODO: This file needs to be cleaned and code-split pretty urgently!
@@ -210,7 +210,14 @@ const useBaseTick = (functorArg: () => void, frequency = 1, isPhysics = false) =
 
 export const usePhysicsTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency, true);
 
-
+// Used for various debugging purposes to mask the real behavior, namely the TICK_RATIO which lets us speed up and slow down the game I guess.
 const useTick = (functorArg: () => void, frequency = 1) => useBaseTick(functorArg, frequency * TICK_RATIO);
 
+export const useAtomicTick = (writeAtom: WritableAtom<void, void, void>, frequency = 1) => {
+  const functor = useSetAtom(writeAtom);
+
+  useTick(functor, frequency);
+};
+
 export default useTick;
+

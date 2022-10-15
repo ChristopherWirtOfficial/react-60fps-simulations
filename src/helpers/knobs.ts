@@ -5,7 +5,7 @@ export const TICK_FACTOR = 1;
 export const CAMERA_SPEED = 25; // How much the camera moves per tick.
 export const CAMERA_POSITION_SCALING_FACTOR = 1; // How much the camera moves in pixels per unit of distance.
 export const DEFAULT_ZOOM = 1; // Initial zoom level
-export const ZOOM_SCROLL_SCALING_FACTOR = 0.1; // How much the camera zooms in in proportion to the scroll delta
+export const ZOOM_SCROLL_SCALING_FACTOR = 0.0001; // How much the camera zooms in in proportion to the scroll delta
 export const ZOOM_MIN = 0.1; // The minimum zoom level
 export const ZOOM_MAX = 10; // The maximum zoom level
 
