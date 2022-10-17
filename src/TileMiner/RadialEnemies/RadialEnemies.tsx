@@ -1,46 +1,52 @@
 import { Box } from '@chakra-ui/react';
-import { FC } from 'react';
-import { generateRing, RadialTile } from 'TileMiner/Enemies/atoms/RadialTiles';
+import { FC, useMemo } from 'react';
+import {
+  generateRing, RADIAL_TILE_SIZE, ringInfo, TILE_HEIGHT, TILE_WIDTH,
+} from 'TileMiner/Enemies/atoms/RadialTiles';
 
 import RadialEnemy from './RadialEnemy';
 
-const N_RINGS = 10;
+const N_RINGS = 5;
 
-const staticEnemies = Array.from({ length: N_RINGS }).map((_, i) => generateRing(i)).slice(1);
+// Plus 1 to make and toss out the center ring
+const staticEnemies = Array.from({ length: N_RINGS }).map((_, i) => i);
 
 
-const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
-  <Box
-    pos='absolute'
-    top='50%'
-    left='50%'
-    transform='translate(-50%, -50%)'
-    bg='#AA222255'
-    overflow='visible'
-    // TODO: This width/height can be ANYTHING really, but the transform in the svg would need to be adjusted
-    // Mostly I'm just playing around to try and figure out what parts of this are important for later
-    width='100px'
-    height='100px'
-  >
-    <svg
+const TileRing: FC<{ ring: number }> = ({ ring }) => {
+  const tiles = useMemo(() => generateRing(ring), [ ring ]);
+  const { radius: ringRadus, tileCount } = ringInfo(ring);
+
+  return (
+    <Box
+      pos='absolute'
+      top='50%'
+      left='50%'
+      transform='translate(-50%, -50%)'
       overflow='visible'
-      transform='translate(50 50)'
-      width='1px'
+      width={ `${RADIAL_TILE_SIZE}px` }
+      height={ `${RADIAL_TILE_SIZE}px` }
+    >
+      <svg
+        overflow='visible'
+        // This must be equal to half the px size of the parent, the RADIAL_TILE_SIZE is for debugging specifically
+        transform={ `translate(${RADIAL_TILE_SIZE / 2} ${RADIAL_TILE_SIZE / 2})` }
+        width='1px'
       // TODO: Why does this height need to be 1px? It throws eveything off otherwise
       //  Of the 4 values here, it seems like ONLY THE HEIGHT affects the radial positions of the tiles
-      height='1px'
-    >
-      {
-      ring.map(tile => <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
+        height='1px'
+      >
+        {
+      tiles.map(tile => <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
     }
-    </svg>
-  </Box>
-);
+      </svg>
+    </Box>
+  );
+};
 
 const RadialEnemies: FC = () => (
   <>
     {
-      staticEnemies.map((ring, i) => <TileRing key={ i } ring={ ring } />)
+      staticEnemies.map(ring => <TileRing key={ ring } ring={ ring } />)
     }
   </>
 );

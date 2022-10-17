@@ -1,11 +1,10 @@
 import { FC } from 'react';
 import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
-
-import { drawArc } from './TileTest';
+import { drawArc } from './RadialTile/radialTileHelpers';
 
 const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
   const { ring, index } = tile;
-  const { radius: ringRadus, tileCount } = ringInfo(ring);
+  const { tileCount } = ringInfo(ring);
 
   const angleInDegrees = (index / tileCount) * 360;
   const pathProps = {
@@ -13,9 +12,7 @@ const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
     'transform-origin': 'left bottom',
   };
 
-  const innerArcPath = drawArc(ring);
-  // const innerArcPath = drawSteppedArc(ring);
-  const innerArc = innerArcPath.toComponent(pathProps) as JSX.Element;
+  const innerArc = drawArc(tile).toComponent(pathProps) as JSX.Element;
 
   return innerArc;
 };
