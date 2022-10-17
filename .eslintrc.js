@@ -15,10 +15,14 @@ module.exports = {
         "react/jsx-props-no-spreading": 0,
         "@typescript-eslint/no-use-before-define": 0,
         "react/react-in-jsx-scope": 0,
+        "no-mixed-operators": 0,
         // END TEST OVERRIDES
 
         // Rules below this point are real overrides. Rules above this are likely temporary overrides
-        "quotes": [2, "single", { "avoidEscape": true }], // Use single quotes
+        "quotes": [2, "single", {
+            "avoidEscape": true,
+            "allowTemplateLiterals": true
+        }], // Use single quotes
         "jsx-quotes": [2, "prefer-single"], // Use single quotes for jsx
         "react/function-component-definition": 0,
         "@typescript-eslint/no-unused-vars": 1,

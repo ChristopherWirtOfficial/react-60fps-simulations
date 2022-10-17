@@ -10,6 +10,8 @@ import TileMinerPlayerBox from './Player/TileMinerPlayer';
 import TileMinerDebug from './Player/TilePlayerDebug';
 import GunProjectiles from './Player/TilePlayerGun/GunProjectiles';
 import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
+import RadialEnemies from './RadialEnemies/RadialEnemies';
+import TileTest from './RadialEnemies/TileTest';
 
 
 const TileMiner: FC = () => {
@@ -46,12 +48,14 @@ const TileMiner: FC = () => {
       // Smooth scrolling, basically
         transition='transform 0.1s'
       >
-        <GunProjectiles />
-        <TileEnemies />
-        <TileMinerPlayerBox />
-        <CameraDebug />
+        { /* <GunProjectiles /> */ }
+        { /* <TileEnemies /> */ }
+        <RadialEnemies />
+        { /* <TileMinerPlayerBox /> */ }
+        { /* <CameraDebug /> */ }
+        { /* <TileTest /> */ }
       </Flex>
-      <TileMinerDebug />
+      { /* <TileMinerDebug /> */ }
     </>
   );
 };

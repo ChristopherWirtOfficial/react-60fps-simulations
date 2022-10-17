@@ -7,15 +7,12 @@ import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy
 
 import { ProjectileHitsAtomFamily } from './useProjectileHit';
 
-let calls = 0;
-
 // A family that indicates whether an enemy is onscreen or not (for rendering purposes)
 // PROBLEM: Every time the camera changes, absolutely every single enemy wrapper component gets an updated version of the atom from this family.
 // How can we de-couple the camera from the enemy rendering?
 // Something like this:
-//
+//  https://www.notion.so/Enemy-is-onscreen-AtomFamily-woes-a454a752c4054a9bba4f76e612814f0c
 const EnemyIsOnscreenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
-  console.log('EnemyIsOnscreenAtomFamily', ++calls);
   const { camera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
   const { gridX, gridY } = enemyId;
 
@@ -45,7 +42,7 @@ const EnemyHasHitsAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(
 }), compareTileEnemyIdentifiers);
 
 
-// TODO: PICKUP - Re-create the logic in `EnemiesToRender` with atom families the entire way down
+// TODO: PICKUP (after radials)- Re-create the logic in `EnemiesToRender` with atom families the entire way down
 // Lets an individal <TileEnemyWrapper> know if it should render or not
 const ShouldEnemyRenderAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
   const enemyIsOnscreen = get(EnemyIsOnscreenAtomFamily(enemyId));

@@ -18,11 +18,13 @@ const CameraDebug: FC = () => {
 
   const styles = useBoxStyles(fakeBox);
 
-  return (
-    <Box { ...styles } border='25px solid red'>
+  return null;
 
-    </Box>
-  );
+  // return (
+  //   <Box { ...styles } border='25px solid red'>
+
+  //   </Box>
+  // );
 };
 
 export default CameraDebug;

@@ -12,7 +12,7 @@ const TileMinerBarrelTip: FC = () => {
   const player = useTileMiner();
   const { ref, gunTipPosition } = useGun(player);
 
-  useShootProjectiles(player, gunTipPosition);
+  // useShootProjectiles(player, gunTipPosition);
 
 
   // Define the "tip" of the barrel

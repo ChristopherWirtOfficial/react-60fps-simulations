@@ -62,6 +62,14 @@ export const useCaptureScroll = () => {
   }, [ Zoom ]);
 };
 
+// SMORT: (weirdly specific stackoverflow lol) https://stackoverflow.com/questions/5527601/normalizing-mousewheel-speed-across-browsers
+// TODO: ZOOM FACTORS
+/*
+  Keep shit from -10 to 10
+  The actual scaling factor caused by zooming is then something like 1.1^zoom
+    (or 1/(1 - (10 - zoom)) or something)
+*/
+
 const useZoom = () => {
   useCaptureScroll();
   const [ zoom ] = useAtom(CameraZoomAtom);
