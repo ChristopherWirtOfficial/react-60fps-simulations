@@ -1,10 +1,10 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
-import { FC, useState } from 'react';
-import Path, { Rect, Circle } from 'react-svg-path';
-import { generateRing, RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
+import { Box, Flex } from '@chakra-ui/react';
+import { randomColor } from 'helpers';
+import { FC } from 'react';
+import Path, { Circle, Rect } from 'react-svg-path';
+import { generateRing, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
 
 import { DebugLabel } from './RadialDebug';
-import Tile from './RadialTile';
 
 const DEBUG_CIRCLE_SIZE = 10;
 
@@ -86,7 +86,7 @@ export const drawArc = (ring: number) => {
 
 
   p.fill('none');
-  p.stroke('green');
+  p.stroke(randomColor(190, ring));
   p.strokeWidth(5);
   p.moveTo(0, 0);
   // Line from the center to the top of the arc, then arc, then line to the center again

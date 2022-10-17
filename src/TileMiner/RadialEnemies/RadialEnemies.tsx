@@ -1,12 +1,11 @@
 import { Box } from '@chakra-ui/react';
 import { FC } from 'react';
 import { generateRing, RadialTile } from 'TileMiner/Enemies/atoms/RadialTiles';
+
 import RadialEnemy from './RadialEnemy';
 
-import Tile from './RadialTile';
 
-
-const staticEnemies = Array.from({ length: 2 }).map((_, i) => generateRing(i)).slice(1);
+const staticEnemies = Array.from({ length: 3 }).map((_, i) => generateRing(i)).slice(1);
 
 
 const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
@@ -17,6 +16,8 @@ const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
     transform='translate(-50%, -50%)'
     bg='#AA222255'
     overflow='visible'
+    // TODO: Setting these to 1px "fixes" drawing issues, but it probably shouldn't be my answer
+    // (same with the svg width/height)
     width='1px'
     height='1px'
   >

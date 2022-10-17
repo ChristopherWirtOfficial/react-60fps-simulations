@@ -1,4 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
+import gen from 'random-seed';
+
 
 export const now = () => performance.now();
 
@@ -21,8 +23,12 @@ export const getDistance = (x1: number, y1: number, x2: number, y2: number) => {
 export const uuid = (type?: string) => `${type ?? ''}${uuidv4()}`;
 
 // eslint-disable-next-line max-len
-export const randomColor = (highestVal: number = 220) => `rgb(
-  ${Math.floor(Math.random() * highestVal)},
-  ${Math.floor(Math.random() * highestVal)},
-  ${Math.floor(Math.random() * highestVal)}
-)`;
+export const randomColor = (highestVal: number = 220, seed?: number) => {
+  const randGen = gen.create(seed?.toString());
+  const rand = () => randGen(highestVal);
+  return `rgb(
+  ${Math.floor(rand())},
+  ${Math.floor(rand())},
+  ${Math.floor(rand())}
+  )`;
+};

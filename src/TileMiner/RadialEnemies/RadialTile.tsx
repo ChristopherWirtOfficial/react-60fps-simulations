@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
+
 import { drawArc } from './TileTest';
 
 const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
