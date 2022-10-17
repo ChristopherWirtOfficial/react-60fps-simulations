@@ -2,12 +2,11 @@ import { Box } from '@chakra-ui/react';
 import { FC } from 'react';
 import { generateRing, RadialTile } from 'TileMiner/Enemies/atoms/RadialTiles';
 import RadialEnemy from './RadialEnemy';
+
 import Tile from './RadialTile';
-import TileTest from './TileTest';
 
 
 const staticEnemies = Array.from({ length: 2 }).map((_, i) => generateRing(i)).slice(1);
-console.log('Total Enemies', staticEnemies.flat().length);
 
 
 const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
@@ -18,10 +17,12 @@ const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
     transform='translate(-50%, -50%)'
     bg='#AA222255'
     overflow='visible'
+    width='1px'
+    height='1px'
   >
-    <svg overflow='visible'>
+    <svg overflow='visible' width='1px' height='1px'>
       {
-      ring.map(tile => <Tile key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
+      ring.map(tile => <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
     }
     </svg>
   </Box>
