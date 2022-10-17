@@ -72,11 +72,9 @@ export const getArcCoordsByRadius = (r: number, tileCount: number) => {
   return { start, end };
 };
 
-
+// TODO: PICKUP - Move this to a helper file, begin cleaning all of these up significantly
 export const drawArc = (ring: number) => {
   const { radius: ringRadus, tileCount } = ringInfo(ring);
-  // TODO: I think I need to "re-start" in many ways
-  //   The ringRadius is a unit radius, but multiplying by tile-height fucks it up a lot lol
   const radius = ringRadus * height;
 
   // Draw an eigth of a circle arc

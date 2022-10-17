@@ -4,8 +4,9 @@ import { generateRing, RadialTile } from 'TileMiner/Enemies/atoms/RadialTiles';
 
 import RadialEnemy from './RadialEnemy';
 
+const N_RINGS = 10;
 
-const staticEnemies = Array.from({ length: 3 }).map((_, i) => generateRing(i)).slice(1);
+const staticEnemies = Array.from({ length: N_RINGS }).map((_, i) => generateRing(i)).slice(1);
 
 
 const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
@@ -16,12 +17,19 @@ const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
     transform='translate(-50%, -50%)'
     bg='#AA222255'
     overflow='visible'
-    // TODO: Setting these to 1px "fixes" drawing issues, but it probably shouldn't be my answer
-    // (same with the svg width/height)
-    width='1px'
-    height='1px'
+    // TODO: This width/height can be ANYTHING really, but the transform in the svg would need to be adjusted
+    // Mostly I'm just playing around to try and figure out what parts of this are important for later
+    width='100px'
+    height='100px'
   >
-    <svg overflow='visible' width='1px' height='1px'>
+    <svg
+      overflow='visible'
+      transform='translate(50 50)'
+      width='1px'
+      // TODO: Why does this height need to be 1px? It throws eveything off otherwise
+      //  Of the 4 values here, it seems like ONLY THE HEIGHT affects the radial positions of the tiles
+      height='1px'
+    >
       {
       ring.map(tile => <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
     }
@@ -32,9 +40,8 @@ const TileRing: FC<{ ring: RadialTile[] }> = ({ ring }) => (
 const RadialEnemies: FC = () => (
   <>
     {
-    staticEnemies.map((ring, i) => <TileRing key={ i } ring={ ring } />)
+      staticEnemies.map((ring, i) => <TileRing key={ i } ring={ ring } />)
     }
-    { /* <TileRing ring={ staticEnemies[0] } /> */ }
   </>
 );
 
