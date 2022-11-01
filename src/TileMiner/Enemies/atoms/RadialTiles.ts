@@ -15,26 +15,23 @@ export interface RadialTile extends RadialTileCoords {
   height: number;
 }
 
-const RING_1_TILE_COUNT = 5;
-// Each tile is 3x as wide as it is tall
-const TILE_WIDTH_RATIO = 20;
-// TODO: These numbers and derivations aren't right
-//       The base tile size is based on how many we want in ring 1, but undoing that doesn't give
-//         us the right numbers
+const RING_1_TILE_COUNT = 4;
 
-// The arc length of a tile, in radians
-export const BASE_TILE_SIZE = (2 * Math.PI) / (RING_1_TILE_COUNT * TILE_WIDTH_RATIO);
+// TODO: The TILE_WIDTH_RATIO isn't beigng respected in the ways I'd expect at all
+//       The scaling factor seems highly skewed, I'm wondering if we
+//         further scale one or both of these numbers separately
+const TILE_WIDTH_RATIO = 30;
 
-export const TILE_HEIGHT = BASE_TILE_SIZE;
-export const TILE_WIDTH = BASE_TILE_SIZE * TILE_WIDTH_RATIO;
-
+// We take our desired number of tiles in ring 1, and our desired height of ring 1, and calculate the width of each tile
+export const TILE_WIDTH = 2 * Math.PI / RING_1_TILE_COUNT;
+export const TILE_HEIGHT = TILE_WIDTH / TILE_WIDTH_RATIO;
 
 // The conversion ratio from arc length to pixels
 // TODO: This doesn't seem to be even CLOSE to the sizes I'd expect from this ratio
 // I think there's something to be said about the TILE_WIDTH_RATIO and the number of tiles in ring 1
 // TODO: Why can't I make the tiles thinner/wider using my current methods?
 // The ratios cancel out in ways that ... don't make sense to me
-export const RADIAL_TILE_SIZE = 500;
+export const RADIAL_TILE_SIZE = 600;
 
 
 export const ringInfo = (ring: number) => {
@@ -65,7 +62,7 @@ export const ringInfo = (ring: number) => {
 // Generate a list of all the tiles in a radial pattern for a given ring
 export const generateRing = (ring: number): RadialTile[] => {
   const { radius: ringRadius, tileCount, perTileLeftoverShare, leftoverSpace } = ringInfo(ring);
-  console.log('Leftover', perTileLeftoverShare, leftoverSpace);
+  // console.log('Leftover', perTileLeftoverShare, leftoverSpace);
   // TODO: I don't thnk the leftover stuff is working right
   const arcLengthInRad = (TILE_WIDTH + perTileLeftoverShare);
   // const arcLengthInRad = TILE_WIDTH;

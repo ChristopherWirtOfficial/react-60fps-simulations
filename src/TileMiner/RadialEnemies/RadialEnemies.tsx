@@ -43,6 +43,8 @@ const TileRing: FC<{ ring: number }> = ({ ring }) => {
   );
 };
 
+console.log(TILE_HEIGHT, TILE_WIDTH);
+
 const RadialEnemies: FC = () => (
   <>
     {
