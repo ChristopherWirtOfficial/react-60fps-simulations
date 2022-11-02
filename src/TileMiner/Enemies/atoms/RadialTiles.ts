@@ -9,24 +9,23 @@ export interface RadialTile extends RadialTileCoords {
   height: number;
 }
 
-// We want 4 tiles in the first ring, which we regard as having a unitless circumference of 2*PI
-const RING_1_RADIUS = 1;
-const RING_1_CIRCUMFERENCE = 2 * Math.PI * RING_1_RADIUS;
-const RING_1_TILE_COUNT = 4;
-
 // "Request" a pixel size for the ring to be, and derive from there
-const RING_1_RADIUS_IN_PX = 50;
-const PIXEL_RATIO = RING_1_RADIUS_IN_PX / RING_1_RADIUS;
+export const RING_1_RADIUS_IN_PX = 45;
 
-export const TILE_WIDTH = (RING_1_CIRCUMFERENCE / RING_1_TILE_COUNT) * PIXEL_RATIO;
+export const RING_1_CIRCUMFERENCE = 2 * Math.PI * RING_1_RADIUS_IN_PX;
+const RING_1_TILE_COUNT = 6;
 
-const TILE_WIDTH_RATIO = 3;
+// TODO: Derive this value based on a stroke width and padding or something idk
+const HORIZONTAL_PADDING = 2;
+export const TILE_WIDTH = (RING_1_CIRCUMFERENCE / RING_1_TILE_COUNT) - HORIZONTAL_PADDING;
 
-export const TILE_HEIGHT = TILE_WIDTH / TILE_WIDTH_RATIO;
+// TODO: Same as above
+const VERTICAL_PADDING = 7;
+export const TILE_HEIGHT = RING_1_RADIUS_IN_PX - VERTICAL_PADDING;
 
 // Everything is pixels here
 export const ringInfo = (ring: number) => {
-  const radius = (ring + 1) * TILE_HEIGHT * 1.5;
+  const radius = ring * RING_1_RADIUS_IN_PX;
   const circumference = 2 * Math.PI * radius;
 
   // Probably won't be a whole number
@@ -55,6 +54,7 @@ export const ringInfo = (ring: number) => {
     tileCount,
     leftoverSpace,
     perTileLeftoverShare,
+    tilesInCircumference,
   };
 };
 

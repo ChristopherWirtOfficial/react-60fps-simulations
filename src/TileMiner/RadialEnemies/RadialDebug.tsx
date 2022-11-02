@@ -1,6 +1,4 @@
-import {
-  Box, Center, chakra, Divider, HStack, VStack,
-} from '@chakra-ui/react';
+import { Box, chakra, HStack, VStack } from '@chakra-ui/react';
 import { FC, PropsWithChildren, useMemo } from 'react';
 import { generateRing, ringInfo, TILE_HEIGHT, TILE_WIDTH } from 'TileMiner/Enemies/atoms/radialTiles';
 
@@ -49,7 +47,7 @@ export const LIKE_P_DIDDY = false;
 
 
 const RingDebug: FC<{ ring: number }> = ({ ring }) => {
-  const { radius, tileCount, circumference, perTileLeftoverShare } = ringInfo(ring);
+  const { radius, tileCount, circumference, tilesInCircumference } = ringInfo(ring);
 
   const ringTiles = useMemo(() => generateRing(ring), [ ring ]);
   const ringTile = ringTiles[0];
@@ -72,7 +70,7 @@ const RingDebug: FC<{ ring: number }> = ({ ring }) => {
       </HStack>
       <HStack>
         <DebugLabel label='circumference'>{ circumference.toFixed(2) }</DebugLabel>
-        <DebugLabel label='perTileLeftoverShare'>{ perTileLeftoverShare.toFixed(2) }</DebugLabel>
+        <DebugLabel label='tilesInCircumference'>{ tilesInCircumference.toFixed(2) }</DebugLabel>
       </HStack>
     </VStack>
   );
@@ -93,7 +91,7 @@ const CenterDebug: FC = () => (
   />
 );
 
-const debugRings: number[] = [ 0, 1 ];
+const debugRings: number[] = [ 1, 2, 3 ];
 
 const RadialDebug: FC = () => (
   <>
