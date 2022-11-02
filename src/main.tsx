@@ -10,7 +10,7 @@ const root = createRoot(container);
 root.render(
   // NOTE: I think it's genuinely too important to have good error messages to not use strict mode
   // NOTE: I ALSO think it's genuinely too important to not double-render literally everything to use strict mode.
-  // <React.StrictMode>
-  <App />,
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <App />,
+  </React.StrictMode>,
 );

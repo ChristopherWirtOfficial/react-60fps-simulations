@@ -2,8 +2,9 @@ import { Box } from '@chakra-ui/react';
 import { FC, useMemo } from 'react';
 import {
   generateRing, RADIAL_TILE_SIZE, ringInfo, TILE_HEIGHT, TILE_WIDTH,
-} from 'TileMiner/Enemies/atoms/RadialTiles';
+} from 'TileMiner/Enemies/atoms/radialTiles';
 
+import RadialDebug from './RadialDebug';
 import RadialEnemy from './RadialEnemy';
 
 const N_RINGS = 5;
@@ -23,8 +24,10 @@ const TileRing: FC<{ ring: number }> = ({ ring }) => {
       left='50%'
       transform='translate(-50%, -50%)'
       overflow='visible'
+      // TODO: I think this is completely arbitrary, and causing many of my problems
       width={ `${RADIAL_TILE_SIZE}px` }
       height={ `${RADIAL_TILE_SIZE}px` }
+
     >
       <svg
         overflow='visible'
@@ -36,17 +39,18 @@ const TileRing: FC<{ ring: number }> = ({ ring }) => {
         height='1px'
       >
         {
-      tiles.map(tile => <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
-    }
+        tiles.map(tile =>
+        // tile.index % 8 === 0 &&
+          <RadialEnemy key={ `${tile.ring}-${tile.index}` } tile={ tile } />)
+      }
       </svg>
     </Box>
   );
 };
 
-console.log(TILE_HEIGHT, TILE_WIDTH);
-
 const RadialEnemies: FC = () => (
   <>
+    <RadialDebug />
     {
       staticEnemies.map(ring => <TileRing key={ ring } ring={ ring } />)
     }

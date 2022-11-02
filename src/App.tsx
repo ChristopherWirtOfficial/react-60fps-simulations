@@ -1,6 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { FC } from 'react';
-import useCameraMovement from 'TileMiner/Player/Camera/useCameraMovement';
 import useZoom from 'TileMiner/Player/Camera/useZoom';
 
 import TileMiner from './TileMiner';

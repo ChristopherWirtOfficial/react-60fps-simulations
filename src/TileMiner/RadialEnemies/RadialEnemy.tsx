@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { FC } from 'react';
-import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
+import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/radialTiles';
 
 import { DebugLabel } from './RadialDebug';
 import Tile from './RadialTile';
@@ -24,8 +24,8 @@ const RadialEnemy: FC<{ tile: RadialTile }> = ({ tile }) => {
         fontSize={ 12 }
         zIndex={ 101 }
       >
-        <DebugLabel label='Ring'>{ ring }</DebugLabel>
-        <DebugLabel label='Index'>{ index }</DebugLabel>
+        { /* <DebugLabel label='Ring'>{ ring }</DebugLabel> */ }
+        { /* <DebugLabel label='Index'>{ index }</DebugLabel> */ }
       </Box>
     </>
   );

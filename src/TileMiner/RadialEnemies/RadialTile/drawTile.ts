@@ -1,6 +1,6 @@
 import { randomColor } from 'helpers';
 import Path from 'react-svg-path';
-import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
+import { RadialTile } from 'TileMiner/Enemies/atoms/radialTiles';
 
 export type ArcProps = Partial<{
   radius: number;
@@ -12,7 +12,7 @@ export type ArcProps = Partial<{
   relative: boolean;
 }>;
 
-export const addArc = (p: any, props: ArcProps) => {
+const addArc = (p: any, props: ArcProps) => {
   const {
     radius = 0,
     rotation = 0,
@@ -26,9 +26,9 @@ export const addArc = (p: any, props: ArcProps) => {
 };
 
 
-export const drawArc = (tile: RadialTile) => {
+const drawTile = (tile: RadialTile) => {
   const {
-    radius, ring, width, height, arcLengthInRad,
+    radius, width, height,
   } = tile;
 
   const start = {
@@ -37,7 +37,9 @@ export const drawArc = (tile: RadialTile) => {
     angle: 0,
   };
 
-  const endAngle = arcLengthInRad;
+
+  const arcLength = width / radius;
+  const endAngle = arcLength;
 
   const end = {
     x: radius * Math.cos(endAngle),
@@ -45,14 +47,14 @@ export const drawArc = (tile: RadialTile) => {
     angle: endAngle,
   };
 
-  // Draw an eigth of a circle arc
   const p = new Path();
 
-
   p.fill('none');
-  // p.stroke(randomColor(190, ring + 2));
   p.stroke(randomColor(190));
-  p.strokeWidth(5);
+  // Real one disabled for now while debugging
+  // p.stroke(randomColor(190, ring));
+  p.strokeWidth(3);
+  // TODO: I should probably bake the stroke width (aka a real border that we need to account for in the math)
   p.moveTo(0, 0);
   // Line from the center to the top of the arc, then arc, then line to the center again
   // p.moveTo(x, y);
@@ -69,6 +71,7 @@ export const drawArc = (tile: RadialTile) => {
     //  They're REALLY: just off of the center point, where we just came from
     endX: end.x,
     endY: end.y,
+    relative: false,
   });
 
   // Draw a line from the start to the outer arc's start, one height in start.angle
@@ -101,3 +104,4 @@ export const drawArc = (tile: RadialTile) => {
   return p;
 };
 
+export default drawTile;

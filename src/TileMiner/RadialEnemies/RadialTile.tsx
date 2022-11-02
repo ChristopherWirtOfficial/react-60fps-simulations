@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/RadialTiles';
-import { drawArc } from './RadialTile/radialTileHelpers';
+import { RadialTile, ringInfo } from 'TileMiner/Enemies/atoms/radialTiles';
+import drawTile from './RadialTile/drawTile';
 
 const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
   const { ring, index } = tile;
@@ -12,9 +12,9 @@ const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
     'transform-origin': 'left bottom',
   };
 
-  const innerArc = drawArc(tile).toComponent(pathProps) as JSX.Element;
+  const tileShape = drawTile(tile).toComponent(pathProps) as JSX.Element;
 
-  return innerArc;
+  return tileShape;
 };
 
 export default Tile;

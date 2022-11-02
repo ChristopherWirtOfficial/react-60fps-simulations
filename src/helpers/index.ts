@@ -22,7 +22,6 @@ export const getDistance = (x1: number, y1: number, x2: number, y2: number) => {
 
 export const uuid = (type?: string) => `${type ?? ''}${uuidv4()}`;
 
-// eslint-disable-next-line max-len
 export const randomColor = (highestVal: number = 220, seed?: number) => {
   const randGen = gen.create(seed?.toString());
   const rand = () => randGen(highestVal);
