@@ -2,30 +2,8 @@ import { Box, chakra, HStack, VStack } from '@chakra-ui/react';
 import useScreen from 'atoms/Screen/useScreen';
 import { FC, PropsWithChildren, useMemo } from 'react';
 import { generateRing, ringInfo, TILE_HEIGHT, TILE_WIDTH } from 'TileMiner/Enemies/atoms/radialTiles';
-import useGameCoordsToRadialTiles, { useMouseGameCoords } from './RadialTile/useGameCoordsToRadialTile';
 
-export const StarboardOverlay: FC = () => (
-  <>
-    <Box
-      pos='absolute'
-      top='0'
-      right='0'
-      left='0'
-      w='100%'
-      h='10px'
-      bg='blue'
-    />
-    <Box
-      pos='absolute'
-      bottom='0'
-      right='0'
-      left='0'
-      w='100%'
-      h='10px'
-      bg='red'
-    />
-  </>
-);
+import useGameCoordsToRadialTiles, { useMouseGameCoords } from './RadialTile/useGameCoordsToRadialTile';
 
 // DREAM: I still want a way for a child to be able to access the parent's state
 // Can you have tons of contexts? Can they nest?
@@ -92,7 +70,8 @@ const CenterDebug: FC = () => (
     transform='translate(-50%, -50%)'
   />
 );
-// TODO: PICKUP - Create a mouse debug component that shows the mouse position in the game world
+
+// I can show information about any given ring by putting it here
 const debugRings: number[] = [];
 
 const MouseDebug: FC = () => {

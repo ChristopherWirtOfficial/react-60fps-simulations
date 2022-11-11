@@ -8,6 +8,7 @@ import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy
 import { ProjectileHitsAtomFamily } from './useProjectileHit';
 
 // A family that indicates whether an enemy is onscreen or not (for rendering purposes)
+// TODO: Do I still need to look into this? (AFTER RADIALS)
 // PROBLEM: Every time the camera changes, absolutely every single enemy wrapper component gets an updated version of the atom from this family.
 // How can we de-couple the camera from the enemy rendering?
 // Something like this:

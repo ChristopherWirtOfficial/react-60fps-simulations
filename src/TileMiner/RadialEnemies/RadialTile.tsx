@@ -13,9 +13,7 @@ const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
 
   const tileShape = drawTile(tile).toComponent(pathProps) as JSX.Element;
 
-
-  // TODO: PICKUP - I'm trying to debug how to get the tiles to go in the right direction
-  return index !== 1 ? tileShape : null;
+  return tileShape;
 };
 
 export default Tile;
