@@ -6,6 +6,7 @@ import TileMiner from './TileMiner';
 
 
 const AppHooks: FC = () => {
+  // Uncommenting this causes the entire game to re-render on every frame
   // useCameraMovement();
   useZoom();
 

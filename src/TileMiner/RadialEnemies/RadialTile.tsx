@@ -6,15 +6,16 @@ const Tile: FC<{ tile: RadialTile }> = ({ tile }) => {
   const { ring, index } = tile;
   const { tileCount } = ringInfo(ring);
 
-  const angleInDegrees = (index / tileCount) * 360;
+  const angleInDegrees = 360 - (index / tileCount) * 360;
   const pathProps = {
     transform: `rotate(${angleInDegrees})`,
-    'transform-origin': 'left bottom',
   };
 
   const tileShape = drawTile(tile).toComponent(pathProps) as JSX.Element;
 
-  return tileShape;
+
+  // TODO: PICKUP - I'm trying to debug how to get the tiles to go in the right direction
+  return index !== 1 ? tileShape : null;
 };
 
 export default Tile;

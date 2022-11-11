@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import useInitScreen from 'atoms/Screen/useScreen';
+import useScreen from 'atoms/Screen/useScreen';
 import { CAMERA_POSITION_SCALING_FACTOR } from 'helpers/knobs';
 import { FC } from 'react';
 
@@ -16,7 +16,7 @@ import TileTest from './RadialEnemies/TileTest';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
-  const { screenRef } = useInitScreen();
+  const { screenRef } = useScreen();
 
   // Probably need some kind of `useInit` for all of these that will
   //  build up as true singletones haha

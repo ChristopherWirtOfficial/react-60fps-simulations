@@ -28,20 +28,24 @@ const addArc = (p: any, props: ArcProps) => {
 
 const drawTile = (tile: RadialTile) => {
   const {
-    radius, width, height,
+    radius, width, height, ring,
   } = tile;
 
-  const start = {
+  const end = {
     x: radius,
     y: 0,
-    angle: 0,
+    angle: 360,
   };
 
-
+  // An individual tile's arclength is apparently equal to the .. width / radius?
+  // I probably derived this, but now I don't know from what lol
   const arcLength = width / radius;
-  const endAngle = arcLength;
+  const endAngle = -arcLength;
 
-  const end = {
+  // NOTE: We find the actual exact drawing coordinates for each tile
+  // Everything is drawn in the same exact slice, and then rotated by the other component to its position
+  // Not sure how to feel about that though
+  const start = {
     x: radius * Math.cos(endAngle),
     y: radius * Math.sin(endAngle),
     angle: endAngle,
@@ -50,15 +54,8 @@ const drawTile = (tile: RadialTile) => {
   const p = new Path();
 
   p.fill('none');
-  p.stroke(randomColor(190));
-  // Real one disabled for now while debugging
-  // p.stroke(randomColor(190, ring));
+  p.stroke(randomColor(190, ring));
   p.strokeWidth(3);
-  // TODO: I should probably bake the stroke width (aka a real border that we need to account for in the math)
-  p.moveTo(0, 0);
-  // Line from the center to the top of the arc, then arc, then line to the center again
-  // p.moveTo(x, y);
-
 
   p.moveTo(start.x, start.y);
 
@@ -67,8 +64,6 @@ const drawTile = (tile: RadialTile) => {
     sweep: 1,
     arc: 0,
 
-    // This needs to be relative, so these need to be relative to the start point
-    //  They're REALLY: just off of the center point, where we just came from
     endX: end.x,
     endY: end.y,
     relative: false,
@@ -76,29 +71,31 @@ const drawTile = (tile: RadialTile) => {
 
   // Draw a line from the start to the outer arc's start, one height in start.angle
   const otherStart = {
+    x: radius + height,
+    y: 0,
+  };
+
+  // Just further out along the perpindicular line from the start of the original arc
+  p.lineTo(otherStart.x, otherStart.y);
+
+  const otherEnd = {
     x: start.x + height * Math.cos(start.angle),
     y: start.y + height * Math.sin(start.angle),
   };
 
-  const otherEnd = {
-    x: end.x + height * Math.cos(end.angle),
-    y: end.y + height * Math.sin(end.angle),
-  };
-
-  p.moveTo(start.x, start.y);
-  p.lineTo(otherStart.x, otherStart.y);
-
-  // Draw the outer arc
+  // Draw the outer arc from the other start, on the x-axis at y=0 again, to the other end
   addArc(p, {
     radius: radius + height,
-    sweep: 1,
+    sweep: 0,
     arc: 0,
     endX: otherEnd.x,
     endY: otherEnd.y,
   });
 
+
   // Draw a line from the end of the outer arc to the end of the inner arc
-  p.lineTo(end.x, end.y);
+  p.moveTo(otherEnd.x, otherEnd.y);
+  p.lineTo(start.x, start.y);
 
 
   return p;

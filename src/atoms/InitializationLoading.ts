@@ -4,7 +4,6 @@ import { atom } from 'jotai';
 
 import { ScreenNodeAtom } from './Screen/ScreenNodeAtom';
 
-// For example, no ticks should be run until the screen dimensions are known
 export const ScreenDimensionsLoaded = atom(get => {
   const screenNode = get(ScreenNodeAtom);
 
@@ -17,6 +16,7 @@ export const ReadyToShootProjectiles = atom(get => {
   return screenDimensionsLoaded;
 });
 
+// NOTE: No ticks should be run until the screen dimensions are known
 export const EverythingLoadedGameIsInitialized = atom(get => {
   const screenDimensionsLoading = get(ScreenDimensionsLoaded);
 

@@ -1,6 +1,8 @@
 import { Box, chakra, HStack, VStack } from '@chakra-ui/react';
+import useScreen from 'atoms/Screen/useScreen';
 import { FC, PropsWithChildren, useMemo } from 'react';
 import { generateRing, ringInfo, TILE_HEIGHT, TILE_WIDTH } from 'TileMiner/Enemies/atoms/radialTiles';
+import useGameCoordsToRadialTiles, { useMouseGameCoords } from './RadialTile/useGameCoordsToRadialTile';
 
 export const StarboardOverlay: FC = () => (
   <>
@@ -90,8 +92,37 @@ const CenterDebug: FC = () => (
     transform='translate(-50%, -50%)'
   />
 );
+// TODO: PICKUP - Create a mouse debug component that shows the mouse position in the game world
+const debugRings: number[] = [];
 
-const debugRings: number[] = [ 1, 2, 3 ];
+const MouseDebug: FC = () => {
+  const { mouseX, mouseY } = useScreen();
+  const { x, y } = useMouseGameCoords();
+  const { ring, index } = useGameCoordsToRadialTiles({ x, y });
+
+  return (
+    <Box
+      bg='#DDEEDDAF'
+      pos='fixed'
+      zIndex={ 1500 }
+      top={ mouseY! - 70 }
+      left={ mouseX! - 180 }
+    >
+      <HStack>
+        <DebugLabel label='mouseX'>{ mouseX }</DebugLabel>
+        <DebugLabel label='mouseY'>{ mouseY }</DebugLabel>
+      </HStack>
+      <HStack>
+        <DebugLabel label='x'>{ x }</DebugLabel>
+        <DebugLabel label='y'>{ y }</DebugLabel>
+      </HStack>
+      <HStack fontSize='xl'>
+        <DebugLabel label='ring'>{ ring }</DebugLabel>
+        <DebugLabel label='index'>{ index }</DebugLabel>
+      </HStack>
+    </Box>
+  );
+};
 
 const RadialDebug: FC = () => (
   <>
@@ -108,6 +139,7 @@ const RadialDebug: FC = () => (
     >
       <DebugLabel label='Height'>{ TILE_HEIGHT.toFixed(4) }</DebugLabel>
       <DebugLabel label='Width'>{ TILE_WIDTH.toFixed(4) }</DebugLabel>
+      <MouseDebug />
       { debugRings.map(ring => <RingDebug key={ ring } ring={ ring } />) }
     </VStack>
   </>
