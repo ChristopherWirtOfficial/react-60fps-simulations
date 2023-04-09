@@ -28,7 +28,7 @@ export const useMouseGameCoords = () => {
   return useGameCoords({ x: mouseX!, y: mouseY! });
 };
 
-
+// TODO: PICKUP - Refactor this to be Jotai based
 const useGameCoordsToRadialTiles = (coords: GameCoords) => {
   // Figure out which ring the coords are in, based on distance from the
   //   center and the Tile Height / Ring "Height"
@@ -43,7 +43,8 @@ const useGameCoordsToRadialTiles = (coords: GameCoords) => {
 
   // Which "ring" it's in. This includes the padding between rings, and so needs to be accounted for
   // I think there should be two versions of this:
-  //   - one that gets the "ring" and "index" and one that
+  //   - one that gets the "ring" and "index" without considering
+  //      if the coords are in the padding on the edges
   //   - one that gets the actual tile that's there, or null if it's in the padding (or center idk)
   const ring = Math.floor(distance / FULL_TILE_HEIGHT);
 

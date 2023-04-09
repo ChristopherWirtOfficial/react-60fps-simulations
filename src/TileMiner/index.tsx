@@ -45,15 +45,14 @@ const TileMiner: FC = () => {
         alignItems='center'
         bg='darkslategray'
         transform={ `translate(${canvasOffset.x}px, ${canvasOffset.y}px)` }
-      // Smooth scrolling, basically
+        // Smooth scrolling, basically
         transition='transform 0.1s'
       >
-        { /* <GunProjectiles /> */ }
-        { /* <TileEnemies /> */ }
+        <GunProjectiles />
+        { /* RIP <TileEnemies /> */ }
         <RadialEnemies />
-        { /* <TileMinerPlayerBox /> */ }
+        <TileMinerPlayerBox />
         { /* <CameraDebug /> */ }
-        { /* <TileTest /> */ }
       </Flex>
       { /* <TileMinerDebug /> */ }
     </>

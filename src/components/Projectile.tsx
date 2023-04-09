@@ -1,8 +1,7 @@
 import { Box } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import { FC } from 'react';
 import useMinerProjectile from 'TileMiner/Projectiles/useMinerProjectile';
 
-import useProjectile from '../atoms/Projectiles/useProjectile';
 import useBoxStyles from '../hooks/Entities/useBoxStyles';
 
 
@@ -15,11 +14,12 @@ const ProjectileComp: FC<{ projectileKey: string }> = ({ projectileKey }) => {
   // const otherStyles = useBoxStyles(nextPosition);
 
   const styles = useBoxStyles(projectile);
-
+  // TODO: Do all the collision math, if any, with a circle in mind
   return (
     <Box
       { ...styles }
       bg='red'
+      rounded='full'
     >
       { /* <Box pos='absolute'>{ projectile.x } { projectile.y }</Box> */ }
     </Box>

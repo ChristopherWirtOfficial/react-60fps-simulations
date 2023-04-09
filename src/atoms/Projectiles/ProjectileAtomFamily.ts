@@ -20,12 +20,12 @@ export const Projectiles = atomFamily((key: string) => atom<Projectile, Projecti
   // TODO: TARGETS - Decouple targets from projectiles
   //  But also, yo I'm dumb, this literally just makes up an enemy to target if the key is fake lmao
   //  That's why all of the projectiles end up sharing a color lmao
-  const target = get(EnemyAtomFamily(projectile.targetKey));
+  const target = projectile.targetKey ? get(EnemyAtomFamily(projectile.targetKey)) : null;
 
   return {
     ...projectile,
     target,
-  };
+  } as Projectile;
 }, (get, set, updateValue) => {
   set(ProjectileAtomFamily(key), updateValue);
 }));

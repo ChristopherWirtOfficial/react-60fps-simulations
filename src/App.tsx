@@ -1,21 +1,20 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { FC } from 'react';
-import useZoom from 'TileMiner/Player/Camera/useZoom';
-
-import TileMiner from './TileMiner';
+import KingOfSomeRingsGame from './KingOfSomeRings/KingOfSomeRingsGame';
 
 
 const AppHooks: FC = () => {
-  // Uncommenting this causes the entire game to re-render on every frame
-  // useCameraMovement();
-  useZoom();
-
+// Uncommenting this causes the entire game to re-render on every frame
+// useCameraMovement();
+// useZoom();
+  const unused = 0;
   return null;
 };
 
 const App: FC = () => (
   <ChakraProvider>
-    <TileMiner />
+    { /* <TileMiner /> */ }
+    <KingOfSomeRingsGame />
     <AppHooks />
   </ChakraProvider>
 );
