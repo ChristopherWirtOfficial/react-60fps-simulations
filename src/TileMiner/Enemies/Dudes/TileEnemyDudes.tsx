@@ -14,19 +14,25 @@ const DUDE_DAMAGE = 5;
 //      1. The feeling of the dudes being more individual, especially when they're synced with when they were
 //         added, and not just based on the number of dudes on the tile and some global timer for that tile's damage check
 //      2. Other nice things, like the dudes falling off the tile when it's destroyed? (Maybe that's actually harder haha)
+//   But the biggest consideration!
+//     - The dudes would probably need IDs then..
+//        Incrementing and decrementing the counter only affecting the "last" dude sucks if there's a reason to
+//        actually differentiate between them. And if there's not, then why get cute about it? Idk maybe I'm overthinking
+//        it, as usual ;)
 const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // The number of dudes on the tile
   const dudesCount = useAtomValue(TileEnemyAssignedDudes(enemyId));
 
   const dudes = Array.from({ length: dudesCount }, (_, i) => i);
 
-  const size = '1.2rem';
 
   const { addDudeHit } = useDudeHits(enemyId);
 
   // Based on how many dudes, a certain amount of damage is done to the tile on each hit
   // Each hit is every X ticks
   useTick(() => {
+    // TODO: What about overhit protection? automatically unassign dudes if they're going to overhit on the next hit
+    //        This is best done after we move the damage to individual dudes
     const collectiveDudeDamage = DUDE_DAMAGE * dudesCount;
 
     addDudeHit(collectiveDudeDamage);
