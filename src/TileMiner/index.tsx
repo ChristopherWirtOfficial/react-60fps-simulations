@@ -4,13 +4,9 @@ import { CAMERA_POSITION_SCALING_FACTOR } from 'helpers/knobs';
 import { FC } from 'react';
 
 import TileEnemies from './Enemies/TileEnemies';
-import CameraDebug from './Player/Camera/CameraDebug';
 import useCamera from './Player/Camera/useCamera';
-import TileMinerPlayerBox from './Player/TileMinerPlayer';
 import TileMinerDebug from './Player/TilePlayerDebug';
-import GunProjectiles from './Player/TilePlayerGun/GunProjectiles';
 import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
-
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -43,15 +39,15 @@ const TileMiner: FC = () => {
         alignItems='center'
         bg='darkslategray'
         transform={ `translate(${canvasOffset.x}px, ${canvasOffset.y}px)` }
-      // Smooth scrolling, basically
+        // Smooth scrolling, basically
         transition='transform 0.1s'
       >
-        <GunProjectiles />
+        { /* <GunProjectiles /> */ }
         <TileEnemies />
-        <TileMinerPlayerBox />
-        <CameraDebug />
+        { /* <TileMinerPlayerBox /> */ }
+        { /* <CameraDebug /> */ }
       </Flex>
-      <TileMinerDebug />
+      { /* <TileMinerDebug /> */ }
     </>
   );
 };

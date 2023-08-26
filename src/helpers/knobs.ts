@@ -12,12 +12,12 @@ export const ZOOM_MAX = 10; // The maximum zoom level
 // Tile Miner knobs
 // Square, for now, but with an odd number of tiles to have a center
 export const MAP_SIZE = 70; // SIZExSIZE grid of tiles (and enemies on most of those tiles)
-export const ENEMY_SPAWN_PADDING = 10;
+export const ENEMY_SPAWN_PADDING = 5; // TODO: Seems to also enforce the actual general grid padding for tiles
 export const TILE_ENEMY_DEBUG_ON = false;
-export const TILE_SIZE = 50;
+export const TILE_SIZE = 110;
 
 // Core Projectile knobs
-export const TICKS_BETWEEN_ATTACKS = 10;
+export const TICKS_BETWEEN_ATTACKS = 100;
 export const BASE_PROJECTILE_SPEED = 3;
 export const ACCELERATION_FACTOR = 0.0;
 export const MAX_PROJECTILE_SPEED = 7;

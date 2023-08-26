@@ -7,6 +7,8 @@ import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
 
 import HandleEnemyDeath from './atoms/HandleEnemyDeath';
 import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
+import { TileEnemyAssignedDudes, useAssignedDudes } from './Dudes/TileEnemyDudesAtoms';
+import TileEnemyDudes from './Dudes/TileEnemyDudes';
 
 export const useRenderCount = () => {
   const renderCount = useRef(0);
@@ -49,23 +51,26 @@ const TileEnemyDebug: FC<{ tileEnemy: TileEnemy }> = ({ tileEnemy }) => {
 };
 
 const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
-  // TODO: PICKUP potentially - useTileEnemy instead
   const [ tileEnemy, setTileEnemy ] = useAtom(TileEnemySelectorFamily(enemyId));
   const { health, hits } = tileEnemy;
   // If the enemy is dead, kill it
-  const handleEnemyDeath = useSetAtom(HandleEnemyDeath);
+  const handleTileDeath = useSetAtom(HandleEnemyDeath);
 
   useEffect(() => {
     if (health <= 0) {
-      handleEnemyDeath(enemyId);
+      handleTileDeath(enemyId);
     }
-  }, [ health, handleEnemyDeath, enemyId ]);
+  }, [ health, handleTileDeath, enemyId ]);
+
+
+  const { assignedDudes, addAssignedDude } = useAssignedDudes(enemyId);
 
 
   const styles = useBoxStyles(tileEnemy);
 
   return (
     <Box
+      onClick={ addAssignedDude }
       pos='absolute'
       top={ 0 }
       left={ 0 }
@@ -90,6 +95,7 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
         { health }
       </Box>
       <TileEnemyDebug tileEnemy={ tileEnemy } />
+      <TileEnemyDudes enemyId={ enemyId } />
     </Box>
   );
 };
