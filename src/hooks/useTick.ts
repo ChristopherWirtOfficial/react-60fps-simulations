@@ -10,7 +10,7 @@ export type TickFunctor = {
   readonly id: string;
   readonly functor: (tickNumber?: number) => void;
   readonly frequency: number;
-  readonly isPhysics: boolean;
+  readonly isPhysics?: boolean;
 };
 
 // TODO: DEBUGGING I really need to add a way to step through single pulses, and probably other ways to highlight specific entities or tickFunctors.
@@ -21,7 +21,7 @@ export type TickFunctor = {
 export const BASE_TICKRATE = 60 * TICK_FACTOR;
 export const FRAMERATE = 60 * TICK_FACTOR;
 
-const TICK_LENGTH = 1000 / BASE_TICKRATE;
+export const TICK_LENGTH = 1000 / BASE_TICKRATE;
 if (TICK_LENGTH <= 1) {
   console.warn('PHYSICS TICK LENGTH IS LESS THAN 1');
 }
