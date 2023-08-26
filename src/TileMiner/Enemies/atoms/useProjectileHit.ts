@@ -53,7 +53,10 @@ export const EnemyDamageTakenAtomFamily = atomFamily((enemyId: TileEnemyIdentife
   const hitsDamage = hits.reduce((acc, hit) => acc + hit.damage, 0);
   const dudesHitDamage = dudeHits.reduce((acc, hit) => acc + hit.damage, 0);
 
-  return hitsDamage + dudesHitDamage;
+  const totalDamage = hitsDamage + dudesHitDamage;
+
+  // If greater than 0, return the total damage
+  return Math.max(0, totalDamage);
 }), compareTileEnemyIdentifiers);
 
 type AddProjectileHitArgs = { enemyId: TileEnemyIdentifer, projectile: Projectile };

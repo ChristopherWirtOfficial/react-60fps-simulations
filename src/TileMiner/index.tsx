@@ -7,6 +7,7 @@ import TileEnemies from './Enemies/TileEnemies';
 import useCamera from './Player/Camera/useCamera';
 import TileMinerDebug from './Player/TilePlayerDebug';
 import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
+import TileMinerPlayer from './Player/TileMinerPlayer';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -44,7 +45,7 @@ const TileMiner: FC = () => {
       >
         { /* <GunProjectiles /> */ }
         <TileEnemies />
-        { /* <TileMinerPlayerBox /> */ }
+        <TileMinerPlayer />
         { /* <CameraDebug /> */ }
       </Flex>
       { /* <TileMinerDebug /> */ }

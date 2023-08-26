@@ -7,7 +7,7 @@ import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
 
 import HandleEnemyDeath from './atoms/HandleEnemyDeath';
 import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
-import { TileEnemyAssignedDudes, useAssignedDudes } from './Dudes/TileEnemyDudesAtoms';
+import { useAssignedDudes } from './Dudes/TileEnemyDudesAtoms';
 import TileEnemyDudes from './Dudes/TileEnemyDudes';
 
 export const useRenderCount = () => {
@@ -56,14 +56,15 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // If the enemy is dead, kill it
   const handleTileDeath = useSetAtom(HandleEnemyDeath);
 
+  const { assignedDudes, addAssignedDude, benchAssignedDude, clearTileDudes } = useAssignedDudes(enemyId);
+
+
   useEffect(() => {
     if (health <= 0) {
       handleTileDeath(enemyId);
+      clearTileDudes();
     }
-  }, [ health, handleTileDeath, enemyId ]);
-
-
-  const { assignedDudes, addAssignedDude } = useAssignedDudes(enemyId);
+  }, [ health, handleTileDeath, enemyId, clearTileDudes ]);
 
 
   const styles = useBoxStyles(tileEnemy);
