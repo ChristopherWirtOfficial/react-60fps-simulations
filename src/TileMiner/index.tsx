@@ -12,6 +12,7 @@ import RelativeTileGrid, { RootTileGrid } from './Tiles/RelativeTileGrid';
 import StoreTile from './Tiles/GameTiles/StoreTile';
 import useCameraMovement from './Player/Camera/useCameraMovement';
 import { useCameraKeyboardCapture } from './Player/Camera/useKeyboard';
+import CameraDebug from './Player/Camera/CameraDebug';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -45,13 +46,10 @@ const TileMiner: FC = () => {
         alignItems='center'
         bg='darkslategray'
         transform={ `translate(${canvasOffset.x}px, ${canvasOffset.y}px)` }
-        // Smooth scrolling, basically
-        transition='transform 0.1s'
       >
         <StoreTile />
         <TileEnemies />
         <TileMinerPlayer />
-        { /* <CameraDebug /> */ }
       </Flex>
     </RootTileGrid>
   );

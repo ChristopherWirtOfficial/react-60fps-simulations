@@ -16,15 +16,17 @@ import { ProjectileHitsAtomFamily } from './useProjectileHit';
 // Something like this:
 //
 const EnemyIsOnscreenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
-  const { camera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
+  const {
+    viewport, width: realWidth, height: realHeight,
+  } = get(ScreenDimensionsSelector);
   const { gridX, gridY } = enemyId;
 
   // TODO: This might not be exactly right, or expecially it might not be obviously wrong
-  const width = realWidth / camera.zoom;
-  const height = realHeight / camera.zoom;
+  const width = realWidth;// / camera.zoom;
+  const height = realHeight;// / camera.zoom;
 
   // Based on the viewport and the enemies' grid positions, determine if this enemy is onscreen
-  const { x, y } = camera;
+  const { x, y } = viewport;
   const { realX, realY } = tileGridToReal(gridX, gridY);
 
   // Relativelty easy to see this is working by just drawing a box around the viewport
