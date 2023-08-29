@@ -1,13 +1,16 @@
 import { FC } from 'react';
 import { TileEnemyIdentifer } from 'types/TileEnemy';
 import { useAtomValue } from 'jotai';
-import { Box, Flex, Grid, HStack } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import useTick from 'hooks/useTick';
 import { TICKS_BETWEEN_ATTACKS } from 'helpers/knobs';
+import { useAtomCallback } from 'jotai/utils';
+import { useMaterialEssence } from 'TileMiner/Tiles/GameTiles/StoreTile';
 import { TileEnemyAssignedDudes } from './TileEnemyDudesAtoms';
-import useProjectileHit, { useDudeHits } from '../atoms/useProjectileHit';
+import { useDudeHits } from '../atoms/useProjectileHit';
+import { TileEnemySelectorFamily } from '../atoms/TileEnemyAtoms';
 
-const DUDE_DAMAGE = 5;
+const BASE_DUDE_DAMAGE = 5;
 export const DUDE_SIZE = '10px';
 
 // TODO: Consider making this render a bunch of individual TileDude components that all control their own tick
@@ -26,17 +29,33 @@ const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
   const dudes = Array.from({ length: dudesCount }, (_, i) => i);
 
+  const getTileEnemyHealth = useAtomCallback<number, void>(get => {
+    const upToDateTileEnemy = get(TileEnemySelectorFamily(enemyId));
+
+    return upToDateTileEnemy.health;
+  }) as () => number;
 
   const { addDudeHit } = useDudeHits(enemyId);
+
+  const { addMaterialEssence } = useMaterialEssence();
 
   // Based on how many dudes, a certain amount of damage is done to the tile on each hit
   // Each hit is every X ticks
   useTick(() => {
     // TODO: What about overhit protection? automatically unassign dudes if they're going to overhit on the next hit
     //        This is best done after we move the damage to individual dudes
-    const collectiveDudeDamage = DUDE_DAMAGE * dudesCount;
+    const collectiveDudeDamage = BASE_DUDE_DAMAGE * dudesCount;
+    const remainingTileHealth = getTileEnemyHealth();
 
     addDudeHit(collectiveDudeDamage);
+
+    const newTileHealth = getTileEnemyHealth();
+    const didOverhit = newTileHealth < 0;
+    const overhit = didOverhit ? Math.abs(newTileHealth) : 0;
+
+    const damageDealt = collectiveDudeDamage - overhit;
+
+    addMaterialEssence(damageDealt);
   }, TICKS_BETWEEN_ATTACKS);
 
   return (

@@ -10,6 +10,8 @@ import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
 import TileMinerPlayer from './Player/TileMinerPlayer';
 import RelativeTileGrid, { RootTileGrid } from './Tiles/RelativeTileGrid';
 import StoreTile from './Tiles/GameTiles/StoreTile';
+import useCameraMovement from './Player/Camera/useCameraMovement';
+import { useCameraKeyboardCapture } from './Player/Camera/useKeyboard';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -20,6 +22,7 @@ const TileMiner: FC = () => {
   useTileMinerClickHandler();
 
   const camera = useCamera();
+  useCameraMovement();
 
   // How we actually move the canvas underneath the static viewport to make it look like we're moving the camera/player center
   // TODO: Make this depend on the zoom level as well

@@ -64,14 +64,8 @@ export const D = 'd';
 // TODO: Replace this with useKeyboard which registers event listeners and captures all keydown and keyup events by key
 // Think this through again, but we SHOULD be okay on performance because ONLY consumers of a key will cause updates/re-renders ANYWHERE
 export const useCameraKeyboardCapture = () => {
-  // TODO: Do these need to be memoized? Are they actually stable with the current implementation?
-  const w = useMemo(() => 'w', []);
-  const a = useMemo(() => 'a', []);
-  const s = useMemo(() => 's', []);
-  const d = useMemo(() => 'd', []);
-
-  useKey(w);
-  useKey(a);
-  useKey(s);
-  useKey(d);
+  useKey(W);
+  useKey(A);
+  useKey(S);
+  useKey(D);
 };

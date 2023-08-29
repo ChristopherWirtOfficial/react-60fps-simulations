@@ -96,12 +96,13 @@ export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyI
   const { realX, realY } = tileGridToReal(gridX, gridY);
 
 
-  // TODO: Get this interface and the other new useTileStlyes
-  //           to speak the same language/types
+  // TODO: Stop calling things like this "boxes" everywhere except at the base sub-tile level
+  //       AKA: Get this (and whatever else) to exclusively speak TILE and have Tile hide all the "Box" stuff, in this case
+  //       The tile (probably) won't have physics done on it, which is the main reason to have a "Game" level Box..
+  // TODO: See above, consider renaming everything to do with "Box" to "GameBox" to tie it to the rest of the "GameCoords" stuff
+  //       Draw the line between Tile and Game, everywhere except the translation interfaces that the game will naturally use, if necessary
   const newEnemy: TileEnemyBase = {
     key,
-    x: realX,
-    y: realY,
     gridX,
     gridY,
     speed: 0,

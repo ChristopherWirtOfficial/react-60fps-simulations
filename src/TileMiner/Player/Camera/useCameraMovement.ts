@@ -1,6 +1,7 @@
 import { CAMERA_SPEED } from 'helpers/knobs';
 import useTick from 'hooks/useTick';
 import { atom, useAtomValue, useSetAtom } from 'jotai';
+import { useEffect } from 'react';
 import {
   A, D, KeyPressed, S, useCameraKeyboardCapture, W,
 } from './useKeyboard';
@@ -14,6 +15,7 @@ export interface CameraPosition {
 export const CameraPositionAtom = atom<CameraPosition>({ x: 0, y: 0 });
 
 const TickCameraMovement = atom(null, (get, set) => {
+  console.log('Ha, yes, ticking camera movement');
   const { x, y } = get(CameraPositionAtom);
   const w = get(KeyPressed(W));
   const a = get(KeyPressed(A));
@@ -34,7 +36,15 @@ const useCameraMovement = () => {
   useCameraKeyboardCapture();
   const tick = useSetAtom(TickCameraMovement);
 
-  useTick(tick);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      tick();
+    });
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [ tick ]);
 
   const { x, y } = useAtomValue(CameraPositionAtom);
 
