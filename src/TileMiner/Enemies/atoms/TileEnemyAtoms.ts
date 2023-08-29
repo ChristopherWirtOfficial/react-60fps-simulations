@@ -1,6 +1,6 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { randomColor, uuid } from 'helpers';
-import gridToReal from 'helpers/grid/gridToScreenCoords';
+import tileGridToReal from 'helpers/tile-grid/gridToScreenCoords';
 import { MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithReset, RESET } from 'jotai/utils';
@@ -54,7 +54,7 @@ export const TileGridOnscreenEnemyIDList = atom(get => {
   // Based on the viewport and the enemies' grid positions, determine which enemies are onscreen
   const onscreenEnemies = enemies.filter(({ gridX, gridY }) => {
     const { x, y } = camera;
-    const { realX, realY } = gridToReal(gridX, gridY);
+    const { realX, realY } = tileGridToReal(gridX, gridY);
 
     // Relativelty easy to see this is working by just drawing a box around the viewport
     //  and seeing which enemies are inside it, especially while on over-cranked zoom levels
@@ -98,7 +98,9 @@ export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyI
   //   and using a padding to make that center a little further away from the "edge of the tile", I can place
   //   enemies that still have a size that they totally stick to, but they're rendered by an actual Tile component,
   //   and that's laid out more traditionally with the same absolute position, transform, and grid logic.
-  const { realX, realY } = gridToReal(gridX, gridY);
+  const { realX, realY } = tileGridToReal(gridX, gridY);
+
+  // TODO: PICKUP - Get rid of all of the realX and Y stuff. None of the "Tile" level rendering will know pixels.
 
   const newEnemy: TileEnemyBase = {
     key,

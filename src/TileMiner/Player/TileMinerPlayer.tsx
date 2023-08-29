@@ -1,10 +1,11 @@
 import { Box, Flex } from '@chakra-ui/react';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 import { useAtomValue } from 'jotai';
 import { BenchedDudes } from 'TileMiner/Enemies/Dudes/TileEnemyDudesAtoms';
-import TileMinerGun from './TilePlayerGun/GunBase';
+import RelativeTileGrid from 'TileMiner/Tiles/RelativeTileGrid';
+import { DUDE_SIZE } from 'TileMiner/Enemies/Dudes/TileEnemyDudes';
 import { useTileMiner } from './useTileMinerPlayer';
 
 
@@ -19,14 +20,16 @@ const TileMinerPlayer: FC = () => {
 
   return (
     <Box bg={ player.color } { ...styles } border='1px yellow solid'>
+      <RelativeTileGrid>
+      </RelativeTileGrid>
       <Flex p={ 1.5 } gap={ 1.5 }>
         {
           benchedDudes.map(dudeId => (
             <Box
               key={ dudeId }
               bg='lightgray'
-              w='10px'
-              h='10px'
+              w={ DUDE_SIZE }
+              h={ DUDE_SIZE }
             />
           ))
 

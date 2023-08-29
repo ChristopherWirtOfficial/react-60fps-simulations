@@ -8,6 +8,7 @@ import { TileEnemyAssignedDudes } from './TileEnemyDudesAtoms';
 import useProjectileHit, { useDudeHits } from '../atoms/useProjectileHit';
 
 const DUDE_DAMAGE = 5;
+export const DUDE_SIZE = '10px';
 
 // TODO: Consider making this render a bunch of individual TileDude components that all control their own tick
 // Benefits include:
@@ -42,7 +43,7 @@ const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
     <Flex wrap='wrap' p={ 1.5 } justifyContent='left' gap={ 1.5 } flex='1'>
       {
         dudes.map(dude => (
-          <Box w={ size } h={ size } bg='gray.500' key={ dude } boxShadow='md' />
+          <Box w={ DUDE_SIZE } h={ DUDE_SIZE } bg='gray.500' key={ dude } boxShadow='md' />
         ))
       }
     </Flex>

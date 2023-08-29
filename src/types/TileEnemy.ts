@@ -1,4 +1,4 @@
-import { GridTile } from 'helpers/grid/gameCoordsToGridTile';
+import { GridTile } from 'helpers/tile-grid/gameCoordsToGridTile';
 import { ProjectileHit } from 'TileMiner/Enemies/atoms/useProjectileHit';
 import { Enemy } from './Boxes';
 

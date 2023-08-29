@@ -1,5 +1,5 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import gridToReal from 'helpers/grid/gridToScreenCoords';
+import tileGridToReal from 'helpers/tile-grid/gridToScreenCoords';
 import { TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
@@ -7,7 +7,8 @@ import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy
 
 import { ProjectileHitsAtomFamily } from './useProjectileHit';
 
-let calls = 0;
+// TODO(RELIC?): Once upon a time I was counting number of executions, but idk why
+// let calls = 0;
 
 // A family that indicates whether an enemy is onscreen or not (for rendering purposes)
 // PROBLEM: Every time the camera changes, absolutely every single enemy wrapper component gets an updated version of the atom from this family.
@@ -15,7 +16,6 @@ let calls = 0;
 // Something like this:
 //
 const EnemyIsOnscreenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
-  console.log('EnemyIsOnscreenAtomFamily', ++calls);
   const { camera, width: realWidth, height: realHeight } = get(ScreenDimensionsSelector);
   const { gridX, gridY } = enemyId;
 
@@ -25,7 +25,7 @@ const EnemyIsOnscreenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => at
 
   // Based on the viewport and the enemies' grid positions, determine if this enemy is onscreen
   const { x, y } = camera;
-  const { realX, realY } = gridToReal(gridX, gridY);
+  const { realX, realY } = tileGridToReal(gridX, gridY);
 
   // Relativelty easy to see this is working by just drawing a box around the viewport
   //  and seeing which enemies are inside it, especially while on over-cranked zoom levels

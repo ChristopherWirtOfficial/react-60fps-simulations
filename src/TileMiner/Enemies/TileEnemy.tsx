@@ -68,6 +68,10 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
 
   const styles = useBoxStyles(tileEnemy);
+  console.log({
+    tileEnemy,
+    styles,
+  });
 
   return (
     <Box

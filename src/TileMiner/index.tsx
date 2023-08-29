@@ -8,6 +8,8 @@ import useCamera from './Player/Camera/useCamera';
 import TileMinerDebug from './Player/TilePlayerDebug';
 import { useTileMinerClickHandler } from './Player/useTileMinerPlayer';
 import TileMinerPlayer from './Player/TileMinerPlayer';
+import RelativeTileGrid, { RootTileGrid } from './Tiles/RelativeTileGrid';
+import StoreTile from './Tiles/GameTiles/StoreTile';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -30,7 +32,7 @@ const TileMiner: FC = () => {
   };
 
   return (
-    <>
+    <RootTileGrid>
       <Flex
         pos='fixed'
         ref={ screenRef }
@@ -43,13 +45,15 @@ const TileMiner: FC = () => {
         // Smooth scrolling, basically
         transition='transform 0.1s'
       >
+        <StoreTile />
+
         { /* <GunProjectiles /> */ }
         <TileEnemies />
         <TileMinerPlayer />
         { /* <CameraDebug /> */ }
       </Flex>
       { /* <TileMinerDebug /> */ }
-    </>
+    </RootTileGrid>
   );
 };
 
