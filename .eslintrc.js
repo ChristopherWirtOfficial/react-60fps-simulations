@@ -18,6 +18,7 @@ module.exports = {
         // END TEST OVERRIDES
 
         // Rules below this point are real overrides. Rules above this are likely temporary overrides
+        "no-mixed-operators": 0, // This rule is dumb
         "quotes": [2, "single", { "avoidEscape": true }], // Use single quotes
         "jsx-quotes": [2, "prefer-single"], // Use single quotes for jsx
         "react/function-component-definition": 0,

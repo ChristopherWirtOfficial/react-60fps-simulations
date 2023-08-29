@@ -14,8 +14,9 @@ export const OriginArrow: FC = () => {
 };
 
 
-const ScreenIndicatorArrow: React.FC<ArrowPosition> = ({ angle, x, y }) => (
+const ScreenIndicatorArrow: React.FC<ArrowPosition> = ({ angle, x, y, shown }) => (
   <Box
+    opacity={ shown ? 1 : 0 }
     pos='fixed'
     transform={ ` translate(-15px, -10px) translate(${x}px, ${y}px)` }
     left='50%'
