@@ -40,7 +40,6 @@ const useBoxStyles = <T extends Box>(box: T) => {
     right: 0,
     bottom: 0,
     transform: `translate(${trueX}px, ${trueY}px)`,
-    // transition: 'all 0.5s ease-in-out',
   };
 
   return boxStyles;

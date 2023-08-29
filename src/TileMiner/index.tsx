@@ -13,6 +13,7 @@ import StoreTile from './Tiles/GameTiles/StoreTile';
 import useCameraMovement from './Player/Camera/useCameraMovement';
 import { useCameraKeyboardCapture } from './Player/Camera/useKeyboard';
 import CameraDebug from './Player/Camera/CameraDebug';
+import { OriginArrow } from 'atoms/Screen/ScreenIndicator';
 
 const TileMiner: FC = () => {
   // A ref to the screen element, which we'll attach to the container div ourselves.
@@ -36,7 +37,7 @@ const TileMiner: FC = () => {
   };
 
   return (
-    <Box as={RootTileGrid}>
+    <Box as={RootTileGrid} w='100%' h='100%'>
       <Flex
         pos='fixed'
         ref={ screenRef }
@@ -51,6 +52,8 @@ const TileMiner: FC = () => {
         <TileEnemies />
         <TileMinerPlayer />
       </Flex>
+
+      <OriginArrow />
     </Box>
   );
 };
