@@ -37,7 +37,8 @@ const TileMiner: FC = () => {
   };
 
   return (
-    <Box as={RootTileGrid} w='100%' h='100%'>
+    // NOTE: If ANY text needs to be selectable, it'll have to ENABLE userSelect
+    <Box as={RootTileGrid} w='100%' h='100%' userSelect='none'>
       <Flex
         pos='fixed'
         ref={ screenRef }

@@ -2,7 +2,11 @@ import { atom, useAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { TileEnemyIdentifer } from 'types/TileEnemy';
 
-export const BenchedDudes = atom(5);
+// These two things are intrinsically paired
+// TODO: Consider deriving the BenchedDudes from the TotalDudesAvailable and assigned dudes
+//         - I think we'd probably have to keep a list or log of dudes being assigned but idk
+export const TotalDudesAvailable = atom(1);
+export const BenchedDudes = atom(1);
 
 export const TileEnemyAssignedDudes = atomFamily(
   (enemyId: TileEnemyIdentifer) => atom(0),

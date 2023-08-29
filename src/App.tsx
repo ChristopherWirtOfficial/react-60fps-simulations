@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 const App: FC = () => (
   <ChakraProvider>
-    <Box bg='darkslategray' w='100vw' h='100vh' pos='absolute' />
+    <Box bg='darkslategray' w='100vw' h='100vh' pos='absolute' userSelect='none' />
     <TileMiner />
   </ChakraProvider>
 );

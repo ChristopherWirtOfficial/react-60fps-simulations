@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { TileEnemyIdentifer } from 'types/TileEnemy';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { Box, Flex } from '@chakra-ui/react';
 import useTick from 'hooks/useTick';
 import { TICKS_BETWEEN_ATTACKS } from 'helpers/knobs';
 import { useAtomCallback } from 'jotai/utils';
 import { useMaterialEssence } from 'TileMiner/Tiles/GameTiles/StoreTile';
-import { TileEnemyAssignedDudes } from './TileEnemyDudesAtoms';
+import { BenchedDudes, TileEnemyAssignedDudes } from './TileEnemyDudesAtoms';
 import { useDudeHits } from '../atoms/useProjectileHit';
 import { TileEnemySelectorFamily } from '../atoms/TileEnemyAtoms';
 
@@ -25,7 +25,15 @@ export const DUDE_SIZE = '10px';
 //        it, as usual ;)
 const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // The number of dudes on the tile
-  const dudesCount = useAtomValue(TileEnemyAssignedDudes(enemyId));
+  const [ dudesCount, setDudesCount ] = useAtom(TileEnemyAssignedDudes(enemyId));
+  const setBenchedDudes = useSetAtom(BenchedDudes);
+
+  const unassignDude = (e: Event) => {
+    setDudesCount(prev => prev - 1);
+    setBenchedDudes(prev => prev + 1);
+
+    e.stopPropagation();
+  };
 
   const dudes = Array.from({ length: dudesCount }, (_, i) => i);
 
@@ -42,10 +50,9 @@ const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // Based on how many dudes, a certain amount of damage is done to the tile on each hit
   // Each hit is every X ticks
   useTick(() => {
-    // TODO: What about overhit protection? automatically unassign dudes if they're going to overhit on the next hit
+    // TODO: What about overhit protection? automatically unassign dudes if they're going to overhit on the next hit?
     //        This is best done after we move the damage to individual dudes
     const collectiveDudeDamage = BASE_DUDE_DAMAGE * dudesCount;
-    const remainingTileHealth = getTileEnemyHealth();
 
     addDudeHit(collectiveDudeDamage);
 
@@ -62,7 +69,7 @@ const TileEnemyDudes: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
     <Flex wrap='wrap' p={ 1.5 } justifyContent='left' gap={ 1.5 } flex='1'>
       {
         dudes.map(dude => (
-          <Box w={ DUDE_SIZE } h={ DUDE_SIZE } bg='gray.500' key={ dude } boxShadow='md' />
+          <Box onClick={ unassignDude } w={ DUDE_SIZE } h={ DUDE_SIZE } bg='gray.500' key={ dude } boxShadow='md' />
         ))
       }
     </Flex>
