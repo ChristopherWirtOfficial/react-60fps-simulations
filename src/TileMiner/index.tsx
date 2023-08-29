@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import useInitScreen from 'atoms/Screen/useScreen';
 import { CAMERA_POSITION_SCALING_FACTOR } from 'helpers/knobs';
 import { FC } from 'react';
@@ -36,22 +36,22 @@ const TileMiner: FC = () => {
   };
 
   return (
-    <RootTileGrid>
+    <Box as={RootTileGrid}>
       <Flex
         pos='fixed'
         ref={ screenRef }
         h='100vh'
         w='100vw'
         justifyContent='center'
+        bg='transparent'
         alignItems='center'
-        bg='darkslategray'
         transform={ `translate(${canvasOffset.x}px, ${canvasOffset.y}px)` }
       >
         <StoreTile />
         <TileEnemies />
         <TileMinerPlayer />
       </Flex>
-    </RootTileGrid>
+    </Box>
   );
 };
 
