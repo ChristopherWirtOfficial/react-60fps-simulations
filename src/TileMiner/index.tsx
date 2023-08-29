@@ -46,13 +46,10 @@ const TileMiner: FC = () => {
         transition='transform 0.1s'
       >
         <StoreTile />
-
-        { /* <GunProjectiles /> */ }
         <TileEnemies />
         <TileMinerPlayer />
         { /* <CameraDebug /> */ }
       </Flex>
-      { /* <TileMinerDebug /> */ }
     </RootTileGrid>
   );
 };

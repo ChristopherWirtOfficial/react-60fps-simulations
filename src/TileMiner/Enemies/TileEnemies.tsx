@@ -23,7 +23,6 @@ const TileEnemyWrapper: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
 const TileEnemies: FC = () => {
   const enemiesGrid = useAtomValue(TileEnemyIDList);
-  console.log(enemiesGrid);
 
   return (
     <>

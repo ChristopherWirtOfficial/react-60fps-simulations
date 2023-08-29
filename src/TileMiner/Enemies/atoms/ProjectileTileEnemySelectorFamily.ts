@@ -1,11 +1,11 @@
 import { ProjectileAtomFamily } from 'atoms/Projectiles/ProjectileAtomFamily';
-import gameCoordsToGridTile from 'helpers/tile-grid/gameCoordsToGridTile';
 import { TILE_PADDING, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import gameCoordsToGridTile from 'TileMiner/Tiles/Tile/helpers/gameCoordsToGridTile';
 import { EnemyIsDead } from './HandleEnemyDeath';
 
-import { gridToReal, TileEnemyIDList, TileEnemySelectorFamily } from './TileEnemyAtoms';
+import { TileEnemyIDList, TileEnemySelectorFamily } from './TileEnemyAtoms';
 
 const TILE_DIAGONAL = Math.sqrt(TILE_SIZE + (2 * TILE_PADDING));
 

@@ -1,10 +1,10 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
-import tileGridToReal from 'helpers/tile-grid/gridToScreenCoords';
 import { TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy';
 
+import tileGridToReal from 'TileMiner/Tiles/Tile/helpers/gridToScreenCoords';
 import { ProjectileHitsAtomFamily } from './useProjectileHit';
 
 // TODO(RELIC?): Once upon a time I was counting number of executions, but idk why

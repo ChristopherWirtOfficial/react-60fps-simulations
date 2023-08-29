@@ -1,23 +1,18 @@
-import tileGridToReal from 'helpers/tile-grid/gridToScreenCoords';
 import { TILE_SIZE } from 'helpers/knobs';
 import useBoxStyles from 'hooks/Entities/useBoxStyles';
-import { GameCoords } from 'types/Game';
+import tileGridToReal from './helpers/gridToScreenCoords';
+import { GridTile } from './helpers/gameCoordsToGridTile';
 
-export interface Tile extends GameCoords {
-  key: string,
-  size?: number, // 1 by default
-}
-
-const useTileStyles = (tile: Tile) => {
+const useTileStyles = (tile: GridTile) => {
   const boxSize = tile.size ?? 1;
 
-  const { realX, realY } = tileGridToReal(tile.x, tile.y);
+  const { realX, realY } = tileGridToReal(tile.gridX, tile.gridY);
 
   const box = {
     size: boxSize * TILE_SIZE,
     x: realX,
     y: realY,
-    key: `${tile.key}-${tile.x}-${tile.y}.box`,
+    key: `${tile.key}-${tile.gridX}-${tile.gridY}.box`,
   };
 
   return useBoxStyles(box);

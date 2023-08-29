@@ -1,12 +1,12 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { randomColor, uuid } from 'helpers';
-import tileGridToReal from 'helpers/tile-grid/gridToScreenCoords';
 import { MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithReset, RESET } from 'jotai/utils';
 import { Enemy } from 'types/Boxes';
 import { compareTileEnemyIdentifiers, TileEnemyBase, TileEnemyIdentifer } from 'types/TileEnemy';
 
+import tileGridToReal from 'TileMiner/Tiles/Tile/helpers/gridToScreenCoords';
 import { EnemyDamageTakenAtomFamily, ProjectileHitsAtomFamily } from './useProjectileHit';
 
 
@@ -93,15 +93,11 @@ export const calculateDamage = <MoveableType extends Enemy>(enemy: MoveableType,
 };
 
 export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyIdentifer) => {
-  // TODO: If I'm seriously going to stick to the tiles then I can make `Tile` components that know what's in them
-  //  So instead of rendering out a bunch of enemies whose centers are in the location of the tile's center,
-  //   and using a padding to make that center a little further away from the "edge of the tile", I can place
-  //   enemies that still have a size that they totally stick to, but they're rendered by an actual Tile component,
-  //   and that's laid out more traditionally with the same absolute position, transform, and grid logic.
   const { realX, realY } = tileGridToReal(gridX, gridY);
 
-  // TODO: PICKUP - Get rid of all of the realX and Y stuff. None of the "Tile" level rendering will know pixels.
 
+  // TODO: Get this interface and the other new useTileStlyes
+  //           to speak the same language/types
   const newEnemy: TileEnemyBase = {
     key,
     x: realX,
@@ -111,7 +107,7 @@ export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyI
     speed: 0,
     maxHealth: 100,
     damage: 0,
-    size: TILE_SIZE,
+    size: 1,
     movementSteps: [],
     color: randomColor(150),
     direction: 0,

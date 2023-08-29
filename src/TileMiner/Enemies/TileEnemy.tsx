@@ -5,6 +5,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { FC, useEffect, useRef } from 'react';
 import { TileEnemy, TileEnemyIdentifer } from 'types/TileEnemy';
 
+import useTileStyles from 'TileMiner/Tiles/Tile/useTileStyles';
 import HandleEnemyDeath from './atoms/HandleEnemyDeath';
 import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
 import { useAssignedDudes } from './Dudes/TileEnemyDudesAtoms';
@@ -67,38 +68,16 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   }, [ health, handleTileDeath, enemyId, clearTileDudes ]);
 
 
-  const styles = useBoxStyles(tileEnemy);
-  console.log({
-    tileEnemy,
-    styles,
-  });
+  const styles = useTileStyles(tileEnemy);
 
   return (
     <Box
       onClick={ addAssignedDude }
-      pos='absolute'
-      top={ 0 }
-      left={ 0 }
-      right={ 0 }
-      bottom={ 0 }
-      w={ `${tileEnemy.size}px` }
-      h={ `${tileEnemy.size}px` }
+      { ...styles }
       bg={ tileEnemy.color }
-      transform={ styles.transform }
       border='1px solid white'
-
     >
-      <Box
-        pos='absolute'
-        top='50%'
-        left='50%'
-        transform='translate(-50%, -50%)'
-        fontSize='20'
-        color='white'
-      >
-        { /* Put stuff in here to show on the enemy */ }
-        { health }
-      </Box>
+      <CenteredHealth health={ health } />
       <TileEnemyDebug tileEnemy={ tileEnemy } />
       <TileEnemyDudes enemyId={ enemyId } />
     </Box>
@@ -107,3 +86,18 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
 
 export default TileEnemyComp;
+
+
+const CenteredHealth: FC<{ health: number }> = ({ health }) => (
+  <Box
+    pos='absolute'
+    top='50%'
+    left='50%'
+    transform='translate(-50%, -50%)'
+    fontSize='20'
+    color='white'
+  >
+    { /* Put stuff in here to show on the enemy */ }
+    { health }
+  </Box>
+);
