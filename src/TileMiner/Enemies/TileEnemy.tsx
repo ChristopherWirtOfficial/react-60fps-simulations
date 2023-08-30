@@ -17,7 +17,8 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // If the enemy is dead, kill it
   const handleTileDeath = useSetAtom(HandleEnemyDeath);
 
-  const { assignedDudes, addAssignedDude, clearTileDudes } = useAssignedDudes(enemyId);
+  const { assignedDudes, addAssignedDude, clearTileDudes } =
+    useAssignedDudes(enemyId);
 
   const dudesActiveOnTile = assignedDudes > 0;
 
@@ -27,7 +28,6 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
       clearTileDudes();
     }
   }, [ health, handleTileDeath, enemyId, clearTileDudes ]);
-
 
   const styles = useTileStyles(tileEnemy);
 
@@ -40,16 +40,12 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
     >
       <CenteredReadout health={ health } />
       <TileEnemyDebug tileEnemy={ tileEnemy } />
-      {
-        dudesActiveOnTile && <TileEnemyDudes enemyId={ enemyId } />
-      }
+      { dudesActiveOnTile && <TileEnemyDudes enemyId={ enemyId } /> }
     </Box>
   );
 };
 
-
 export default TileEnemyComp;
-
 
 const CenteredReadout: FC<{ health: number }> = ({ health }) => (
   <Box
