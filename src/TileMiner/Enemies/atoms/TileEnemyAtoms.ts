@@ -122,8 +122,14 @@ export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) 
   get => {
     const enemyAtom = get(TileEnemyAtomFamily(enemyId));
 
+
     const damageTaken = get(EnemyDamageTakenAtomFamily(enemyId));
     const health = enemyAtom.maxHealth - damageTaken;
+
+    const healthPercentage = health / enemyAtom.maxHealth;
+
+    // The size at 0 health is 5px, and at 100% health it's 5+(the entire tile size - 5) basically
+    const sizeBasedOnHealth = 0.05 + (enemyAtom.size - 0.05) * Math.sqrt(healthPercentage);
 
     const hits = get(ProjectileHitsAtomFamily(enemyId));
 
@@ -131,6 +137,7 @@ export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) 
       ...enemyAtom,
       health,
       hits,
+      size: sizeBasedOnHealth,
     };
   },
   (get, set, newEnemy: TileEnemyBase | typeof RESET) => {

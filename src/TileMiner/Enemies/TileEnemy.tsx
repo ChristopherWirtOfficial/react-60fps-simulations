@@ -11,6 +11,8 @@ import { TileEnemySelectorFamily } from './atoms/TileEnemyAtoms';
 import { useAssignedDudes } from './Dudes/TileEnemyDudesAtoms';
 import TileEnemyDudes from './Dudes/TileEnemyDudes';
 
+const easeInCirc = (x: number) => 1 - Math.sqrt(1 - x ** 2);
+
 const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   const tileEnemy = useAtomValue(TileEnemySelectorFamily(enemyId));
   const { health, hits } = tileEnemy;
@@ -31,12 +33,16 @@ const TileEnemyComp: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
 
   const styles = useTileStyles(tileEnemy);
 
+  const healthPercentage = health / tileEnemy.maxHealth;
+
+  const borderWidth = 3 * easeInCirc(healthPercentage);
+
   return (
     <Box
       onClick={ addAssignedDude }
       { ...styles }
       bg={ tileEnemy.color }
-      border='1px solid white'
+      border={ `${borderWidth}px solid white` }
     >
       <CenteredReadout health={ health } />
       <TileEnemyDebug tileEnemy={ tileEnemy } />
