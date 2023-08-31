@@ -6,7 +6,6 @@ import { GameCoords } from './Game';
   Moveable - Something that can be moved with MovementSteps
 */
 export interface Box extends GameCoords {
-  key: string;
   size: number;
   color?: string;
 }

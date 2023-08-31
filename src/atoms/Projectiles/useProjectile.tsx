@@ -1,4 +1,3 @@
-import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import getBoxKey from 'helpers/boxes/getBoxKey';
 import checkCollisions from 'helpers/collisions/checkCollisions';
 import projectCollision from 'helpers/collisions/projectCollisions';

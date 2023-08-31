@@ -5,10 +5,8 @@ import { Box } from 'types/Boxes';
 import { ScreenDimensionsSelector } from '../../atoms/Screen/ScreenNodeAtom';
 
 /*
-  All Boxes are positioned with cartesian coordinates with the origin at the center of the screen.
+  All Boxes are positioned with cartesian PIXEL coordinates with the origin at the center of the screen.
 */
-// TODO: Consider moving all of this to a common selector logic and put it on the atoms or something
-//  Something using an argument thats like <T extends Box> and then Bob's your uncle
 export const useBoxPositioning = <T extends Box>(box: T) => {
   const { center } = useAtomValue(ScreenDimensionsSelector);
   const { x, y, size } = box ?? {};
@@ -42,7 +40,6 @@ const useBoxStyles = <T extends Box>(box: T) => {
     right: 0,
     bottom: 0,
     transform: `translate(${trueX}px, ${trueY}px)`,
-    // transition: 'all 0.5s ease-in-out',
   };
 
   return boxStyles;

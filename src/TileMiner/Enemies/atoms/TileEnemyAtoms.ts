@@ -1,12 +1,12 @@
 import { ScreenDimensionsSelector } from 'atoms/Screen/ScreenNodeAtom';
 import { randomColor, uuid } from 'helpers';
-import gridToReal from 'helpers/grid/gridToScreenCoords';
 import { MAP_SIZE, TILE_SIZE } from 'helpers/knobs';
 import { atom } from 'jotai';
 import { atomFamily, atomWithDefault, atomWithReset, RESET } from 'jotai/utils';
 import { Enemy } from 'types/Boxes';
 import { compareTileEnemyIdentifiers, TileEnemyBase, TileEnemyIdentifer } from 'types/TileEnemy';
 
+import tileGridToReal from 'TileMiner/Tiles/Tile/helpers/gridToScreenCoords';
 import { EnemyDamageTakenAtomFamily, ProjectileHitsAtomFamily } from './useProjectileHit';
 
 
@@ -54,7 +54,7 @@ export const TileGridOnscreenEnemyIDList = atom(get => {
   // Based on the viewport and the enemies' grid positions, determine which enemies are onscreen
   const onscreenEnemies = enemies.filter(({ gridX, gridY }) => {
     const { x, y } = camera;
-    const { realX, realY } = gridToReal(gridX, gridY);
+    const { realX, realY } = tileGridToReal(gridX, gridY);
 
     // Relativelty easy to see this is working by just drawing a box around the viewport
     //  and seeing which enemies are inside it, especially while on over-cranked zoom levels
@@ -93,23 +93,22 @@ export const calculateDamage = <MoveableType extends Enemy>(enemy: MoveableType,
 };
 
 export const TileEnemyAtomFamily = atomFamily(({ key, gridX, gridY }: TileEnemyIdentifer) => {
-  // TODO: If I'm seriously going to stick to the tiles then I can make `Tile` components that know what's in them
-  //  So instead of rendering out a bunch of enemies whose centers are in the location of the tile's center,
-  //   and using a padding to make that center a little further away from the "edge of the tile", I can place
-  //   enemies that still have a size that they totally stick to, but they're rendered by an actual Tile component,
-  //   and that's laid out more traditionally with the same absolute position, transform, and grid logic.
-  const { realX, realY } = gridToReal(gridX, gridY);
+  const { realX, realY } = tileGridToReal(gridX, gridY);
 
+
+  // TODO: Stop calling things like this "boxes" everywhere except at the base sub-tile level
+  //       AKA: Get this (and whatever else) to exclusively speak TILE and have Tile hide all the "Box" stuff, in this case
+  //       The tile (probably) won't have physics done on it, which is the main reason to have a "Game" level Box..
+  // TODO: See above, consider renaming everything to do with "Box" to "GameBox" to tie it to the rest of the "GameCoords" stuff
+  //       Draw the line between Tile and Game, everywhere except the translation interfaces that the game will naturally use, if necessary
   const newEnemy: TileEnemyBase = {
     key,
-    x: realX,
-    y: realY,
     gridX,
     gridY,
     speed: 0,
     maxHealth: 100,
     damage: 0,
-    size: TILE_SIZE,
+    size: 1,
     movementSteps: [],
     color: randomColor(150),
     direction: 0,
@@ -123,8 +122,14 @@ export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) 
   get => {
     const enemyAtom = get(TileEnemyAtomFamily(enemyId));
 
+
     const damageTaken = get(EnemyDamageTakenAtomFamily(enemyId));
     const health = enemyAtom.maxHealth - damageTaken;
+
+    const healthPercentage = health / enemyAtom.maxHealth;
+
+    // The size at 0 health is 5px, and at 100% health it's 5+(the entire tile size - 5) basically
+    const sizeBasedOnHealth = 0.05 + (enemyAtom.size - 0.05) * Math.sqrt(healthPercentage);
 
     const hits = get(ProjectileHitsAtomFamily(enemyId));
 
@@ -132,6 +137,7 @@ export const TileEnemySelectorFamily = atomFamily((enemyId: TileEnemyIdentifer) 
       ...enemyAtom,
       health,
       hits,
+      size: sizeBasedOnHealth,
     };
   },
   (get, set, newEnemy: TileEnemyBase | typeof RESET) => {

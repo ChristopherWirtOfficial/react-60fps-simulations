@@ -1,8 +1,12 @@
 import { atom, useSetAtom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import { useCallback } from 'react';
 import { Projectile } from 'types/Boxes';
 import { compareTileEnemyIdentifiers, TileEnemyIdentifer } from 'types/TileEnemy';
 
+export type TileMinerDudeHit = {
+  damage: number;
+};
 
 export type ProjectileHit = {
   x: number;
@@ -24,10 +28,35 @@ export const ProjectileHitsAtomFamily = atomFamily(
   compareTileEnemyIdentifiers,
 );
 
+// TODO: Get this in its own more meaningful place? Maybe not, maybe just .. keep them together lol
+export const TileMinerDudeHits = atomFamily(
+  (enemyId: TileEnemyIdentifer) => atom<TileMinerDudeHit[]>([]),
+  compareTileEnemyIdentifiers,
+);
+
+// Adding a hit is super easy in this case.
+export const useDudeHits = (enemyId: TileEnemyIdentifer) => {
+  const setDudeHit = useSetAtom(TileMinerDudeHits(enemyId));
+
+  const addDudeHit = useCallback((damage: number) => {
+    setDudeHit(dudeHits => [ ...dudeHits, { damage } ]);
+  }, [ setDudeHit ]);
+
+  return { addDudeHit };
+};
+
+
 export const EnemyDamageTakenAtomFamily = atomFamily((enemyId: TileEnemyIdentifer) => atom(get => {
   const hits = get(ProjectileHitsAtomFamily(enemyId));
+  const dudeHits = get(TileMinerDudeHits(enemyId));
 
-  return hits.reduce((acc, hit) => acc + hit.damage, 0);
+  const hitsDamage = hits.reduce((acc, hit) => acc + hit.damage, 0);
+  const dudesHitDamage = dudeHits.reduce((acc, hit) => acc + hit.damage, 0);
+
+  const totalDamage = hitsDamage + dudesHitDamage;
+
+  // If greater than 0, return the total damage
+  return Math.max(0, totalDamage);
 }), compareTileEnemyIdentifiers);
 
 type AddProjectileHitArgs = { enemyId: TileEnemyIdentifer, projectile: Projectile };

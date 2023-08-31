@@ -1,5 +1,5 @@
-import { GridTile } from 'helpers/grid/gameCoordsToGridTile';
 import { ProjectileHit } from 'TileMiner/Enemies/atoms/useProjectileHit';
+import { GridTile } from 'TileMiner/Tiles/Tile/helpers/gameCoordsToGridTile';
 import { Enemy } from './Boxes';
 
 export interface TileEnemy extends Enemy, GridTile {
