@@ -17,25 +17,25 @@ export const TILE_ENEMY_DEBUG_ON = false;
 export const TILE_SIZE = 100;
 
 // Core Projectile knobs
-export const TICKS_BETWEEN_ATTACKS = 100;
-export const BASE_PROJECTILE_SPEED = 3;
+export const TICKS_BETWEEN_ATTACKS = 3;
+export const BASE_PROJECTILE_SPEED = 4;
 export const ACCELERATION_FACTOR = 0.0;
 export const MAX_PROJECTILE_SPEED = 7;
-export const PROJECTILE_SIZE = 10;
+export const PROJECTILE_SIZE = 7;
 export const MAX_TARGET_DISTANCE = 350;
 export const PROJECTILE_DAMAGE = 100;
 
 // Every tick there's a DESIRED_ENEMY_SPAWN_RATE / FRAMERATE chance of spawning an enemy (I guess lol)
-export const DESIRED_ENEMY_SPAWN_RATE = 20;
+export const DESIRED_ENEMY_SPAWN_RATE = 10;
 export const ENEMY_DEATH_TIMEOUT = 300;
-export const ENEMY_SPEED = 13;
+export const ENEMY_SPEED = 10;
 
 export const ORBIT_RADIUS = 150;
 export const ORBIT_EAGERNESS = 30;
 
 // After switching to Jotai the Hard max seems to be 500, especially when calculating
 //   the distance between the player and the enemy when it takes a huge performance hit.
-export const MAX_ENEMIES = 100; // Soft cap of 300 probably
+export const MAX_ENEMIES = 50; // Soft cap of 300 probably
 
 export const MIN_ENEMY_SIZE = 10;
 export const MAX_ENEMY_SIZE = 30;

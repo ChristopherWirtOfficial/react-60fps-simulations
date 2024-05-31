@@ -21,7 +21,7 @@ const useStyles = createUseStyles({
   },
 });
 
-const DrawTest: FC = () => {
+const CircleGravity: FC = () => {
   const {
     screenRef, // A ref to the screen element, which we'll attach to the container div ourselves.
   } = useScreen();
@@ -88,4 +88,4 @@ const DrawTest: FC = () => {
   );
 };
 
-export default DrawTest;
+export default CircleGravity;
