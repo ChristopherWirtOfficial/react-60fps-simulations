@@ -15,6 +15,7 @@ export const MapSeedAtom = atom(0xB00B1E5);
 const CENTER = Math.ceil(MAP_SIZE / 2);
 
 // Create a simple 2D array of enemies, without the seed for now
+// NOTE: Highly static (shouldn't cause reactive changes ever, given the current implementation), but also is the major limiter of an infinite playing field, in many ways
 export const TileEnemyIDList = atomWithDefault(get => {
   // Eventually, we'll use the seed to generate the map.
   // COOL: And maybe base all actor's RNG off of their uuid (which would also be based on the seed)

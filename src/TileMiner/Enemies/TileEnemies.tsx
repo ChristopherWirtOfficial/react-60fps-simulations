@@ -7,6 +7,11 @@ import { EnemyIsDead } from './atoms/HandleEnemyDeath';
 import { TileEnemyIDList } from './atoms/TileEnemyAtoms';
 import TileEnemy from './TileEnemy';
 
+// This exists to control the atomic access of any individual tile information at all, especially anything
+//   that could change frequently accross all tiles that TileEnemies could render
+//   - Since it's hook based, we need a component for each tile. Otherwise, any change causes a rerender of all tiles
+//   - Since other reactive information that a TileEnemy could rely upon may change frequently, we want to just not render
+//       a real TileMiner at all in some cases (i.e. when the enemy is dead)
 const TileEnemyWrapper: FC<{ enemyId: TileEnemyIdentifer }> = ({ enemyId }) => {
   // const shouldRender = useAtomValue(ShouldEnemyRenderAtomFamily(enemyId));
   const enemyIsDead = useAtomValue(EnemyIsDead(enemyId));
